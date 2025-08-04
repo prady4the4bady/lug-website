@@ -21,8 +21,11 @@ export function Header() {
     { href: "/council", label: "Council" },
     { href: "/events", label: "Events" },
     { href: "/forum", label: "Forum" },
-    { href: "/profile", label: "Profile" },
-  ]
+  ];
+
+  if (user) {
+    navLinks.push({ href: "/profile", label: "Profile" });
+  }
   
   if (isAdmin) {
     navLinks.push({ href: "/admin", label: "Admin" });
@@ -100,9 +103,9 @@ export function Header() {
                     Sign Out
                 </Button>
             ) : (
-                <Button variant="secondary" className="ml-2" onClick={signIn}>
-                    Sign In
-                </Button>
+              <Button asChild>
+                <Link href="/signin">Sign In</Link>
+              </Button>
             )}
             <Button variant="outline" size="sm" asChild>
                 <Link href="https://lug12.netlify.app/" target="_blank" rel="noopener noreferrer">
