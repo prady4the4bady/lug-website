@@ -8,6 +8,7 @@ export type User = {
     isCouncilMember: boolean;
     councilRole?: string;
     councilDepartment?: string;
+    description?: string;
 }
 
 export type CouncilMember = User & {

@@ -2,7 +2,7 @@
 "use client";
 
 import Image from "next/image";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import type { CouncilMember } from "@/lib/types";
 import { Button } from "./ui/button";
 import { X } from "lucide-react";
@@ -15,7 +15,7 @@ interface CouncilCardProps {
 
 export function CouncilCard({ member, isAdmin, onDelete }: CouncilCardProps) {
   return (
-    <Card className="text-center transition-all duration-300 ease-in-out transform hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-2 group w-full max-w-xs relative">
+    <Card className="text-center transition-all duration-300 ease-in-out transform hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-2 group w-full max-w-xs relative flex flex-col">
       {isAdmin && (
         <Button
           variant="ghost"
@@ -40,6 +40,11 @@ export function CouncilCard({ member, isAdmin, onDelete }: CouncilCardProps) {
         <CardTitle className="font-headline text-2xl">{member.name}</CardTitle>
         <CardDescription className="text-primary font-semibold">{member.councilRole}</CardDescription>
       </CardHeader>
+      {member.description && (
+        <CardContent className="flex-grow">
+          <p className="text-muted-foreground text-sm">{member.description}</p>
+        </CardContent>
+      )}
     </Card>
   );
 }

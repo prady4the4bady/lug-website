@@ -12,6 +12,7 @@ import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { collection, onSnapshot, query, where, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { EditProfileForm } from "./edit-profile-form";
 
 // This is just an example. In a real app, you'd fetch events the user has *actually* attended.
 // This might involve a subcollection on the user document or a separate 'attendance' collection.
@@ -44,7 +45,7 @@ const useParticipatedEvents = () => {
 
 
 export function ProfileTabs() {
-    const { user, loading: authLoading } = useAuth();
+    const { user, dbUser, loading: authLoading } = useAuth();
     const { events: participatedEvents, loading: eventsLoading } = useParticipatedEvents();
 
     if (authLoading || eventsLoading) {
@@ -58,13 +59,15 @@ export function ProfileTabs() {
     const userName = user?.displayName || "User";
     const userEmail = user?.email || "No email provided";
     const userAvatar = user?.photoURL || "https://placehold.co/100x100.png";
+    const isCouncilMember = dbUser?.isCouncilMember || false;
 
     return (
         <Tabs defaultValue="dashboard" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className={`grid w-full grid-cols-${isCouncilMember ? 4 : 3}`}>
                 <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
                 <TabsTrigger value="history">Event History</TabsTrigger>
                 <TabsTrigger value="certificates">Certificates</TabsTrigger>
+                {isCouncilMember && <TabsTrigger value="edit-profile">Edit Profile</TabsTrigger>}
             </TabsList>
             <TabsContent value="dashboard">
                 <Card>
@@ -132,6 +135,11 @@ export function ProfileTabs() {
             <TabsContent value="certificates">
                 <CertificateGenerator events={participatedEvents} userName={userName} />
             </TabsContent>
+            {isCouncilMember && (
+                <TabsContent value="edit-profile">
+                    <EditProfileForm user={dbUser} />
+                </TabsContent>
+            )}
         </Tabs>
     );
 }
