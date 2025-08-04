@@ -7,7 +7,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import Link from "next/link";
 
 function GoogleIcon() {
     return (
@@ -40,7 +39,6 @@ export default function SignInPage() {
     if (user) {
         return null;
     }
-
 
     return (
         <div className="flex items-center justify-center min-h-[80vh]">

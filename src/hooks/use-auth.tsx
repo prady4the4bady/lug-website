@@ -61,7 +61,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const handleRedirectResult = useCallback(async () => {
     try {
-        setLoading(true);
         const result = await getRedirectResult(auth);
         if (result && result.user) {
             await processAuth(result.user);
@@ -69,38 +68,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     } catch (error) {
         console.error("Error processing redirect result:", error);
-    } finally {
-        // This will run regardless of whether a redirect happened
-        // The onAuthStateChanged listener below will handle setting the final user state
     }
   }, [router]);
 
 
   useEffect(() => {
-    handleRedirectResult();
+    // This combined effect handles both redirect results and auth state changes,
+    // ensuring we don't set loading to false prematurely.
+    const initializeAuth = async () => {
+        setLoading(true);
+        await handleRedirectResult();
 
-    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
-        if (authUser) {
-            setUser(authUser);
-            const userDocRef = doc(db, "users", authUser.uid);
-            const unsubDoc = onSnapshot(userDocRef, (doc) => {
-                if (doc.exists()) {
-                    const userData = doc.data() as User;
-                    setDbUser({ id: doc.id, ...userData });
-                    setIsAdmin(!!userData.isAdmin);
-                }
-                 setLoading(false);
-            });
-             return () => unsubDoc();
-        } else {
-            setUser(null);
-            setDbUser(null);
-            setIsAdmin(false);
-            setLoading(false);
-        }
-    });
+        const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+            if (authUser) {
+                setUser(authUser);
+                const userDocRef = doc(db, "users", authUser.uid);
+                const unsubDoc = onSnapshot(userDocRef, (doc) => {
+                    if (doc.exists()) {
+                        const userData = doc.data() as User;
+                        setDbUser({ id: doc.id, ...userData });
+                        setIsAdmin(!!userData.isAdmin);
+                    }
+                    // Only set loading to false after we have the dbUser info
+                    setLoading(false);
+                });
+                return () => unsubDoc();
+            } else {
+                setUser(null);
+                setDbUser(null);
+                setIsAdmin(false);
+                setLoading(false);
+            }
+        });
 
-    return () => unsubscribe();
+        return () => unsubscribe();
+    };
+
+    initializeAuth();
   }, [handleRedirectResult]);
 
   const signIn = async () => {
@@ -111,16 +115,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     try {
-        // Detect if running in an iframe
         const isIframe = window.self !== window.top;
-        
         if (isIframe) {
-            // Use popup for iframes
             const result = await signInWithPopup(auth, provider);
             await processAuth(result.user);
             router.push('/profile');
         } else {
-            // Use redirect for top-level context
             await signInWithRedirect(auth, provider);
         }
     } catch (error) {
