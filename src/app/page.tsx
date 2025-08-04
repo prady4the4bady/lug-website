@@ -1,24 +1,20 @@
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Rocket, Code, Users } from "lucide-react";
 import Link from "next/link";
 
 function Tux3DModel() {
   return (
-    <div className="relative w-full max-w-md mx-auto lg:mx-0">
-      <div className="aspect-square rounded-full bg-primary/10 p-4">
-        <Image 
-          src="https://placehold.co/600x600.png" 
-          alt="Tux, the Linux mascot" 
-          width={600} 
-          height={600}
-          className="rounded-full object-cover shadow-2xl shadow-primary/20"
-          data-ai-hint="tux linux mascot"
-          priority
-        />
-      </div>
-      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-background/10 to-transparent rounded-full"></div>
+    <div className="relative w-full max-w-md h-96 mx-auto lg:mx-0">
+      <iframe 
+        title="Tux" 
+        frameBorder="0" 
+        allowFullScreen 
+        allow="autoplay; fullscreen; xr-spatial-tracking" 
+        src="https://sketchfab.com/models/157de95fa4014050a969a8361a83d366/embed?autostart=1&ui_hint=0&camera=0"
+        className="w-full h-full rounded-lg"
+      >
+      </iframe>
     </div>
   );
 }
