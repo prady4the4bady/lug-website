@@ -1,6 +1,8 @@
+
 "use client"
 
 import { Suspense } from "react"
+import dynamic from 'next/dynamic';
 import { Canvas } from "@react-three/fiber"
 import { OrbitControls, useGLTF } from "@react-three/drei"
 import { Button } from "@/components/ui/button";
@@ -29,6 +31,11 @@ function Tux3DModel() {
   );
 }
 
+const DynamicTuxModel = dynamic(() => Promise.resolve(Tux3DModel), {
+  ssr: false,
+  loading: () => <Skeleton className="w-full h-96" />,
+});
+
 export default function Home() {
   return (
     <div className="w-full">
@@ -47,7 +54,7 @@ export default function Home() {
             <Link href="/signin">Get Started</Link>
           </Button>
         </div>
-        <Tux3DModel />
+        <DynamicTuxModel />
       </section>
 
       <section className="bg-muted/30 dark:bg-card/20 py-20">
