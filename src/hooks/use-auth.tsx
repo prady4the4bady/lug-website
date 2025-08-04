@@ -5,7 +5,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { onAuthStateChanged, User, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
@@ -29,24 +29,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
-        
         const userDocRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userDocRef);
-        
-        const isDefaultAdmin = user.email === DEFAULT_ADMIN_EMAIL;
 
-        if (!userDoc.exists()) {
-          await setDoc(userDocRef, {
-            name: user.displayName,
-            email: user.email,
-            isAdmin: isDefaultAdmin,
-            isCouncilMember: isDefaultAdmin,
-          });
-        }
-        
-        if (isDefaultAdmin) {
+        if (user.email === DEFAULT_ADMIN_EMAIL) {
+          // This is the default admin user.
           setIsAdmin(true);
-           // Ensure the default admin's Firestore document is always correct.
+          const userDoc = await getDoc(userDocRef);
+          // Ensure their Firestore document is always correct.
           if (!userDoc.exists() || !userDoc.data()?.isAdmin || !userDoc.data()?.isCouncilMember) {
              await setDoc(userDocRef, { 
                name: user.displayName,
@@ -56,11 +45,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
              }, { merge: true });
           }
         } else {
-          // For other users, check custom claims.
-          const idTokenResult = await user.getIdTokenResult();
-          setIsAdmin(!!idTokenResult.claims.admin);
+          // For all other users, check their document in Firestore.
+          const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists()) {
+            setIsAdmin(!!userDoc.data().isAdmin);
+          } else {
+             await setDoc(userDocRef, {
+              name: user.displayName,
+              email: user.email,
+              isAdmin: false,
+              isCouncilMember: false,
+            });
+            setIsAdmin(false);
+          }
         }
-
       } else {
         setUser(null);
         setIsAdmin(false);
