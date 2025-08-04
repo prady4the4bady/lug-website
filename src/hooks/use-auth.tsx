@@ -5,7 +5,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { onAuthStateChanged, User, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
@@ -30,23 +30,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (user) {
         setUser(user);
         
-        // Create or update user in Firestore
         const userDocRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userDocRef);
+        
+        const isDefaultAdmin = user.email === DEFAULT_ADMIN_EMAIL;
+
         if (!userDoc.exists()) {
           await setDoc(userDocRef, {
             name: user.displayName,
             email: user.email,
-            isAdmin: user.email === DEFAULT_ADMIN_EMAIL,
-            isCouncilMember: user.email === DEFAULT_ADMIN_EMAIL,
+            isAdmin: isDefaultAdmin,
+            isCouncilMember: isDefaultAdmin,
+          });
+        } else if (isDefaultAdmin) {
+          // Ensure default admin always has correct flags in Firestore
+           await updateDoc(userDocRef, {
+            isAdmin: true,
+            isCouncilMember: true,
           });
         }
 
-        // Check for default admin email first
-        if (user.email === DEFAULT_ADMIN_EMAIL) {
+        if (isDefaultAdmin) {
           setIsAdmin(true);
         } else {
-          // Otherwise, check for custom claims
           try {
             const tokenResult = await user.getIdTokenResult();
             setIsAdmin(!!tokenResult.claims.admin);
