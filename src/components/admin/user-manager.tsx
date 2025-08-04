@@ -16,7 +16,7 @@ type User = {
     name: string;
     email: string;
     isAdmin: boolean;
-    isBanned: boolean;
+    isCouncilMember: boolean;
 }
 
 export function UserManager() {
@@ -29,13 +29,13 @@ export function UserManager() {
         // In a real app, this data would be fetched from a secure backend.
         // For now, we'll display the currently authenticated user and some mock data.
         const mockUsers: User[] = [
-             { id: "2", name: "Maria Garcia", email: "maria@dubai.bits-pilani.ac.in", isAdmin: false, isBanned: false },
-             { id: "3", name: "Chen Wei", email: "chen@dubai.bits-pilani.ac.in", isAdmin: false, isBanned: true },
+             { id: "2", name: "Maria Garcia", email: "maria@dubai.bits-pilani.ac.in", isAdmin: false, isCouncilMember: true },
+             { id: "3", name: "Chen Wei", email: "chen@dubai.bits-pilani.ac.in", isAdmin: false, isCouncilMember: false },
         ]
 
         if (user) {
             setUsers([
-                { id: user.uid, name: user.displayName || "N/A", email: user.email || "N/A", isAdmin: isAdmin, isBanned: false },
+                { id: user.uid, name: user.displayName || "N/A", email: user.email || "N/A", isAdmin: isAdmin, isCouncilMember: true },
                 ...mockUsers
             ]);
         }
@@ -49,11 +49,11 @@ export function UserManager() {
         ));
     };
     
-    const toggleBan = (userId: string) => {
+    const toggleCouncil = (userId: string) => {
         // This is a simulation. In a real app, this would trigger a secure backend function.
-        console.log(`Toggling ban for user ${userId}`);
+        console.log(`Toggling council status for user ${userId}`);
          setUsers(users.map(u => 
-            u.id === userId ? { ...u, isBanned: !u.isBanned } : u
+            u.id === userId ? { ...u, isCouncilMember: !u.isCouncilMember } : u
         ));
     }
 
@@ -76,7 +76,7 @@ export function UserManager() {
                                 <TableHead>User</TableHead>
                                 <TableHead>Email</TableHead>
                                 <TableHead>Role</TableHead>
-                                <TableHead>Status</TableHead>
+                                <TableHead>Council</TableHead>
                                 <TableHead>Admin</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
@@ -93,9 +93,9 @@ export function UserManager() {
                                     </TableCell>
                                      <TableCell>
                                          <Switch
-                                            checked={!u.isBanned}
-                                            onCheckedChange={() => toggleBan(u.id)}
-                                            aria-label="Toggle ban status"
+                                            checked={u.isCouncilMember}
+                                            onCheckedChange={() => toggleCouncil(u.id)}
+                                            aria-label="Toggle council status"
                                         />
                                     </TableCell>
                                     <TableCell>
