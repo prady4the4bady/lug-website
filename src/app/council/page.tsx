@@ -4,8 +4,11 @@ import { CouncilSection } from "@/components/council-section";
 import { useAuth } from "@/hooks/use-auth";
 import type { CouncilMember } from "@/lib/types";
 
-const coreMembers: CouncilMember[] = [
+const president: CouncilMember[] = [
   { role: "President", name: "Alex Johnson", imageUrl: "https://placehold.co/200x200.png" },
+];
+
+const coreMembers: CouncilMember[] = [
   { role: "Vice President", name: "Maria Garcia", imageUrl: "https://placehold.co/200x200.png" },
   { role: "Secretary", name: "Chen Wei", imageUrl: "https://placehold.co/200x200.png" },
   { role: "Treasurer", name: "Harsh", imageUrl: "https://placehold.co/200x200.png" },
@@ -65,7 +68,8 @@ export default function CouncilPage() {
       </div>
       
       <div className="space-y-16">
-        <CouncilSection title="Core" members={coreMembers} isAdmin={isAdmin} />
+        <CouncilSection title="Core" members={president} isAdmin={isAdmin} />
+        <CouncilSection members={coreMembers} isAdmin={isAdmin} />
         <CouncilSection title="Technical" members={technicalMembers} isAdmin={isAdmin} />
         <CouncilSection title="Operations" members={operationsMembers} isAdmin={isAdmin} />
         <CouncilSection title="Creative" members={creativeMembers} isAdmin={isAdmin} />
