@@ -3,8 +3,12 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Users, Calendar, MessageSquare, Loader2 } from "lucide-react"
+import { Loader2, Users, Calendar, MessageSquare } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EventManager } from "@/components/admin/event-manager";
+import { UserManager } from "@/components/admin/user-manager";
+import { ForumModeration } from "@/components/admin/forum-moderation";
 
 export default function AdminPage() {
   const { isAdmin, loading } = useAuth();
@@ -31,7 +35,7 @@ export default function AdminPage() {
         <p className="text-lg text-muted-foreground mt-2">Manage users, events, and forum content.</p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-8">
+      <div className="grid md:grid-cols-3 gap-8 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -65,6 +69,23 @@ export default function AdminPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Tabs defaultValue="events" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="events">Events</TabsTrigger>
+          <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="forum">Forum</TabsTrigger>
+        </TabsList>
+        <TabsContent value="events">
+          <EventManager />
+        </TabsContent>
+        <TabsContent value="users">
+          <UserManager />
+        </TabsContent>
+        <TabsContent value="forum">
+          <ForumModeration />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }
