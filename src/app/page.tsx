@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Rocket, Code, Users } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TuxModel } from "@/components/tux-model";
+import { TuxLoader } from "@/components/tux-loader";
 
 
 export default function Home() {
@@ -27,7 +27,7 @@ export default function Home() {
           </Button>
         </div>
         <Suspense fallback={<Skeleton className="w-full max-w-md h-96 mx-auto lg:mx-0" />}>
-            <TuxModel />
+            <TuxLoader />
         </Suspense>
       </section>
 
