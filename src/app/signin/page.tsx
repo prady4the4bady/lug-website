@@ -28,7 +28,7 @@ export default function SignInPage() {
         }
     }, [user, loading, router]);
     
-    if(loading) {
+    if(loading && !user) {
         return (
              <div className="flex justify-center items-center h-screen">
                 <Loader2 className="h-8 w-8 animate-spin" />
@@ -36,22 +36,25 @@ export default function SignInPage() {
             </div>
         )
     }
+    
+    if (user) {
+        return null;
+    }
+
 
     return (
         <div className="flex items-center justify-center min-h-[80vh]">
             <Card className="w-full max-w-sm bg-card/80 backdrop-blur-sm">
                 <CardHeader className="text-center">
                     <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
-                    <CardDescription className="text-base">
+                    <CardDescription>
                         Access is restricted to members with a BITS Pilani email.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
-                    <Button variant="outline" asChild>
-                        <a href="#" onClick={(e) => { e.preventDefault(); signIn(); }} target="_top">
-                            <GoogleIcon />
-                            Sign in with Google
-                        </a>
+                    <Button variant="outline" onClick={signIn}>
+                        <GoogleIcon />
+                        Sign in with Google
                     </Button>
                     <p className="text-xs text-center text-muted-foreground">
                         By signing in, you agree to our terms of service.
@@ -61,3 +64,4 @@ export default function SignInPage() {
         </div>
     );
 }
+
