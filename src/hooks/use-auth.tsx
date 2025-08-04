@@ -30,6 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+      setLoading(true);
       if (authUser) {
         setUser(authUser);
         const userDocRef = doc(db, "users", authUser.uid);
@@ -55,6 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             };
             setDoc(userDocRef, newUser).catch(console.error);
           }
+           setLoading(false);
         });
 
         // Detach listener on cleanup
@@ -63,8 +65,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null);
         setDbUser(null);
         setIsAdmin(false);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => unsubscribe();

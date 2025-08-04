@@ -46,11 +46,9 @@ export default function SignInPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
-                    <Button variant="outline" asChild>
-                      <a href={`https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_FIREBASE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_FIREBASE_AUTH_REDIRECT_URI}&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile&hd=dubai.bits-pilani.ac.in`} target="_top">
+                    <Button variant="outline" onClick={signIn}>
                         <GoogleIcon />
                         Sign in with Google
-                      </a>
                     </Button>
                     <p className="text-xs text-center text-muted-foreground">
                         By signing in, you agree to our terms of service.
@@ -60,4 +58,3 @@ export default function SignInPage() {
         </div>
     );
 }
-
