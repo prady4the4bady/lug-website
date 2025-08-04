@@ -1,10 +1,18 @@
-export type CouncilMember = {
-  id?: string;
-  role: string;
-  name: string;
-  imageUrl: string;
-  department: string;
-  vacant?: boolean;
+
+export type User = {
+    id?: string;
+    name: string;
+    email: string;
+    photoURL: string;
+    isAdmin: boolean;
+    isCouncilMember: boolean;
+    councilRole?: string;
+    councilDepartment?: string;
+}
+
+export type CouncilMember = User & {
+  councilRole: string;
+  councilDepartment: string;
 };
 
 export type Event = {
@@ -23,4 +31,3 @@ export type ChatMessage = {
   timestamp: Date;
   imageUrl?: string;
 };
-

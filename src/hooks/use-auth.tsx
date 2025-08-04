@@ -30,32 +30,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (user) {
         setUser(user);
         const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
 
         if (user.email === DEFAULT_ADMIN_EMAIL) {
-          // This is the default admin user.
           setIsAdmin(true);
-          const userDoc = await getDoc(userDocRef);
-          // Ensure their Firestore document is always correct.
           if (!userDoc.exists() || !userDoc.data()?.isAdmin || !userDoc.data()?.isCouncilMember) {
              await setDoc(userDocRef, { 
                name: user.displayName,
                email: user.email,
+               photoURL: user.photoURL,
                isAdmin: true, 
-               isCouncilMember: true 
+               isCouncilMember: true,
+               councilDepartment: "Faculty In-Charge",
+               councilRole: "Faculty In-Charge"
              }, { merge: true });
           }
         } else {
-          // For all other users, check their document in Firestore.
-          const userDoc = await getDoc(userDocRef);
           if (userDoc.exists()) {
             setIsAdmin(!!userDoc.data().isAdmin);
           } else {
              await setDoc(userDocRef, {
               name: user.displayName,
               email: user.email,
+              photoURL: user.photoURL,
               isAdmin: false,
               isCouncilMember: false,
-            });
+             }, { merge: true });
             setIsAdmin(false);
           }
         }

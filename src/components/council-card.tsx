@@ -1,8 +1,8 @@
+
 "use client";
 
 import Image from "next/image";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import type { CouncilMember } from "@/lib/types";
 import { Button } from "./ui/button";
 import { X } from "lucide-react";
@@ -27,18 +27,10 @@ export function CouncilCard({ member, isAdmin, onDelete }: CouncilCardProps) {
           <span className="sr-only">Remove member</span>
         </Button>
       )}
-      {member.vacant && (
-        <Badge
-          variant="destructive"
-          className="absolute -top-2 -left-2 rotate-[-20deg] text-sm px-3 py-1"
-        >
-          Vacant
-        </Badge>
-      )}
       <CardHeader>
         <div className="relative w-32 h-32 mx-auto mb-4">
           <Image
-            src={member.imageUrl}
+            src={member.photoURL || `https://placehold.co/128x128.png`}
             alt={`Photo of ${member.name}`}
             fill
             className="rounded-full object-cover border-4 border-primary/50 transition-all duration-300 group-hover:border-primary"
@@ -46,13 +38,8 @@ export function CouncilCard({ member, isAdmin, onDelete }: CouncilCardProps) {
           />
         </div>
         <CardTitle className="font-headline text-2xl">{member.name}</CardTitle>
-        <CardDescription className="text-primary font-semibold">{member.role}</CardDescription>
+        <CardDescription className="text-primary font-semibold">{member.councilRole}</CardDescription>
       </CardHeader>
-      <CardContent className="opacity-0 max-h-0 transition-all duration-300 ease-in-out group-hover:opacity-100 group-hover:max-h-40">
-        <p className="text-muted-foreground text-sm">
-          Leading the charge for open-source innovation on campus.
-        </p>
-      </CardContent>
     </Card>
   );
 }

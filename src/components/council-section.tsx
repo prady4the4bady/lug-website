@@ -1,3 +1,4 @@
+
 "use client";
 
 import { CouncilCard } from "@/components/council-card";
@@ -7,7 +8,7 @@ interface CouncilSectionProps {
   title?: string;
   members: CouncilMember[];
   isAdmin: boolean;
-  onDelete: (memberId: string) => void;
+  onDelete: (userId: string) => void;
 }
 
 export function CouncilSection({ title, members, isAdmin, onDelete }: CouncilSectionProps) {

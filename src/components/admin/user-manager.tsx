@@ -42,11 +42,6 @@ export function UserManager() {
         // Note: For full security, a Firebase Function should handle setting custom claims
         // This only updates the Firestore record.
     };
-    
-    const toggleCouncil = async (userId: string, currentStatus: boolean) => {
-        const userDocRef = doc(db, "users", userId);
-        await updateDoc(userDocRef, { isCouncilMember: !currentStatus });
-    }
 
     const handleViewActivity = (user: User) => {
         setSelectedUser(user);
@@ -58,7 +53,7 @@ export function UserManager() {
             <Card className="mt-6">
                 <CardHeader>
                     <CardTitle>User Management</CardTitle>
-                    <CardDescription>View users and manage their permissions and status.</CardDescription>
+                    <CardDescription>View users and manage their admin permissions.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Table>
@@ -66,8 +61,7 @@ export function UserManager() {
                             <TableRow>
                                 <TableHead>User</TableHead>
                                 <TableHead>Email</TableHead>
-                                <TableHead>Role</TableHead>
-                                <TableHead>Council</TableHead>
+                                <TableHead>Status</TableHead>
                                 <TableHead>Admin</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
@@ -78,17 +72,11 @@ export function UserManager() {
                                     <TableCell className="font-medium">{u.name}</TableCell>
                                     <TableCell>{u.email}</TableCell>
                                     <TableCell>
-                                        <Badge variant={u.isAdmin ? "default" : "secondary"}>
-                                            {u.isAdmin ? "Admin" : "Member"}
-                                        </Badge>
-                                    </TableCell>
-                                     <TableCell>
-                                         <Switch
-                                            checked={u.isCouncilMember}
-                                            onCheckedChange={() => toggleCouncil(u.id, u.isCouncilMember)}
-                                            aria-label="Toggle council status"
-                                            disabled={!currentAdminIsAdmin}
-                                        />
+                                        <div className="flex items-center gap-2">
+                                            {u.isAdmin && <Badge variant="default">Admin</Badge>}
+                                            {u.isCouncilMember && <Badge variant="secondary">Council</Badge>}
+                                            {!u.isAdmin && !u.isCouncilMember && <Badge variant="outline">Member</Badge>}
+                                        </div>
                                     </TableCell>
                                     <TableCell>
                                         <Switch
