@@ -3,39 +3,31 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper functions
+  
+    // Helper function to check if a user is an admin
     function isAdmin() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
 
+    // Users can read/update their own profile.
+    // Admins can read/write any user profile.
     match /users/{userId} {
-      // Allow admin to read/write any user document
-      // Allow users to read/write their own document
-      allow read, write: if isAdmin() || request.auth.uid == userId;
-
-      // Allow anyone to list users who are council members for the council page
-      allow list: if request.query.where.isCouncilMember == true;
-
-      // Allow admins to list all users, or filter by council member status
-      allow list: if isAdmin();
+      allow read, update: if request.auth.uid == userId || isAdmin();
+      allow list: if isAdmin(); // Allow admins to list all users
+      allow create: if request.auth.uid != null;
     }
 
+    // Allow public read for events
     match /events/{eventId} {
-      // Allow anyone to read events
-      allow get, list: if true;
-      // Only admins can create, update, or delete events
+      allow read: if true;
       allow write: if isAdmin();
     }
-    
-    match /messages/{messageId} {
-        // Anyone can read messages
-        allow get, list: if true;
-        // Only authenticated users can create messages
-        allow create: if request.auth != null;
-        // Only admins can delete messages
-        allow delete: if isAdmin();
-    }
 
+    // Logged-in users can read/write messages
+    // Admins can delete messages
+    match /messages/{messageId} {
+      allow read, create: if request.auth.uid != null;
+      allow delete: if isAdmin();
+    }
   }
 }
