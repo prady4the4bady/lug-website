@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { useState, useEffect } from "react";
@@ -24,7 +25,6 @@ export function EventCalendar() {
         return { 
           id: doc.id, 
           ...data,
-          date: (data.date as Timestamp).toDate()
         } as Event
       });
       setEvents(eventsData);
@@ -33,8 +33,10 @@ export function EventCalendar() {
     return () => unsubscribe();
   }, []);
 
+  const eventDates = events.map(e => e.date.toDate());
+
   const eventsForSelectedDay = date
-    ? events.filter(event => format(event.date, "yyyy-MM-dd") === format(date, "yyyy-MM-dd"))
+    ? events.filter(event => format(event.date.toDate(), "yyyy-MM-dd") === format(date, "yyyy-MM-dd"))
     : [];
 
   return (
@@ -48,7 +50,7 @@ export function EventCalendar() {
               onSelect={setDate}
               className="p-3"
               modifiers={{
-                events: events.map(e => e.date)
+                events: eventDates
               }}
               modifiersStyles={{
                 events: {
@@ -76,7 +78,7 @@ export function EventCalendar() {
                   <div className="flex justify-between items-start">
                     <div>
                       <CardTitle>{event.title}</CardTitle>
-                      <CardDescription>{format(event.date, "p")}</CardDescription>
+                      <CardDescription>{format(event.date.toDate(), "p")}</CardDescription>
                     </div>
                     <Badge variant="secondary">Upcoming</Badge>
                   </div>

@@ -39,8 +39,6 @@ export function UserManager() {
     const toggleAdmin = async (userId: string, currentStatus: boolean) => {
         const userDocRef = doc(db, "users", userId);
         await updateDoc(userDocRef, { isAdmin: !currentStatus });
-        // Note: For full security, a Firebase Function should handle setting custom claims
-        // This only updates the Firestore record.
     };
 
     const handleViewActivity = (user: User) => {

@@ -1,3 +1,4 @@
+
 "use client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,7 +31,6 @@ const useParticipatedEvents = () => {
                 return {
                     id: doc.id,
                     ...data,
-                    date: (data.date as Timestamp).toDate(),
                 } as Event
             });
             setEvents(eventsData);
@@ -117,7 +117,7 @@ export function ProfileTabs() {
                                 {participatedEvents.map(event => (
                                     <TableRow key={event.id}>
                                         <TableCell className="font-medium">{event.title}</TableCell>
-                                        <TableCell>{format(event.date, "PPP")}</TableCell>
+                                        <TableCell>{format(event.date.toDate(), "PPP")}</TableCell>
                                     </TableRow>
                                 ))}
                                 {participatedEvents.length === 0 && (

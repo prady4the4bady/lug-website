@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -30,7 +31,7 @@ export function ChatInterface() {
           text: data.text,
           user: data.user,
           avatarUrl: data.avatarUrl,
-          timestamp: (data.timestamp as Timestamp)?.toDate() || new Date(),
+          timestamp: (data.timestamp as Timestamp),
           imageUrl: data.imageUrl,
         });
       });

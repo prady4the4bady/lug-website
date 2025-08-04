@@ -1,4 +1,6 @@
 
+import type { Timestamp } from "firebase/firestore";
+
 export type User = {
     id?: string;
     name: string;
@@ -20,7 +22,7 @@ export type Event = {
   id: string;
   title: string;
   description: string;
-  date: Date;
+  date: Timestamp;
   link?: string;
 };
 
@@ -29,6 +31,6 @@ export type ChatMessage = {
   text: string;
   user: string;
   avatarUrl: string;
-  timestamp: Date;
+  timestamp: Timestamp;
   imageUrl?: string;
 };

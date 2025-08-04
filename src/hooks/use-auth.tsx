@@ -29,67 +29,64 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const handleAuth = async (authUser: FirebaseUser | null) => {
-      if (authUser) {
+    const processAuth = async (authUser: FirebaseUser | null) => {
+        if (!authUser) {
+            setUser(null);
+            setDbUser(null);
+            setIsAdmin(false);
+            setLoading(false);
+            return;
+        }
+
         setUser(authUser);
         const userDocRef = doc(db, "users", authUser.uid);
-        
-        const unsubFirestore = onSnapshot(userDocRef, (userDoc) => {
-          if (userDoc.exists()) {
-            const userData = userDoc.data() as User;
-            setDbUser({ id: userDoc.id, ...userData });
-            setIsAdmin(!!userData.isAdmin);
-            setLoading(false);
-          } else {
-             // This part runs if the user is authenticated but not in Firestore yet
-            const isDefaultAdmin = authUser.email === DEFAULT_ADMIN_EMAIL;
-            const newUser: User = {
-              name: authUser.displayName!,
-              email: authUser.email!,
-              photoURL: authUser.photoURL!,
-              isAdmin: isDefaultAdmin,
-              isCouncilMember: isDefaultAdmin,
-              ...(isDefaultAdmin && {
-                  councilDepartment: "Faculty In-Charge",
-                  councilRole: "Faculty In-Charge"
-              })
-            };
-            setDoc(userDocRef, newUser, { merge: true }).then(() => {
-                setDbUser({ id: authUser.uid, ...newUser });
-                setIsAdmin(isDefaultAdmin);
-                setLoading(false);
-            });
-          }
+
+        const unsub = onSnapshot(userDocRef, (userDoc) => {
+            if (userDoc.exists()) {
+                const userData = userDoc.data() as User;
+                setDbUser({ id: userDoc.id, ...userData });
+                setIsAdmin(!!userData.isAdmin);
+            } else {
+                // If doc doesn't exist, it means it's a new user. Create the doc.
+                const isDefaultAdmin = authUser.email === DEFAULT_ADMIN_EMAIL;
+                const newUser: User = {
+                    name: authUser.displayName!,
+                    email: authUser.email!,
+                    photoURL: authUser.photoURL!,
+                    isAdmin: isDefaultAdmin,
+                    isCouncilMember: isDefaultAdmin,
+                    ...(isDefaultAdmin && {
+                        councilDepartment: "Faculty In-Charge",
+                        councilRole: "Faculty In-Charge"
+                    })
+                };
+                setDoc(userDocRef, newUser, { merge: true }).catch(console.error);
+                // No need to call setDbUser here, the onSnapshot will fire again with the new data.
+            }
         });
-
-        return () => unsubFirestore();
-
-      } else {
-        setUser(null);
-        setDbUser(null);
-        setIsAdmin(false);
+        
         setLoading(false);
-      }
+        return unsub;
     };
     
-    // This handles the redirect result after signing in
+    // First, check for redirect result. This should only run once on page load.
     getRedirectResult(auth)
       .then((result) => {
+        // If result is not null, it means we just came back from a sign-in redirect.
+        // onAuthStateChanged will handle the user session from here.
         // If result is null, it means the user is just visiting the page, not returning from a redirect.
-        // The onAuthStateChanged listener below will handle their session.
-        if (result) {
-          // User has successfully signed in. onAuthStateChanged will now fire and handle the user session.
-        }
-        // Even if the result is null, we need to let onAuthStateChanged do its thing.
       })
       .catch((error) => {
-        console.error("Error getting redirect result:", error);
-        setLoading(false); // Stop loading on error
+        console.error("Error processing redirect result:", error);
+      })
+      .finally(() => {
+        // Now, set up the persistent auth state listener.
+        const unsubscribe = onAuthStateChanged(auth, (authUser) => {
+            processAuth(authUser).catch(console.error);
+        });
+        return () => unsubscribe();
       });
 
-    const unsubscribeAuth = onAuthStateChanged(auth, handleAuth);
-
-    return () => unsubscribeAuth();
   }, []);
 
   const signIn = async () => {
@@ -99,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       'hd': 'dubai.bits-pilani.ac.in'
     });
     // We don't need to await this. Firebase handles the redirect.
-    signInWithRedirect(auth, provider);
+    await signInWithRedirect(auth, provider);
   };
 
   const signOutUser = async () => {

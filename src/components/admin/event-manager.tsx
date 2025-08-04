@@ -31,7 +31,6 @@ export function EventManager() {
                 return {
                     id: doc.id,
                     ...data,
-                    date: (data.date as Timestamp).toDate(),
                 } as Event;
             });
             setEvents(eventsData);
@@ -44,7 +43,7 @@ export function EventManager() {
         setEditingEvent(event);
         setTitle(event.title);
         setDescription(event.description);
-        const formattedDate = event.date ? new Date(event.date).toISOString().slice(0, 16) : '';
+        const formattedDate = event.date ? event.date.toDate().toISOString().slice(0, 16) : '';
         setDate(formattedDate);
         setLink(event.link || '');
     };
@@ -66,7 +65,7 @@ export function EventManager() {
         const eventData = {
             title,
             description,
-            date: new Date(date),
+            date: Timestamp.fromDate(new Date(date)),
             link,
         };
 
@@ -134,7 +133,7 @@ export function EventManager() {
                                 {events.map(event => (
                                     <TableRow key={event.id}>
                                         <TableCell className="font-medium">{event.title}</TableCell>
-                                        <TableCell>{format(event.date, "PPpp")}</TableCell>
+                                        <TableCell>{format(event.date.toDate(), "PPpp")}</TableCell>
                                         <TableCell className="text-right">
                                             <Button variant="ghost" size="icon" className="mr-2" onClick={() => handleEditClick(event)}>
                                                 <Edit className="h-4 w-4" />

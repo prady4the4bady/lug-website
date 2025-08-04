@@ -1,3 +1,4 @@
+
 "use client";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { ChatMessage } from "@/lib/types";
@@ -28,7 +29,7 @@ function ChatMessageItem({ message }: { message: ChatMessage }) {
         <div className={cn("flex items-baseline gap-2", isYou && 'justify-end')}>
           <p className="font-semibold">{isYou ? 'You' : message.user}</p>
           <p className="text-xs text-muted-foreground">
-            {isClient ? formatDistanceToNow(message.timestamp, { addSuffix: true }) : '...'}
+            {isClient && message.timestamp ? formatDistanceToNow(message.timestamp.toDate(), { addSuffix: true }) : '...'}
           </p>
         </div>
         <div className={cn("p-3 rounded-lg mt-1", isYou ? 'bg-primary text-primary-foreground' : 'bg-muted')}>

@@ -39,7 +39,7 @@ export function CertificateGenerator({ events, userName }: CertificateGeneratorP
       const result = await generateEventCertificate({
         userName: userName,
         eventName: event.title,
-        eventDate: format(event.date, "PPP"),
+        eventDate: format(event.date.toDate(), "PPP"),
         certificateTemplate: CERTIFICATE_TEMPLATE_URI,
       });
 

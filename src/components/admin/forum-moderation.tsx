@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -26,7 +27,7 @@ export function ForumModeration() {
                     text: data.text,
                     user: data.user,
                     avatarUrl: data.avatarUrl,
-                    timestamp: (data.timestamp as Timestamp)?.toDate() || new Date(),
+                    timestamp: (data.timestamp as Timestamp),
                     imageUrl: data.imageUrl,
                 });
             });
@@ -74,7 +75,7 @@ export function ForumModeration() {
                                         <Image src={message.imageUrl} alt="Uploaded content" width={150} height={100} className="mt-2 rounded-lg" data-ai-hint="user uploaded" />
                                     )}
                                 </TableCell>
-                                <TableCell className="text-muted-foreground">{formatDistanceToNow(message.timestamp, { addSuffix: true })}</TableCell>
+                                <TableCell className="text-muted-foreground">{formatDistanceToNow(message.timestamp.toDate(), { addSuffix: true })}</TableCell>
                                 <TableCell className="text-right">
                                     <Button variant="ghost" size="icon" onClick={() => handleDelete(message.id)}>
                                         <Trash2 className="h-4 w-4" />
