@@ -39,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const userData = userDoc.data() as User;
             setDbUser({ id: userDoc.id, ...userData });
             setIsAdmin(!!userData.isAdmin);
+            setLoading(false);
           } else {
              // This part runs if the user is authenticated but not in Firestore yet
             const isDefaultAdmin = authUser.email === DEFAULT_ADMIN_EMAIL;
@@ -53,9 +54,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                   councilRole: "Faculty In-Charge"
               })
             };
-            setDoc(userDocRef, newUser, { merge: true });
-            setDbUser({ id: authUser.uid, ...newUser });
-            setIsAdmin(isDefaultAdmin);
+            setDoc(userDocRef, newUser, { merge: true }).then(() => {
+                setDbUser({ id: authUser.uid, ...newUser });
+                setIsAdmin(isDefaultAdmin);
+                setLoading(false);
+            });
           }
         });
 
@@ -67,12 +70,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsAdmin(false);
         setLoading(false);
       }
-    });
-
-    // We set loading to false only after the initial auth state has been determined.
-    const initialAuthCheck = onAuthStateChanged(auth, () => {
-        setLoading(false);
-        initialAuthCheck(); // Unsubscribe after the first run.
     });
 
     return () => unsubscribeAuth();
