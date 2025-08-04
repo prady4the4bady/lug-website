@@ -17,7 +17,7 @@ export default function Home() {
             BITS Pilani Dubai Campus
           </p>
           <div className="pt-4">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg px-8 py-6" asChild>
+            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xl px-10 py-8" asChild>
               <Link href="/signin">Get Started</Link>
             </Button>
           </div>
