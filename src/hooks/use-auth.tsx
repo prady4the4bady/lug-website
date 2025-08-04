@@ -2,7 +2,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
-import { onAuthStateChanged, User as FirebaseUser, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut } from 'firebase/auth';
+import { onAuthStateChanged, User as FirebaseUser, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { doc, setDoc, onSnapshot, getDoc } from 'firebase/firestore';
@@ -32,7 +32,7 @@ const processAuth = async (authUser: FirebaseUser | null) => {
     if (!userDoc.exists()) {
       const isDefaultAdmin = authUser.email === DEFAULT_ADMIN_EMAIL;
       const newUser: User = {
- name: authUser.displayName || 'New User',
+        name: authUser.displayName || 'New User',
         email: authUser.email!,
         photoURL: authUser.photoURL!,
         isAdmin: isDefaultAdmin,
@@ -58,54 +58,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
-
-  const handleRedirectResult = useCallback(async () => {
-    try {
-        const result = await getRedirectResult(auth);
-        if (result && result.user) {
-            await processAuth(result.user);
-            router.push('/profile');
-        }
-    } catch (error) {
-        console.error("Error processing redirect result:", error);
-    }
-  }, [router]);
-
-
+  
   useEffect(() => {
-    // This combined effect handles both redirect results and auth state changes,
-    // ensuring we don't set loading to false prematurely.
-    const initializeAuth = async () => {
-        setLoading(true);
-        await handleRedirectResult();
-
-        const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
-            if (authUser) {
-                setUser(authUser);
-                const userDocRef = doc(db, "users", authUser.uid);
-                const unsubDoc = onSnapshot(userDocRef, (doc) => {
-                    if (doc.exists()) {
-                        const userData = doc.data() as User;
-                        setDbUser({ id: doc.id, ...userData });
-                        setIsAdmin(!!userData.isAdmin);
-                    }
-                    // Only set loading to false after we have the dbUser info
-                    setLoading(false);
-                });
-                return () => unsubDoc();
-            } else {
-                setUser(null);
-                setDbUser(null);
-                setIsAdmin(false);
+    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+        if (authUser) {
+            setUser(authUser);
+            const userDocRef = doc(db, "users", authUser.uid);
+            const unsubDoc = onSnapshot(userDocRef, (doc) => {
+                if (doc.exists()) {
+                    const userData = doc.data() as User;
+                    setDbUser({ id: doc.id, ...userData });
+                    setIsAdmin(!!userData.isAdmin);
+                }
                 setLoading(false);
-            }
-        });
+            });
+            return () => unsubDoc();
+        } else {
+            setUser(null);
+            setDbUser(null);
+            setIsAdmin(false);
+            setLoading(false);
+        }
+    });
 
-        return () => unsubscribe();
-    };
-
-    initializeAuth();
-  }, [handleRedirectResult]);
+    return () => unsubscribe();
+  }, []);
 
   const signIn = async () => {
     setLoading(true);
@@ -115,9 +92,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     try {
- await signInWithRedirect(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      if (result.user) {
+        await processAuth(result.user);
+        router.push('/profile');
+      }
     } catch (error) {
         console.error("Error during sign-in:", error);
+    } finally {
         setLoading(false);
     }
   };
