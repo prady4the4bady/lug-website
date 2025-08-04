@@ -42,25 +42,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             isAdmin: isDefaultAdmin,
             isCouncilMember: isDefaultAdmin,
           });
-        } else if (isDefaultAdmin) {
-          // Ensure default admin always has correct flags in Firestore
-           await updateDoc(userDocRef, {
-            isAdmin: true,
-            isCouncilMember: true,
-          });
         }
-
+        
         if (isDefaultAdmin) {
           setIsAdmin(true);
-        } else {
-          try {
-            const tokenResult = await user.getIdTokenResult();
-            setIsAdmin(!!tokenResult.claims.admin);
-          } catch (error) {
-            console.error("Error getting token result:", error);
-            setIsAdmin(false);
+           // Ensure the default admin's Firestore document is always correct.
+          if (!userDoc.exists() || !userDoc.data()?.isAdmin || !userDoc.data()?.isCouncilMember) {
+             await setDoc(userDocRef, { 
+               name: user.displayName,
+               email: user.email,
+               isAdmin: true, 
+               isCouncilMember: true 
+             }, { merge: true });
           }
+        } else {
+          // For other users, check custom claims.
+          const idTokenResult = await user.getIdTokenResult();
+          setIsAdmin(!!idTokenResult.claims.admin);
         }
+
       } else {
         setUser(null);
         setIsAdmin(false);
