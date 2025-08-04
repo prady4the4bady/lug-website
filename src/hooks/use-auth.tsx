@@ -2,7 +2,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { onAuthStateChanged, User as FirebaseUser, GoogleAuthProvider, signInWithRedirect, signOut } from 'firebase/auth';
+import { onAuthStateChanged, User as FirebaseUser, GoogleAuthProvider, signInWithRedirect, signOut, getRedirectResult } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { doc, setDoc, onSnapshot, getDoc } from 'firebase/firestore';
@@ -29,45 +29,75 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
-      setLoading(true);
-      if (authUser) {
-        setUser(authUser);
-        const userDocRef = doc(db, "users", authUser.uid);
-        
-        const unsubDoc = onSnapshot(userDocRef, (userDoc) => {
-          if (userDoc.exists()) {
-            const userData = userDoc.data() as User;
-            setDbUser({ id: userDoc.id, ...userData });
-            setIsAdmin(!!userData.isAdmin);
-          } else {
-             // New user, create the document
-            const isDefaultAdmin = authUser.email === DEFAULT_ADMIN_EMAIL;
-            const newUser: User = {
-                name: authUser.displayName!,
-                email: authUser.email!,
-                photoURL: authUser.photoURL!,
-                isAdmin: isDefaultAdmin,
-                isCouncilMember: isDefaultAdmin,
-                ...(isDefaultAdmin && {
-                    councilDepartment: "Faculty In-Charge",
-                    councilRole: "Faculty In-Charge"
-                })
-            };
-            setDoc(userDocRef, newUser).catch(console.error);
-          }
-           setLoading(false);
-        });
-
-        // Detach listener on cleanup
-        return () => unsubDoc();
-      } else {
+    const processAuth = async (authUser: FirebaseUser | null) => {
+      if (!authUser) {
         setUser(null);
         setDbUser(null);
         setIsAdmin(false);
         setLoading(false);
+        return;
       }
-    });
+      
+      setUser(authUser);
+      const userDocRef = doc(db, "users", authUser.uid);
+      
+      // Stop listening for a moment to prevent conflicts
+      let unsubDoc: (() => void) | null = null;
+
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        // This is a new user, create their document in Firestore.
+        const isDefaultAdmin = authUser.email === DEFAULT_ADMIN_EMAIL;
+        const newUser: User = {
+          name: authUser.displayName!,
+          email: authUser.email!,
+          photoURL: authUser.photoURL!,
+          isAdmin: isDefaultAdmin,
+          isCouncilMember: isDefaultAdmin,
+          ...(isDefaultAdmin && {
+            councilDepartment: "Faculty In-Charge",
+            councilRole: "Faculty In-Charge"
+          })
+        };
+        try {
+          await setDoc(userDocRef, newUser);
+        } catch(e) {
+            console.error("Error creating user document:", e);
+        }
+      } 
+      
+      // Now, listen for changes to the user document
+      unsubDoc = onSnapshot(userDocRef, (doc) => {
+          if (doc.exists()) {
+              const userData = doc.data() as User;
+              setDbUser({ id: doc.id, ...userData });
+              setIsAdmin(!!userData.isAdmin);
+          }
+      });
+      
+      setLoading(false);
+
+      return () => {
+          if (unsubDoc) {
+              unsubDoc();
+          }
+      };
+    };
+
+    const unsubscribe = onAuthStateChanged(auth, processAuth);
+    
+    // Also check for redirect result
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) {
+          processAuth(result.user);
+        }
+      })
+      .catch((error) => {
+        console.error("Error getting redirect result:", error);
+        setLoading(false);
+      });
 
     return () => unsubscribe();
   }, []);

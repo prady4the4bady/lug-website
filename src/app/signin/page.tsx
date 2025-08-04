@@ -43,14 +43,14 @@ export default function SignInPage() {
         <div className="flex items-center justify-center min-h-[80vh]">
             <Card className="w-full max-w-sm bg-card/80 backdrop-blur-sm">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-xl font-medium">Sign In</CardTitle>
-                    <CardDescription>
-                        Access to the LUG dashboard is restricted to members with a BITS Pilani email.
+                    <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
+                    <CardDescription className="text-base">
+                        Access is restricted to members with a BITS Pilani email.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
                     <Button variant="outline" asChild>
-                        <a href="/signin" onClick={(e) => { e.preventDefault(); signIn(); }} target="_top">
+                        <a href="#" onClick={(e) => { e.preventDefault(); signIn(); }} target="_top">
                             <GoogleIcon />
                             Sign in with Google
                         </a>
