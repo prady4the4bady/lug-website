@@ -3,38 +3,17 @@
 
 import { Suspense } from "react"
 import dynamic from 'next/dynamic';
-import { Canvas } from "@react-three/fiber"
-import { OrbitControls, useGLTF } from "@react-three/drei"
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Rocket, Code, Users } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 
-function Model() {
-  const { scene } = useGLTF('/tux.glb')
-  return <primitive object={scene} scale={0.01} />
-}
-
-function Tux3DModel() {
-  return (
-    <div className="relative w-full max-w-md h-96 mx-auto lg:mx-0 rounded-lg bg-card/80">
-       <Suspense fallback={<Skeleton className="w-full h-full" />}>
-        <Canvas camera={{ position: [0, 0, 10], fov: 25 }}>
-          <ambientLight intensity={1.5} />
-          <pointLight position={[10, 10, 10]} />
-          <Model />
-          <OrbitControls enableZoom={false} autoRotate />
-        </Canvas>
-       </Suspense>
-    </div>
-  );
-}
-
-const DynamicTuxModel = dynamic(() => Promise.resolve(Tux3DModel), {
+const TuxModel = dynamic(() => import('@/components/tux-model').then(mod => mod.TuxModel), {
   ssr: false,
-  loading: () => <Skeleton className="w-full h-96" />,
+  loading: () => <Skeleton className="w-full max-w-md h-96 mx-auto lg:mx-0" />,
 });
+
 
 export default function Home() {
   return (
@@ -54,7 +33,7 @@ export default function Home() {
             <Link href="/signin">Get Started</Link>
           </Button>
         </div>
-        <DynamicTuxModel />
+        <TuxModel />
       </section>
 
       <section className="bg-muted/30 dark:bg-card/20 py-20">
