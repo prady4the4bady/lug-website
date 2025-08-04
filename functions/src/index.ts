@@ -1,3 +1,11 @@
 
-// This file is intentionally left blank.
-// You can add new Cloud Functions here in the future.
+import {https} from "firebase-functions";
+import next from "next";
+
+const dev = process.env.NODE_ENV !== "production";
+const app = next({dev, conf: {distDir: ".next"}});
+const handle = app.getRequestHandler();
+
+export const nextApp = https.onRequest((req, res) => {
+  return app.prepare().then(() => handle(req, res));
+});
