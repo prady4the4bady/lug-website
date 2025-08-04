@@ -17,19 +17,21 @@ export default function Home() {
           <p className="text-lg md:text-xl text-muted-foreground max-w-md mx-auto lg:mx-0 font-headline">
             BITS Pilani Dubai Campus
           </p>
-          <p className="text-base text-foreground/80 max-w-lg mx-auto lg:mx-0">
-            A community of open-source enthusiasts, developers, and innovators. Explore the world of Linux and FOSS with us.
-          </p>
-          <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg px-8 py-6" asChild>
-            <Link href="/signin">Get Started</Link>
-          </Button>
+          <div className="pt-4">
+            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg px-8 py-6" asChild>
+              <Link href="/signin">Get Started</Link>
+            </Button>
+          </div>
         </div>
-        <div className="relative w-full max-w-lg h-[32rem] mx-auto lg:mx-0 flex items-center justify-center">
-          <img
+        <div className="flex items-center justify-center">
+          <Image
             src="https://stablediffusion-prod.s3.amazonaws.com/9da1a820-2169-4509-9b98-54b6099b0c24.png"
-            alt="Tux penguin with sunglasses"
-            className="object-contain h-full w-full"
-            data-ai-hint="Tux penguin sunglasses"
+            alt="Tux, the Linux penguin"
+            width={450}
+            height={450}
+            className="object-contain"
+            data-ai-hint="Tux penguin"
+            priority
           />
         </div>
       </section>
