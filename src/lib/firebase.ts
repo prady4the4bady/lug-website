@@ -7,12 +7,12 @@ import { getStorage } from "firebase/storage";
 // Your web app's Firebase configuration
 // IMPORTANT: Replace with your actual Firebase project configuration
 const firebaseConfig = {
-  "projectId": "linux-user-group-420pp",
-  "appId": "1:357891612710:web:aa2b06ef35b507cbd506e7",
-  "storageBucket": "linux-user-group-420pp.appspot.com",
   "apiKey": "AIzaSyCQFYrhX1A-ADl8oehKn6ddQDpWynG15nE",
   "authDomain": "linux-user-group-420pp.firebaseapp.com",
-  "messagingSenderId": "357891612710"
+  "projectId": "linux-user-group-420pp",
+  "storageBucket": "linux-user-group-420pp.appspot.com",
+  "messagingSenderId": "357891612710",
+  "appId": "1:357891612710:web:aa2b06ef35b507cbd506e7"
 };
 
 // Initialize Firebase
