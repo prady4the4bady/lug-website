@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Moon, Sun, TerminalIcon } from "lucide-react"
+import { Moon, Sun } from "lucide-react"
 import { useTheme } from "@/components/layout/theme-provider"
 import { Button } from "@/components/ui/button"
 import {
@@ -10,7 +10,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import Link from "next/link"
 
 export function ThemeToggle() {
   const { setTheme } = useTheme()
@@ -36,15 +35,4 @@ export function ThemeToggle() {
       </DropdownMenuContent>
     </DropdownMenu>
   )
-}
-
-
-export function TerminalViewToggle() {
-    const { isTerminal, setIsTerminal } = useTheme()
-    return (
-        <Button variant="outline" size="sm" onClick={() => setIsTerminal(!isTerminal)}>
-            <TerminalIcon className="h-4 w-4 mr-2"/>
-            <span>Terminal View</span>
-        </Button>
-    )
 }
