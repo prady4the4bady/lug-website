@@ -1,27 +1,27 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Allow public read access for events
+    // Users: Public can read, users can only update their own doc
+    match /users/{userId} {
+      allow read: if true;
+      allow update: if request.auth != null && request.auth.uid == userId;
+      allow create, delete: if false; // Typically only admins should create/delete users
+    }
+
+    // Events: Public can read, nobody can write (admin only)
     match /events/{eventId} {
       allow read: if true;
-      allow write: if request.auth.token.admin == true;
+      allow write: if false; // Or check for admin role: request.auth.token.isAdmin == true
     }
 
-    // Users can read all user profiles, but only write to their own (or if admin)
-    match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth.uid == userId || request.auth.token.admin == true;
-    }
-
-    // Authenticated users can read/create messages, but only admins can delete.
-    // Users cannot edit existing messages.
+    // Messages: Authenticated users can read/create, can only delete their own
     match /messages/{messageId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update: if false; // Prevent users from editing messages
-      allow delete: if request.auth.token.admin == true;
+      allow read, create: if request.auth != null;
+      allow update: if false;
+      allow delete: if request.auth != null && resource.data.user == request.auth.token.name;
     }
   }
 }
