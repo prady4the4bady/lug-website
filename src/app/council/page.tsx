@@ -7,13 +7,13 @@ const coreMembers: CouncilMember[] = [
   { role: "Vice President", name: "Maria Garcia", imageUrl: "https://placehold.co/200x200.png" },
   { role: "Secretary", name: "Chen Wei", imageUrl: "https://placehold.co/200x200.png" },
   { role: "Treasurer", name: "Fatima Al-Fassi", imageUrl: "https://placehold.co/200x200.png" },
-  { role: "Core Member", name: "Sam Lee", imageUrl: "https://placehold.co/200x200.png", vacant: true },
+  { role: "Core Member", name: "Sam Lee", imageUrl: "https://placehold.co/200x200.png" },
   { role: "Core Member", name: "Priya Singh", imageUrl: "https://placehold.co/200x200.png" },
   { role: "Core Member", name: "David Miller", imageUrl: "https://placehold.co/200x200.png" },
 ];
 
 const devopsMembers: CouncilMember[] = [
-  { role: "DevOps Lead", name: "John Doe", imageUrl: "https://placehold.co/200x200.png" },
+  { role: "DevOps Lead", name: "John Doe", imageUrl: "https://placehold.co/200x200.png", vacant: true },
   { role: "DevOps Member", name: "Jane Smith", imageUrl: "https://placehold.co/200x200.png" },
   { role: "DevOps Member", name: "Mike Ross", imageUrl: "https://placehold.co/200x200.png" },
   { role: "DevOps Member", name: "Rachel Zane", imageUrl: "https://placehold.co/200x200.png" },
