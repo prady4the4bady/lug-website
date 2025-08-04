@@ -22,9 +22,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setIsAdmin(user?.email === 'lugbpdc@dubai.bits-pilani.ac.in');
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setUser(user);
+        const tokenResult = await user.getIdTokenResult();
+        setIsAdmin(!!tokenResult.claims.admin);
+      } else {
+        setUser(null);
+        setIsAdmin(false);
+      }
       setLoading(false);
     });
     return () => unsubscribe();
