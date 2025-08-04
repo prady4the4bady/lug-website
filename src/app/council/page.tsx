@@ -12,14 +12,6 @@ const coreMembers: CouncilMember[] = [
   { role: "Core Member", name: "David Miller", imageUrl: "https://placehold.co/200x200.png" },
 ];
 
-const devopsMembers: CouncilMember[] = [
-  { role: "DevOps Lead", name: "John Doe", imageUrl: "https://placehold.co/200x200.png", vacant: true },
-  { role: "DevOps Member", name: "Jane Smith", imageUrl: "https://placehold.co/200x200.png" },
-  { role: "DevOps Member", name: "Mike Ross", imageUrl: "https://placehold.co/200x200.png" },
-  { role: "DevOps Member", name: "Rachel Zane", imageUrl: "https://placehold.co/200x200.png" },
-  { role: "DevOps Member", name: "Harvey Specter", imageUrl: "https://placehold.co/200x200.png" },
-]
-
 const technicalMembers: CouncilMember[] = [
     { role: "Tech Lead", name: "Alice Williams", imageUrl: "https://placehold.co/200x200.png" },
     { role: "Tech Member", name: "Bob Brown", imageUrl: "https://placehold.co/200x200.png" },
@@ -70,7 +62,6 @@ export default function CouncilPage() {
       
       <div className="space-y-16">
         <CouncilSection title="Core" members={coreMembers} />
-        <CouncilSection title="DevOps" members={devopsMembers} />
         <CouncilSection title="Technical" members={technicalMembers} />
         <CouncilSection title="Operations" members={operationsMembers} />
         <CouncilSection title="Creative" members={creativeMembers} />
