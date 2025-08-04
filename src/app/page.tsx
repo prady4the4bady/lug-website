@@ -33,7 +33,9 @@ export default function Home() {
             <Link href="/signin">Get Started</Link>
           </Button>
         </div>
-        <TuxModel />
+        <Suspense fallback={<Skeleton className="w-full max-w-md h-96 mx-auto lg:mx-0" />}>
+            <TuxModel />
+        </Suspense>
       </section>
 
       <section className="bg-muted/30 dark:bg-card/20 py-20">
