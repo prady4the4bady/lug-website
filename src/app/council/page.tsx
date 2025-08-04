@@ -54,7 +54,6 @@ const communityMembers: CouncilMember[] = [
 
 const facultyInCharge: CouncilMember[] = [
     { role: "Faculty In-Charge", name: "Dr. Ziegler", imageUrl: "https://placehold.co/200x200.png" },
-    { role: "Faculty In-Charge", name: "Dr. Smith", imageUrl: "https://placehold.co/200x200.png" },
 ]
 
 export default function CouncilPage() {
