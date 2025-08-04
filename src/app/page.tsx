@@ -1,11 +1,9 @@
 
-import { Suspense } from "react"
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Rocket, Code, Users } from "lucide-react";
 import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
-import { TuxLoader } from "@/components/tux-loader";
+import Image from "next/image";
 
 
 export default function Home() {
@@ -26,9 +24,15 @@ export default function Home() {
             <Link href="/signin">Get Started</Link>
           </Button>
         </div>
-        <Suspense fallback={<Skeleton className="w-full max-w-md h-96 mx-auto lg:mx-0" />}>
-            <TuxLoader />
-        </Suspense>
+        <div className="relative w-full max-w-md h-96 mx-auto lg:mx-0">
+          <Image
+            src="https://placehold.co/600x600.png"
+            alt="3D Tux Penguin"
+            fill
+            className="object-contain"
+            data-ai-hint="3d penguin"
+          />
+        </div>
       </section>
 
       <section className="bg-muted/30 dark:bg-card/20 py-20">

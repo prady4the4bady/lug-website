@@ -18,11 +18,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-   webpack: (config) => {
-    config.resolve.alias.canvas = false;
-    return config;
-  },
-  serverComponentsExternalPackages: ['three'],
 };
 
 export default nextConfig;
