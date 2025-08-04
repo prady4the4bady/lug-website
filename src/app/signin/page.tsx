@@ -41,9 +41,9 @@ export default function SignInPage() {
 
     return (
         <div className="flex items-center justify-center min-h-[80vh]">
-            <Card className="w-full max-w-sm">
+            <Card className="w-full max-w-sm bg-card/80 backdrop-blur-sm">
                 <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">Sign In</CardTitle>
+                    <CardTitle className="text-xl font-medium">Sign In</CardTitle>
                     <CardDescription>
                         Access to the LUG dashboard is restricted to members with a BITS Pilani email.
                     </CardDescription>
