@@ -2,6 +2,7 @@ export type CouncilMember = {
   role: string;
   name: string;
   imageUrl: string;
+  vacant?: boolean;
 };
 
 export type Event = {
