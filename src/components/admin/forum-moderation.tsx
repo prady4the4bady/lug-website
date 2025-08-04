@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ChatMessage } from '@/lib/types';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,18 +10,35 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from 'date-fns';
 import { Trash2 } from 'lucide-react';
 import Image from 'next/image';
-
-const mockMessages: ChatMessage[] = [
-  { id: '1', text: 'Hey everyone! Welcome to the forum.', user: 'Admin', avatarUrl: 'https://placehold.co/40x40.png', timestamp: new Date(Date.now() - 60000 * 5) },
-  { id: '2', text: 'Just pushed my new dotfiles to GitHub, check them out!', user: 'Alex Johnson', avatarUrl: 'https://placehold.co/40x40.png', timestamp: new Date(Date.now() - 60000 * 2) },
-  { id: '3', text: 'Uploaded an image.', user: 'Maria Garcia', avatarUrl: 'https://placehold.co/40x40.png', timestamp: new Date(), imageUrl: 'https://placehold.co/300x200.png' },
-];
+import { db } from '@/lib/firebase';
+import { collection, query, orderBy, onSnapshot, deleteDoc, doc, Timestamp } from "firebase/firestore";
 
 export function ForumModeration() {
-    const [messages, setMessages] = useState<ChatMessage[]>(mockMessages);
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
     
-    const handleDelete = (messageId: string) => {
-        setMessages(messages.filter(msg => msg.id !== messageId));
+    useEffect(() => {
+        const q = query(collection(db, "messages"), orderBy("timestamp", "desc"));
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const msgs: ChatMessage[] = [];
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                msgs.push({
+                    id: doc.id,
+                    text: data.text,
+                    user: data.user,
+                    avatarUrl: data.avatarUrl,
+                    timestamp: (data.timestamp as Timestamp)?.toDate() || new Date(),
+                    imageUrl: data.imageUrl,
+                });
+            });
+            setMessages(msgs);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    const handleDelete = async (messageId: string) => {
+        await deleteDoc(doc(db, "messages", messageId));
     }
 
     return (

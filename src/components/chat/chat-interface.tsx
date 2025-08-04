@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { ChatMessage } from '@/lib/types';
 import { ChatMessages } from '@/components/chat/chat-messages';
 import { ChatInput } from '@/components/chat/chat-input';
@@ -9,31 +9,48 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ImageIcon } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
-
-const initialMessages: ChatMessage[] = [
-  { id: '1', text: 'Hey everyone! Welcome to the forum.', user: 'Admin', avatarUrl: 'https://placehold.co/40x40.png', timestamp: new Date(Date.now() - 60000 * 5) },
-  { id: '2', text: 'Just pushed my new dotfiles to GitHub, check them out!', user: 'Alex Johnson', avatarUrl: 'https://placehold.co/40x40.png', timestamp: new Date(Date.now() - 60000 * 2) },
-];
+import { db, storage } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
 
 export function ChatInterface() {
-  const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [imageDataUri, setImageDataUri] = useState<string | null>(null);
   const { user } = useAuth();
   const router = useRouter();
 
-  const handleSendMessage = (text: string) => {
+  useEffect(() => {
+    const q = query(collection(db, "messages"), orderBy("timestamp", "asc"));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const msgs: ChatMessage[] = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        msgs.push({
+          id: doc.id,
+          text: data.text,
+          user: data.user,
+          avatarUrl: data.avatarUrl,
+          timestamp: (data.timestamp as Timestamp)?.toDate() || new Date(),
+          imageUrl: data.imageUrl,
+        });
+      });
+      setMessages(msgs);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleSendMessage = async (text: string) => {
     if (!user) {
       router.push('/signin');
       return;
     }
-    const newMessage: ChatMessage = {
-      id: Date.now().toString(),
+    await addDoc(collection(db, "messages"), {
       text,
       user: user.displayName || 'You',
       avatarUrl: user.photoURL || 'https://placehold.co/40x40.png',
-      timestamp: new Date(),
-    };
-    setMessages(prev => [...prev, newMessage]);
+      timestamp: serverTimestamp(),
+    });
   };
   
   const handleImageSelect = (dataUri: string) => {
@@ -44,20 +61,24 @@ export function ChatInterface() {
     setImageDataUri(dataUri);
   }
   
-  const handleImageUpload = (tags: string[]) => {
-    if (!user) {
+  const handleImageUpload = async (tags: string[]) => {
+    if (!user || !imageDataUri) {
       router.push('/signin');
       return;
     }
-    const newMessage: ChatMessage = {
-      id: Date.now().toString(),
+
+    const storageRef = ref(storage, `chat-images/${Date.now()}`);
+    const uploadResult = await uploadString(storageRef, imageDataUri, 'data_url');
+    const downloadURL = await getDownloadURL(uploadResult.ref);
+
+    await addDoc(collection(db, "messages"), {
       text: `Uploaded an image with tags: ${tags.join(', ')}`,
       user: user.displayName || 'You',
       avatarUrl: user.photoURL || 'https://placehold.co/40x40.png',
-      timestamp: new Date(),
-      imageUrl: imageDataUri!,
-    };
-    setMessages(prev => [...prev, newMessage]);
+      timestamp: serverTimestamp(),
+      imageUrl: downloadURL,
+    });
+    
     setImageDataUri(null);
   }
 
