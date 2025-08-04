@@ -10,6 +10,8 @@ import { Badge } from '../ui/badge';
 import { useAuth } from '@/hooks/use-auth';
 import { Eye } from 'lucide-react';
 import { UserActivityDialog } from './user-activity-dialog';
+import { db } from '@/lib/firebase';
+import { collection, onSnapshot, doc, updateDoc } from 'firebase/firestore';
 
 type User = {
     id: string;
@@ -20,41 +22,30 @@ type User = {
 }
 
 export function UserManager() {
-    const { user, isAdmin } = useAuth();
+    const { user, isAdmin: currentAdminIsAdmin } = useAuth();
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [isActivityLogOpen, setIsActivityLogOpen] = useState(false);
 
     useEffect(() => {
-        // In a real app, this data would be fetched from a secure backend.
-        // For now, we'll display the currently authenticated user and some mock data.
-        const mockUsers: User[] = [
-             { id: "2", name: "Maria Garcia", email: "maria@dubai.bits-pilani.ac.in", isAdmin: false, isCouncilMember: true },
-             { id: "3", name: "Chen Wei", email: "chen@dubai.bits-pilani.ac.in", isAdmin: false, isCouncilMember: false },
-        ]
+        const unsubscribe = onSnapshot(collection(db, "users"), (snapshot) => {
+            const usersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
+            setUsers(usersData);
+        });
 
-        if (user) {
-            setUsers([
-                { id: user.uid, name: user.displayName || "N/A", email: user.email || "N/A", isAdmin: isAdmin, isCouncilMember: true },
-                ...mockUsers
-            ]);
-        }
-    }, [user, isAdmin]);
+        return () => unsubscribe();
+    }, []);
 
-    const toggleAdmin = (userId: string) => {
-        // This is a simulation. In a real app, this would trigger a secure backend function.
-        console.log(`Toggling admin for user ${userId}`);
-        setUsers(users.map(u => 
-            u.id === userId ? { ...u, isAdmin: !u.isAdmin } : u
-        ));
+    const toggleAdmin = async (userId: string, currentStatus: boolean) => {
+        const userDocRef = doc(db, "users", userId);
+        await updateDoc(userDocRef, { isAdmin: !currentStatus });
+        // Note: For full security, a Firebase Function should handle setting custom claims
+        // This only updates the Firestore record.
     };
     
-    const toggleCouncil = (userId: string) => {
-        // This is a simulation. In a real app, this would trigger a secure backend function.
-        console.log(`Toggling council status for user ${userId}`);
-         setUsers(users.map(u => 
-            u.id === userId ? { ...u, isCouncilMember: !u.isCouncilMember } : u
-        ));
+    const toggleCouncil = async (userId: string, currentStatus: boolean) => {
+        const userDocRef = doc(db, "users", userId);
+        await updateDoc(userDocRef, { isCouncilMember: !currentStatus });
     }
 
     const handleViewActivity = (user: User) => {
@@ -94,15 +85,17 @@ export function UserManager() {
                                      <TableCell>
                                          <Switch
                                             checked={u.isCouncilMember}
-                                            onCheckedChange={() => toggleCouncil(u.id)}
+                                            onCheckedChange={() => toggleCouncil(u.id, u.isCouncilMember)}
                                             aria-label="Toggle council status"
+                                            disabled={!currentAdminIsAdmin}
                                         />
                                     </TableCell>
                                     <TableCell>
                                         <Switch
                                             checked={u.isAdmin}
-                                            onCheckedChange={() => toggleAdmin(u.id)}
+                                            onCheckedChange={() => toggleAdmin(u.id, u.isAdmin)}
                                             aria-label="Toggle admin status"
+                                            disabled={!currentAdminIsAdmin || u.email === 'lugbpdc@dubai.bits-pilani.ac.in'}
                                         />
                                     </TableCell>
                                     <TableCell className="text-right">

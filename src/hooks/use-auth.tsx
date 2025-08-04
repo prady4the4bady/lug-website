@@ -1,9 +1,11 @@
+
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { onAuthStateChanged, User, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
@@ -27,13 +29,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
+        
+        // Create or update user in Firestore
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (!userDoc.exists()) {
+          await setDoc(userDocRef, {
+            name: user.displayName,
+            email: user.email,
+            isAdmin: user.email === DEFAULT_ADMIN_EMAIL,
+            isCouncilMember: user.email === DEFAULT_ADMIN_EMAIL,
+          });
+        }
+
         // Check for default admin email first
         if (user.email === DEFAULT_ADMIN_EMAIL) {
           setIsAdmin(true);
         } else {
           // Otherwise, check for custom claims
-          const tokenResult = await user.getIdTokenResult();
-          setIsAdmin(!!tokenResult.claims.admin);
+          try {
+            const tokenResult = await user.getIdTokenResult();
+            setIsAdmin(!!tokenResult.claims.admin);
+          } catch (error) {
+            console.error("Error getting token result:", error);
+            setIsAdmin(false);
+          }
         }
       } else {
         setUser(null);
