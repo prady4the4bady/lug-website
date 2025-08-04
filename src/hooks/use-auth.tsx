@@ -2,10 +2,10 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { onAuthStateChanged, User as FirebaseUser, GoogleAuthProvider, signInWithRedirect, signOut, getRedirectResult } from 'firebase/auth';
+import { onAuthStateChanged, User as FirebaseUser, GoogleAuthProvider, signInWithRedirect, signOut } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
-import { doc, setDoc, onSnapshot, DocumentData } from 'firebase/firestore';
+import { doc, setDoc, onSnapshot, getDoc } from 'firebase/firestore';
 import type { User } from '@/lib/types';
 
 interface AuthContextType {
@@ -31,14 +31,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
       if (authUser) {
+        setUser(authUser);
         const userDocRef = doc(db, "users", authUser.uid);
-        onSnapshot(userDocRef, (userDoc) => {
+        
+        const unsubDoc = onSnapshot(userDocRef, (userDoc) => {
           if (userDoc.exists()) {
             const userData = userDoc.data() as User;
             setDbUser({ id: userDoc.id, ...userData });
             setIsAdmin(!!userData.isAdmin);
           } else {
-            // This is a new user, create their document
+             // New user, create the document
             const isDefaultAdmin = authUser.email === DEFAULT_ADMIN_EMAIL;
             const newUser: User = {
                 name: authUser.displayName!,
@@ -51,10 +53,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     councilRole: "Faculty In-Charge"
                 })
             };
-            setDoc(userDocRef, newUser, { merge: true }).catch(console.error);
+            setDoc(userDocRef, newUser).catch(console.error);
           }
         });
-        setUser(authUser);
+
+        // Detach listener on cleanup
+        return () => unsubDoc();
       } else {
         setUser(null);
         setDbUser(null);
