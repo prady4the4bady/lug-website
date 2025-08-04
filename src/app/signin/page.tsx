@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import { getRedirectResult, GoogleAuthProvider } from "firebase/auth";
+import { GoogleAuthProvider } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import Link from "next/link";
 
@@ -49,9 +49,11 @@ export default function SignInPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
-                     <Button variant="outline" onClick={signIn}>
-                        <GoogleIcon />
-                        Sign in with Google
+                    <Button variant="outline" asChild>
+                        <a href="/signin" onClick={(e) => { e.preventDefault(); signIn(); }} target="_top">
+                            <GoogleIcon />
+                            Sign in with Google
+                        </a>
                     </Button>
                     <p className="text-xs text-center text-muted-foreground">
                         By signing in, you agree to our terms of service.
