@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { Loader2 } from "lucide-react";
 
 function GoogleIcon() {
     return (
@@ -16,14 +17,23 @@ function GoogleIcon() {
 }
 
 export default function SignInPage() {
-    const { user, signIn } = useAuth();
+    const { user, loading, signIn } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
-        if (user) {
+        if (!loading && user) {
             router.push('/profile');
         }
-    }, [user, router]);
+    }, [user, loading, router]);
+    
+    if(loading) {
+        return (
+             <div className="flex justify-center items-center h-screen">
+                <Loader2 className="h-8 w-8 animate-spin" />
+                <p className="ml-4 text-muted-foreground">Signing you in...</p>
+            </div>
+        )
+    }
 
     return (
         <div className="flex items-center justify-center min-h-[80vh]">
