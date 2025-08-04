@@ -3,33 +3,46 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // Helper function to check if a user is an admin
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
     
-    // Events can be read by anyone, but only written by admins.
-    match /events/{eventId} {
-      allow read: if true;
-      allow write: if request.auth.token.admin == true;
+    // Helper function to check if the user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    // Messages can be read and written by any authenticated user.
-    // Admins can delete messages.
-    match /messages/{messageId} {
-      allow read, write: if request.auth != null;
-      allow delete: if request.auth.token.admin == true;
+    // USERS Collection
+    match /users/{userId} {
+      // Admins can read/write any user document
+      allow read, write: if isAdmin();
+      // A user can read their own document
+      allow read: if request.auth.uid == userId;
+      // A user can update their own document
+      allow update: if request.auth.uid == userId;
+      // A new user can create their own document
+      allow create: if request.auth.uid == userId;
+    }
+
+    // EVENTS Collection
+    // Anyone can view events
+    match /events/{eventId} {
+      allow read: if true;
+      // Only admins can create, update, or delete events
+      allow write: if isAdmin();
     }
     
-    // User documents have more complex rules.
-    match /users/{userId} {
-      // Allow anyone to read user profiles (needed for council page).
-      allow read: if true;
-      
-      // A user can create their own document.
-      allow create: if request.auth.uid == userId;
-      
-      // A user can update their own profile information.
-      allow update: if request.auth.uid == userId;
-      
-      // An admin can write to any user document (for managing roles).
-      allow write: if request.auth.token.admin == true;
+    // MESSAGES (Forum) Collection
+    match /messages/{messageId} {
+        // Any signed-in user can read messages
+        allow read: if isSignedIn();
+        // Any signed-in user can create messages
+        allow create: if isSignedIn();
+        // Only admins can delete messages
+        allow delete: if isAdmin();
     }
   }
 }

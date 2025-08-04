@@ -22,22 +22,20 @@ export default function SignInPage() {
     const router = useRouter();
 
     useEffect(() => {
-        if (!loading && user) {
+        if (user) {
             router.push('/profile');
         }
-    }, [user, loading, router]);
+    }, [user, router]);
     
     if(loading) {
         return (
              <div className="flex justify-center items-center h-screen">
                 <Loader2 className="h-8 w-8 animate-spin" />
-                <p className="ml-4 text-muted-foreground">Signing you in...</p>
+                <p className="ml-4 text-muted-foreground">Loading session...</p>
             </div>
         )
     }
 
-    // If user is not logged in and not loading, show the sign-in card.
-    // This prevents the page from flashing while the redirect is being processed.
     if (!user) {
         return (
             <div className="flex items-center justify-center min-h-[80vh]">
@@ -49,7 +47,7 @@ export default function SignInPage() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="flex flex-col gap-4">
-                        <Button variant="outline" onClick={signIn} disabled={loading}>
+                        <Button variant="outline" onClick={signIn}>
                             <GoogleIcon />
                             Sign in with Google
                         </Button>
@@ -62,10 +60,11 @@ export default function SignInPage() {
         );
     }
     
-    // Fallback while redirecting
+    // Fallback while redirecting to profile
     return (
         <div className="flex justify-center items-center h-screen">
             <Loader2 className="h-8 w-8 animate-spin" />
+             <p className="ml-4 text-muted-foreground">Redirecting to profile...</p>
         </div>
     );
 }
