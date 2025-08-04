@@ -24,15 +24,12 @@ export default function Home() {
             <Link href="/signin">Get Started</Link>
           </Button>
         </div>
-        <div className="relative w-full max-w-lg h-[32rem] mx-auto lg:mx-0">
-          <Image
+        <div className="relative w-full max-w-lg h-[32rem] mx-auto lg:mx-0 flex items-center justify-center">
+          <img
             src="https://stablediffusion-prod.s3.amazonaws.com/9da1a820-2169-4509-9b98-54b6099b0c24.png"
             alt="Tux penguin with sunglasses"
-            fill
-            className="object-contain"
+            className="object-contain h-full w-full"
             data-ai-hint="Tux penguin sunglasses"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            priority
           />
         </div>
       </section>
