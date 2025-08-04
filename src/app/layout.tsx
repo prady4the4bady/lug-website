@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/header";
 import { Button } from '@/components/ui/button';
 import { Bug } from 'lucide-react';
 import Link from 'next/link';
+import { AuthProvider } from '@/hooks/use-auth';
 
 export const metadata: Metadata = {
   title: 'Linux User Group - BITS Pilani Dubai',
@@ -26,21 +27,23 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased min-h-screen bg-background text-foreground font-sans" suppressHydrationWarning>
         <ThemeProvider defaultTheme="dark" storageKey="lug-theme">
-          <div className="relative flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Button
-              asChild
-              className="fixed bottom-4 left-4 bg-red-600 hover:bg-red-700 text-white shadow-lg"
-              aria-label="Report a bug"
-            >
-              <Link href="/forum">
-                <Bug className="mr-2 h-4 w-4" />
-                Report a Bug
-              </Link>
-            </Button>
-          </div>
-          <Toaster />
+          <AuthProvider>
+            <div className="relative flex min-h-screen flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Button
+                asChild
+                className="fixed bottom-4 left-4 bg-red-600 hover:bg-red-700 text-white shadow-lg"
+                aria-label="Report a bug"
+              >
+                <Link href="/forum">
+                  <Bug className="mr-2 h-4 w-4" />
+                  Report a Bug
+                </Link>
+              </Button>
+            </div>
+            <Toaster />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

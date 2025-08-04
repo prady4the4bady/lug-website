@@ -1,5 +1,10 @@
+"use client";
+
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 function GoogleIcon() {
     return (
@@ -11,6 +16,15 @@ function GoogleIcon() {
 }
 
 export default function SignInPage() {
+    const { user, signIn } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (user) {
+            router.push('/profile');
+        }
+    }, [user, router]);
+
     return (
         <div className="flex items-center justify-center min-h-[80vh]">
             <Card className="w-full max-w-sm">
@@ -21,7 +35,7 @@ export default function SignInPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
-                    <Button variant="outline">
+                    <Button variant="outline" onClick={signIn}>
                         <GoogleIcon />
                         Sign in with Google
                     </Button>

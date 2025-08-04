@@ -7,11 +7,13 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ThemeToggle } from "./theme-toggle"
-import { Menu, Mountain, TerminalIcon, Bug } from "lucide-react"
+import { Menu, Mountain, TerminalIcon, LogOut } from "lucide-react"
+import { useAuth } from "@/hooks/use-auth"
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
+  const { user, isAdmin, signIn, signOutUser } = useAuth();
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -20,8 +22,11 @@ export function Header() {
     { href: "/events", label: "Events" },
     { href: "/forum", label: "Forum" },
     { href: "/profile", label: "Profile" },
-    { href: "/admin", label: "Admin" },
   ]
+  
+  if (isAdmin) {
+    navLinks.push({ href: "/admin", label: "Admin" });
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -89,9 +94,16 @@ export function Header() {
              {/* Future search bar can go here */}
           </div>
           <nav className="flex items-center gap-2">
-            <Button variant="secondary" className="ml-2" asChild>
-                <Link href="/signin">Sign In</Link>
-            </Button>
+            {user ? (
+                <Button variant="ghost" size="sm" onClick={signOutUser}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
+                </Button>
+            ) : (
+                <Button variant="secondary" className="ml-2" onClick={signIn}>
+                    Sign In
+                </Button>
+            )}
             <Button variant="outline" size="sm" asChild>
                 <Link href="https://lug12.netlify.app/" target="_blank" rel="noopener noreferrer">
                     <TerminalIcon className="h-4 w-4 mr-2"/>

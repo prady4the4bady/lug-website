@@ -1,7 +1,29 @@
+"use client";
+
+import { useAuth } from "@/hooks/use-auth";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Users, Calendar, MessageSquare } from "lucide-react"
+import { Users, Calendar, MessageSquare, Loader2 } from "lucide-react"
 
 export default function AdminPage() {
+  const { isAdmin, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !isAdmin) {
+      router.push("/");
+    }
+  }, [isAdmin, loading, router]);
+
+  if (loading || !isAdmin) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="container py-12 md:py-20">
       <div className="text-center mb-12">
