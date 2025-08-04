@@ -4,7 +4,7 @@ import type { CouncilMember } from "@/lib/types";
 
 export function CouncilCard({ member }: { member: CouncilMember }) {
   return (
-    <Card className="text-center transition-all duration-300 ease-in-out transform hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-2 group">
+    <Card className="text-center transition-all duration-300 ease-in-out transform hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-2 group w-full max-w-xs">
       <CardHeader>
         <div className="relative w-32 h-32 mx-auto mb-4">
           <Image
