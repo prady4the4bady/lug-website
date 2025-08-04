@@ -11,8 +11,6 @@ import { useRouter } from 'next/navigation';
 import { db, storage } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
-import { Button } from '../ui/button';
-import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
 
 export function ChatInterface() {
