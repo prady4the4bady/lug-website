@@ -10,11 +10,9 @@ export function CouncilSection({ title, members }: CouncilSectionProps) {
   return (
     <section>
       <h2 className="text-3xl font-headline font-bold mb-8 text-center">{title}</h2>
-      <div className="flex flex-wrap gap-8 justify-center">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center">
         {members.map((member) => (
-          <div key={member.name} className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 flex justify-center">
-             <CouncilCard member={member} />
-          </div>
+          <CouncilCard key={member.name} member={member} />
         ))}
       </div>
     </section>
