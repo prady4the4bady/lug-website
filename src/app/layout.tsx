@@ -34,7 +34,7 @@ export default function RootLayout({
               className="fixed bottom-4 left-4 bg-red-600 hover:bg-red-700 text-white shadow-lg"
               aria-label="Report a bug"
             >
-              <Link href="https://lug.im/bugs" target="_blank">
+              <Link href="/forum">
                 <Bug className="mr-2 h-4 w-4" />
                 Report a Bug
               </Link>
