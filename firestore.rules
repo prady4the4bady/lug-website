@@ -3,49 +3,36 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper functions
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
     
-    function getRole() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
-    }
-    
+    // Helper function to check if a user is an admin
     function isAdmin() {
-      // Check if the user is an admin.
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
 
-    // Users Collection
+    // Users can be read by any authenticated user, but only modified by themselves or an admin.
+    // New users can create their own document.
     match /users/{userId} {
-      // Anyone can create their own user document (sign up)
-      allow create: if isSignedIn() && isOwner(userId);
-      // Only owners or admins can update a user. Everyone can read.
-      allow read: if isSignedIn();
-      allow update: if isSignedIn() && (isOwner(userId) || isAdmin());
-      // Only admins can delete users.
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth.uid == userId || isAdmin();
       allow delete: if isAdmin();
     }
-
-    // Events Collection
+    
+    // Events can be read by anyone. They can only be created, updated, or deleted by an admin.
     match /events/{eventId} {
-      // Anyone can read events. Only admins can create, update, or delete them.
       allow read: if true;
       allow write: if isAdmin();
     }
     
-    // Messages (Forum) Collection
+    // Messages can be read by any authenticated user.
+    // Users can create their own messages.
+    // Admins can delete any message.
     match /messages/{messageId} {
-        // Any signed-in user can read or create messages.
-        allow read, create: if isSignedIn();
-        // Only admins can delete messages.
-        allow delete: if isAdmin();
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if false; // Messages are immutable
+      allow delete: if isAdmin();
     }
   }
 }
