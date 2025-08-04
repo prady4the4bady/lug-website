@@ -6,8 +6,8 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { ThemeToggle, TerminalViewToggle } from "./theme-toggle"
-import { Menu, Mountain } from "lucide-react"
+import { ThemeToggle } from "./theme-toggle"
+import { Menu, Mountain, TerminalIcon } from "lucide-react"
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -89,7 +89,12 @@ export function Header() {
           </div>
           <nav className="flex items-center gap-2">
             <Button variant="secondary" className="ml-2">Sign In</Button>
-            <TerminalViewToggle />
+            <Button variant="outline" size="sm" asChild>
+                <Link href="https://lug12.netlify.app/" target="_blank" rel="noopener noreferrer">
+                    <TerminalIcon className="h-4 w-4 mr-2"/>
+                    <span>Terminal View</span>
+                </Link>
+            </Button>
             <ThemeToggle />
           </nav>
         </div>
