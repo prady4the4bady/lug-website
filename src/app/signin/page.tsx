@@ -36,25 +36,36 @@ export default function SignInPage() {
         )
     }
 
+    // If user is not logged in and not loading, show the sign-in card.
+    // This prevents the page from flashing while the redirect is being processed.
+    if (!user) {
+        return (
+            <div className="flex items-center justify-center min-h-[80vh]">
+                <Card className="w-full max-w-sm">
+                    <CardHeader className="text-center">
+                        <CardTitle className="text-2xl">Sign In</CardTitle>
+                        <CardDescription>
+                            Access to the LUG dashboard is restricted to members with a BITS Pilani email.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-col gap-4">
+                        <Button variant="outline" onClick={signIn} disabled={loading}>
+                            <GoogleIcon />
+                            Sign in with Google
+                        </Button>
+                        <p className="text-xs text-center text-muted-foreground">
+                            By signing in, you agree to our terms of service.
+                        </p>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+    
+    // Fallback while redirecting
     return (
-        <div className="flex items-center justify-center min-h-[80vh]">
-            <Card className="w-full max-w-sm">
-                <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">Sign In</CardTitle>
-                    <CardDescription>
-                        Access to the LUG dashboard is restricted to members with a BITS Pilani email.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="flex flex-col gap-4">
-                    <Button variant="outline" onClick={signIn}>
-                        <GoogleIcon />
-                        Sign in with Google
-                    </Button>
-                    <p className="text-xs text-center text-muted-foreground">
-                        By signing in, you agree to our terms of service.
-                    </p>
-                </CardContent>
-            </Card>
+        <div className="flex justify-center items-center h-screen">
+            <Loader2 className="h-8 w-8 animate-spin" />
         </div>
     );
 }

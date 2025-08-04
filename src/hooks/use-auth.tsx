@@ -29,20 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const processAuth = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result) {
-          // User has just signed in via redirect. The onAuthStateChanged will handle the rest.
-        }
-      } catch (error) {
-        console.error("Error processing redirect result:", error);
-      }
-    };
-
-    processAuth();
-    
-    const unsubscribeAuth = onAuthStateChanged(auth, async (authUser) => {
+    const handleAuth = async (authUser: FirebaseUser | null) => {
       if (authUser) {
         setUser(authUser);
         const userDocRef = doc(db, "users", authUser.uid);
@@ -83,7 +70,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setIsAdmin(false);
         setLoading(false);
       }
-    });
+    };
+    
+    // This handles the redirect result after signing in
+    getRedirectResult(auth)
+      .then((result) => {
+        // If result is null, it means the user is just visiting the page, not returning from a redirect.
+        // The onAuthStateChanged listener below will handle their session.
+        if (result) {
+          // User has successfully signed in. onAuthStateChanged will now fire and handle the user session.
+        }
+        // Even if the result is null, we need to let onAuthStateChanged do its thing.
+      })
+      .catch((error) => {
+        console.error("Error getting redirect result:", error);
+        setLoading(false); // Stop loading on error
+      });
+
+    const unsubscribeAuth = onAuthStateChanged(auth, handleAuth);
 
     return () => unsubscribeAuth();
   }, []);
@@ -94,12 +98,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     provider.setCustomParameters({
       'hd': 'dubai.bits-pilani.ac.in'
     });
-    try {
-      await signInWithRedirect(auth, provider);
-    } catch (error) {
-      console.error("Error during sign-in:", error);
-      setLoading(false);
-    }
+    // We don't need to await this. Firebase handles the redirect.
+    signInWithRedirect(auth, provider);
   };
 
   const signOutUser = async () => {

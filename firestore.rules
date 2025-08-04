@@ -1,33 +1,68 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
   
-    // Helper function to check if a user is an admin
-    function isAdmin() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    // Helper functions
+    function isUserAuthenticated() {
+      return request.auth != null;
     }
-
-    // Users can read/update their own profile.
-    // Admins can read/write any user profile.
+    
+    function isExistingUser(userId) {
+      return exists(/databases/$(database)/documents/users/$(userId));
+    }
+    
+    function getRequestingUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isRequestingUserAdmin() {
+      return isUserAuthenticated() && getRequestingUserData().isAdmin == true;
+    }
+    
+    // USERS collection
     match /users/{userId} {
-      allow read, update: if request.auth.uid == userId || isAdmin();
-      allow list: if isAdmin(); // Allow admins to list all users
-      allow create: if request.auth.uid != null;
-    }
+      // Anyone can create their own user document on signup
+      allow create: if isUserAuthenticated() && request.auth.uid == userId;
+      
+      // Any authenticated user can read any other user's profile (for names, avatars, etc.)
+      // Admins can read any profile.
+      allow get: if isUserAuthenticated() || isRequestingUserAdmin();
 
-    // Allow public read for events
+      // Users can update their own document. Admins can update any document.
+      allow update: if (isUserAuthenticated() && request.auth.uid == userId) || isRequestingUserAdmin();
+      
+      // Only admins can delete users.
+      allow delete: if isRequestingUserAdmin();
+      
+      // Admins can list all users.
+      // Logged-in users can query for council members.
+      allow list: if isRequestingUserAdmin() 
+                  || (isUserAuthenticated() && request.query.where[0][0] == 'isCouncilMember');
+    }
+    
+    // EVENTS collection
     match /events/{eventId} {
-      allow read: if true;
-      allow write: if isAdmin();
+      // Anyone can read events.
+      allow get, list: if true;
+      
+      // Only admins can create, update, or delete events.
+      allow write: if isRequestingUserAdmin();
     }
-
-    // Logged-in users can read/write messages
-    // Admins can delete messages
+    
+    // MESSAGES (Forum) collection
     match /messages/{messageId} {
-      allow read, create: if request.auth.uid != null;
-      allow delete: if isAdmin();
+        // Anyone can read forum messages
+        allow get, list: if true;
+        
+        // Only authenticated users can create messages
+        allow create: if isUserAuthenticated();
+        
+        // Only admins can delete messages
+        allow delete: if isRequestingUserAdmin();
+        
+        // Nobody can update messages to ensure immutability
+        allow update: if false;
     }
   }
 }
