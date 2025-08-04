@@ -10,9 +10,9 @@ const firebaseConfig = {
   "apiKey": "AIzaSyCQFYrhX1A-ADl8oehKn6ddQDpWynG15nE",
   "authDomain": "linux-user-group-420pp.firebaseapp.com",
   "projectId": "linux-user-group-420pp",
-  "storageBucket": "linux-user-group-420pp.appspot.com",
+  "storageBucket": "linux-user-group-420pp.firebasestorage.app",
   "messagingSenderId": "357891612710",
-  "appId": "1:357891612710:web:aa2b06ef35b507cbd506e7"
+  "appId": "1:357891612710:web:a6e36652b622b2b1d506e7"
 };
 
 // Initialize Firebase.
