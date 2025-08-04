@@ -7,6 +7,8 @@ import { ChatInput } from '@/components/chat/chat-input';
 import { ImageTagger } from '@/components/chat/image-tagger';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ImageIcon } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
+import { useRouter } from 'next/navigation';
 
 const initialMessages: ChatMessage[] = [
   { id: '1', text: 'Hey everyone! Welcome to the forum.', user: 'Admin', avatarUrl: 'https://placehold.co/40x40.png', timestamp: new Date(Date.now() - 60000 * 5) },
@@ -16,28 +18,42 @@ const initialMessages: ChatMessage[] = [
 export function ChatInterface() {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [imageDataUri, setImageDataUri] = useState<string | null>(null);
+  const { user } = useAuth();
+  const router = useRouter();
 
   const handleSendMessage = (text: string) => {
+    if (!user) {
+      router.push('/signin');
+      return;
+    }
     const newMessage: ChatMessage = {
       id: Date.now().toString(),
       text,
-      user: 'You',
-      avatarUrl: 'https://placehold.co/40x40.png',
+      user: user.displayName || 'You',
+      avatarUrl: user.photoURL || 'https://placehold.co/40x40.png',
       timestamp: new Date(),
     };
     setMessages(prev => [...prev, newMessage]);
   };
   
   const handleImageSelect = (dataUri: string) => {
+    if (!user) {
+      router.push('/signin');
+      return;
+    }
     setImageDataUri(dataUri);
   }
   
   const handleImageUpload = (tags: string[]) => {
+    if (!user) {
+      router.push('/signin');
+      return;
+    }
     const newMessage: ChatMessage = {
       id: Date.now().toString(),
       text: `Uploaded an image with tags: ${tags.join(', ')}`,
-      user: 'You',
-      avatarUrl: 'https://placehold.co/40x40.png',
+      user: user.displayName || 'You',
+      avatarUrl: user.photoURL || 'https://placehold.co/40x40.png',
       timestamp: new Date(),
       imageUrl: imageDataUri!,
     };
