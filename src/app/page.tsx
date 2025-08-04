@@ -26,7 +26,7 @@ export default function Home() {
         </div>
         <div className="relative w-full max-w-md h-96 mx-auto lg:mx-0">
           <Image
-            src="https://stablediffusion-prod.s3.amazonaws.com/9ea5879e-4592-4f81-817a-51368a5793de.jpeg"
+            src="https://upload.wikimedia.org/wikipedia/commons/a/af/Tux.png"
             alt="3D Tux Penguin"
             fill
             className="object-contain"

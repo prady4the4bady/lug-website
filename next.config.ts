@@ -21,6 +21,12 @@ const nextConfig: NextConfig = {
         hostname: 'stablediffusion-prod.s3.amazonaws.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+        port: "",
+        pathname: "/wikipedia/commons/**",
       }
     ],
   },
