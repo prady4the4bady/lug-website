@@ -9,8 +9,8 @@ import Image from "next/image";
 export default function Home() {
   return (
     <div className="w-full">
-      <section className="container grid lg:grid-cols-2 gap-12 items-center py-20 md:py-32">
-        <div className="flex flex-col gap-6 items-start text-center lg:text-left">
+      <section className="container grid lg:grid-cols-1 gap-12 items-center justify-center text-center py-20 md:py-32">
+        <div className="flex flex-col gap-6 items-center">
           <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tighter">
             Linux User Group
           </h1>
@@ -22,17 +22,6 @@ export default function Home() {
               <Link href="/signin">Get Started</Link>
             </Button>
           </div>
-        </div>
-        <div className="flex items-center justify-center">
-          <Image
-            src="https://stablediffusion-prod.s3.amazonaws.com/9da1a820-2169-4509-9b98-54b6099b0c24.png"
-            alt="Tux, the Linux penguin"
-            width={450}
-            height={450}
-            className="object-contain"
-            data-ai-hint="Tux penguin"
-            priority
-          />
         </div>
       </section>
 
