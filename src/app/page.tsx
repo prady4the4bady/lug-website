@@ -24,13 +24,15 @@ export default function Home() {
             <Link href="/signin">Get Started</Link>
           </Button>
         </div>
-        <div className="relative w-full max-w-md h-96 mx-auto lg:mx-0">
+        <div className="relative w-full max-w-lg h-[28rem] mx-auto lg:mx-0">
           <Image
             src="https://upload.wikimedia.org/wikipedia/commons/a/af/Tux.png"
             alt="3D Tux Penguin"
             fill
             className="object-contain"
             data-ai-hint="Tux penguin"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority
           />
         </div>
       </section>
