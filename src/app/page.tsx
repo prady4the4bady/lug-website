@@ -3,18 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Rocket, Code, Users } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
-
 
 export default function Home() {
   return (
     <div className="w-full">
-      <section className="container grid lg:grid-cols-1 gap-12 items-center justify-center text-center py-20 md:py-32">
-        <div className="flex flex-col gap-6 items-center">
+      <section className="container grid lg:grid-cols-2 gap-12 items-center py-20 md:py-32">
+        <div className="flex flex-col gap-6 items-start text-left">
           <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tighter">
             Linux User Group
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-md mx-auto lg:mx-0 font-headline">
+          <p className="text-lg md:text-xl text-muted-foreground max-w-md font-headline">
             BITS Pilani Dubai Campus
           </p>
           <div className="pt-4">
@@ -22,6 +20,15 @@ export default function Home() {
               <Link href="/signin">Get Started</Link>
             </Button>
           </div>
+        </div>
+        <div className="flex items-center justify-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://stablediffusion-prod.s3.amazonaws.com/4dd4195a-2736-4995-9344-93515437e2a9.png"
+            alt="Tux Penguin Mascot"
+            className="w-full max-w-md h-auto transition-all duration-300 ease-in-out hover:[filter:drop-shadow(0_0_2rem_hsl(var(--primary)/0.4))]"
+            data-ai-hint="Tux penguin"
+          />
         </div>
       </section>
 
