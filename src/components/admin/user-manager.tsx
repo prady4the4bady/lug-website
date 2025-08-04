@@ -8,10 +8,12 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '../ui/badge';
 import { useAuth } from '@/hooks/use-auth';
-import { Eye } from 'lucide-react';
+import { Eye, Loader2, RefreshCw } from 'lucide-react';
 import { UserActivityDialog } from './user-activity-dialog';
 import { db } from '@/lib/firebase';
 import { collection, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import { getFunctions, httpsCallable } from "firebase/functions";
+import { useToast } from '@/hooks/use-toast';
 
 type User = {
     id: string;
@@ -26,6 +28,8 @@ export function UserManager() {
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [isActivityLogOpen, setIsActivityLogOpen] = useState(false);
+    const [isSyncing, setIsSyncing] = useState(false);
+    const { toast } = useToast();
 
     useEffect(() => {
         const unsubscribe = onSnapshot(collection(db, "users"), (snapshot) => {
@@ -46,12 +50,40 @@ export function UserManager() {
         setIsActivityLogOpen(true);
     };
 
+    const handleSyncUsers = async () => {
+        setIsSyncing(true);
+        const functions = getFunctions();
+        const syncUsers = httpsCallable(functions, 'syncUsers');
+        try {
+            const result = await syncUsers();
+            toast({
+                title: "Sync Successful",
+                description: (result.data as { message: string }).message,
+            });
+        } catch (error) {
+             console.error("Error syncing users:", error);
+            toast({
+                variant: "destructive",
+                title: "Sync Failed",
+                description: "An error occurred while syncing users.",
+            });
+        } finally {
+            setIsSyncing(false);
+        }
+    };
+
     return (
         <>
             <Card className="mt-6">
-                <CardHeader>
-                    <CardTitle>User Management</CardTitle>
-                    <CardDescription>View users and manage their admin permissions.</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>User Management</CardTitle>
+                        <CardDescription>View users and manage their admin permissions.</CardDescription>
+                    </div>
+                     <Button onClick={handleSyncUsers} disabled={isSyncing}>
+                        {isSyncing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
+                        Sync Users
+                    </Button>
                 </CardHeader>
                 <CardContent>
                     <Table>
