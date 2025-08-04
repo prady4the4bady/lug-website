@@ -49,11 +49,9 @@ export default function SignInPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
-                     <Button variant="outline" onClick={signIn} asChild>
-                        <Link href="/profile" target="_top">
-                            <GoogleIcon />
-                            Sign in with Google
-                        </Link>
+                     <Button variant="outline" onClick={signIn}>
+                        <GoogleIcon />
+                        Sign in with Google
                     </Button>
                     <p className="text-xs text-center text-muted-foreground">
                         By signing in, you agree to our terms of service.
