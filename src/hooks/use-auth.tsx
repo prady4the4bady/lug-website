@@ -32,7 +32,7 @@ const processAuth = async (authUser: FirebaseUser | null) => {
     if (!userDoc.exists()) {
       const isDefaultAdmin = authUser.email === DEFAULT_ADMIN_EMAIL;
       const newUser: User = {
-        name: authUser.displayName!,
+ name: authUser.displayName || 'New User',
         email: authUser.email!,
         photoURL: authUser.photoURL!,
         isAdmin: isDefaultAdmin,
@@ -115,14 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     try {
-        const isIframe = window.self !== window.top;
-        if (isIframe) {
-            const result = await signInWithPopup(auth, provider);
-            await processAuth(result.user);
-            router.push('/profile');
-        } else {
-            await signInWithRedirect(auth, provider);
-        }
+ await signInWithRedirect(auth, provider);
     } catch (error) {
         console.error("Error during sign-in:", error);
         setLoading(false);
