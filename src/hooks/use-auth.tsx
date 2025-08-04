@@ -1,8 +1,8 @@
 
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { onAuthStateChanged, User as FirebaseUser, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import { onAuthStateChanged, User as FirebaseUser, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { doc, setDoc, onSnapshot, getDoc } from 'firebase/firestore';
@@ -59,10 +59,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
 
+  const handleRedirectResult = useCallback(async () => {
+    try {
+        setLoading(true);
+        const result = await getRedirectResult(auth);
+        if (result && result.user) {
+            await processAuth(result.user);
+            router.push('/profile');
+        }
+    } catch (error) {
+        console.error("Error processing redirect result:", error);
+    } finally {
+        // This will run regardless of whether a redirect happened
+        // The onAuthStateChanged listener below will handle setting the final user state
+    }
+  }, [router]);
+
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
-        setUser(authUser);
+    handleRedirectResult();
+
+    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
         if (authUser) {
+            setUser(authUser);
             const userDocRef = doc(db, "users", authUser.uid);
             const unsubDoc = onSnapshot(userDocRef, (doc) => {
                 if (doc.exists()) {
@@ -70,30 +89,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     setDbUser({ id: doc.id, ...userData });
                     setIsAdmin(!!userData.isAdmin);
                 }
+                 setLoading(false);
             });
+             return () => unsubDoc();
         } else {
+            setUser(null);
             setDbUser(null);
             setIsAdmin(false);
+            setLoading(false);
         }
-        setLoading(false);
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [handleRedirectResult]);
 
   const signIn = async () => {
     setLoading(true);
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({
+      'hd': 'dubai.bits-pilani.ac.in'
+    });
+
     try {
-        const provider = new GoogleAuthProvider();
-        provider.setCustomParameters({
-          'hd': 'dubai.bits-pilani.ac.in'
-        });
-        const result = await signInWithPopup(auth, provider);
-        await processAuth(result.user);
-        router.push('/profile');
+        // Detect if running in an iframe
+        const isIframe = window.self !== window.top;
+        
+        if (isIframe) {
+            // Use popup for iframes
+            const result = await signInWithPopup(auth, provider);
+            await processAuth(result.user);
+            router.push('/profile');
+        } else {
+            // Use redirect for top-level context
+            await signInWithRedirect(auth, provider);
+        }
     } catch (error) {
         console.error("Error during sign-in:", error);
-    } finally {
         setLoading(false);
     }
   };

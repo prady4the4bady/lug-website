@@ -28,7 +28,7 @@ export default function SignInPage() {
         }
     }, [user, loading, router]);
     
-    if(loading && !user) {
+    if(loading) {
         return (
              <div className="flex justify-center items-center h-screen">
                 <Loader2 className="h-8 w-8 animate-spin" />
@@ -52,7 +52,7 @@ export default function SignInPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
-                    <Button variant="outline" onClick={signIn}>
+                    <Button variant="outline" onClick={signIn} disabled={loading}>
                         <GoogleIcon />
                         Sign in with Google
                     </Button>
@@ -64,4 +64,3 @@ export default function SignInPage() {
         </div>
     );
 }
-
