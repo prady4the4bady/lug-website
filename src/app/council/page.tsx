@@ -1,5 +1,7 @@
-import { CouncilCard } from "@/components/council-card";
+"use client";
+
 import { CouncilSection } from "@/components/council-section";
+import { useAuth } from "@/hooks/use-auth";
 import type { CouncilMember } from "@/lib/types";
 
 const coreMembers: CouncilMember[] = [
@@ -39,6 +41,7 @@ const marketingMembers: CouncilMember[] = [
     { role: "Marketing Member", name: "Paul Quinn", imageUrl: "https://placehold.co/200x200.png" },
     { role: "Marketing Member", name: "Rose Scott", imageUrl: "https://placehold.co/200x200.png" },
     { role: "Marketing Member", name: "Steve Taylor", imageUrl: "https://placehold.co/200x200.png" },
+    { role: "Marketing Member", name: "Zoe Adams", imageUrl: "https://placehold.co/200x200.png" },
 ]
 
 const communityMembers: CouncilMember[] = [
@@ -50,9 +53,12 @@ const communityMembers: CouncilMember[] = [
 
 const facultyInCharge: CouncilMember[] = [
     { role: "Faculty In-Charge", name: "Dr. Ziegler", imageUrl: "https://placehold.co/200x200.png" },
+    { role: "Faculty In-Charge", name: "Dr. Smith", imageUrl: "https://placehold.co/200x200.png" },
 ]
 
 export default function CouncilPage() {
+  const { isAdmin } = useAuth();
+  
   return (
     <div className="container py-12 md:py-20">
       <div className="text-center mb-12">
@@ -61,13 +67,13 @@ export default function CouncilPage() {
       </div>
       
       <div className="space-y-16">
-        <CouncilSection title="Core" members={coreMembers} />
-        <CouncilSection title="Technical" members={technicalMembers} />
-        <CouncilSection title="Operations" members={operationsMembers} />
-        <CouncilSection title="Creative" members={creativeMembers} />
-        <CouncilSection title="Marketing" members={marketingMembers} />
-        <CouncilSection title="Community" members={communityMembers} />
-        <CouncilSection title="Faculty In-Charge" members={facultyInCharge} />
+        <CouncilSection title="Core" members={coreMembers} isAdmin={isAdmin} />
+        <CouncilSection title="Technical" members={technicalMembers} isAdmin={isAdmin} />
+        <CouncilSection title="Operations" members={operationsMembers} isAdmin={isAdmin} />
+        <CouncilSection title="Creative" members={creativeMembers} isAdmin={isAdmin} />
+        <CouncilSection title="Marketing" members={marketingMembers} isAdmin={isAdmin} />
+        <CouncilSection title="Community" members={communityMembers} isAdmin={isAdmin} />
+        <CouncilSection title="Faculty In-Charge" members={facultyInCharge} isAdmin={isAdmin} />
       </div>
     </div>
   );

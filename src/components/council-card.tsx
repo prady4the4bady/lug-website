@@ -1,11 +1,32 @@
+"use client";
+
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { CouncilMember } from "@/lib/types";
+import { Button } from "./ui/button";
+import { X } from "lucide-react";
 
-export function CouncilCard({ member }: { member: CouncilMember }) {
+interface CouncilCardProps {
+  member: CouncilMember;
+  isAdmin: boolean;
+  onDelete: (name: string) => void;
+}
+
+export function CouncilCard({ member, isAdmin, onDelete }: CouncilCardProps) {
   return (
     <Card className="text-center transition-all duration-300 ease-in-out transform hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-2 group w-full max-w-xs relative">
+      {isAdmin && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+          onClick={() => onDelete(member.name)}
+        >
+          <X className="h-4 w-4" />
+          <span className="sr-only">Remove member</span>
+        </Button>
+      )}
       {member.vacant && (
         <Badge
           variant="destructive"
