@@ -7,6 +7,8 @@ import { ThemeToggle } from "@/components/layout/theme-toggle";
 import type { Event } from "@/lib/types";
 import { format } from "date-fns";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useAuth } from "@/hooks/use-auth";
+import { Loader2 } from "lucide-react";
 
 const participatedEvents: Event[] = [
   { id: "1", title: "Intro to Linux Workshop", description: "Learned the basics of the Linux command line.", date: new Date(2023, 10, 15) },
@@ -15,6 +17,20 @@ const participatedEvents: Event[] = [
 
 
 export function ProfileTabs() {
+    const { user, loading } = useAuth();
+
+    if (loading) {
+        return (
+          <div className="flex justify-center items-center h-40">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        );
+    }
+    
+    const userName = user?.displayName || "User";
+    const userEmail = user?.email || "No email provided";
+    const userAvatar = user?.photoURL || "https://placehold.co/100x100.png";
+
     return (
         <Tabs defaultValue="dashboard" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
@@ -31,12 +47,12 @@ export function ProfileTabs() {
                     <CardContent className="space-y-6">
                         <div className="flex items-center gap-4">
                             <Avatar className="h-20 w-20">
-                                <AvatarImage src="https://placehold.co/100x100.png" alt="User Avatar" />
-                                <AvatarFallback>U</AvatarFallback>
+                                <AvatarImage src={userAvatar} alt="User Avatar" />
+                                <AvatarFallback>{userName.charAt(0)}</AvatarFallback>
                             </Avatar>
                             <div>
-                                <h3 className="text-xl font-semibold">User Name</h3>
-                                <p className="text-sm text-muted-foreground">user.name@dubai.bits-pilani.ac.in</p>
+                                <h3 className="text-xl font-semibold">{userName}</h3>
+                                <p className="text-sm text-muted-foreground">{userEmail}</p>
                             </div>
                         </div>
                         <div className="space-y-2">
@@ -86,7 +102,7 @@ export function ProfileTabs() {
                 </Card>
             </TabsContent>
             <TabsContent value="certificates">
-                <CertificateGenerator events={participatedEvents} userName="User Name" />
+                <CertificateGenerator events={participatedEvents} userName={userName} />
             </TabsContent>
         </Tabs>
     );
