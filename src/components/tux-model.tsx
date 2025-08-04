@@ -17,17 +17,19 @@ export function TuxModel() {
     setIsClient(true);
   }, []);
 
+  if (!isClient) {
+    return <Skeleton className="w-full max-w-md h-96 mx-auto lg:mx-0" />;
+  }
+
   return (
     <div className="relative w-full max-w-md h-96 mx-auto lg:mx-0 rounded-lg bg-card/80">
        <Suspense fallback={<Skeleton className="w-full h-full" />}>
-        {isClient ? (
           <Canvas camera={{ position: [0, 0, 10], fov: 25 }}>
             <ambientLight intensity={1.5} />
             <pointLight position={[10, 10, 10]} />
             <Model />
             <OrbitControls enableZoom={false} autoRotate />
           </Canvas>
-        ) : null}
        </Suspense>
     </div>
   );
