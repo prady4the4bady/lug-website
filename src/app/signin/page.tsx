@@ -7,8 +7,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
-import { GoogleAuthProvider } from "firebase/auth";
-import { auth } from "@/lib/firebase";
 import Link from "next/link";
 
 function GoogleIcon() {
