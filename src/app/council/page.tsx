@@ -8,8 +8,8 @@ const coreMembers: CouncilMember[] = [
   { role: "President", name: "Alex Johnson", imageUrl: "https://placehold.co/200x200.png" },
   { role: "Vice President", name: "Maria Garcia", imageUrl: "https://placehold.co/200x200.png" },
   { role: "Secretary", name: "Chen Wei", imageUrl: "https://placehold.co/200x200.png" },
-  { role: "Treasurer", name: "Fatima Al-Fassi", imageUrl: "https://placehold.co/200x200.png" },
-  { role: "Core Member", name: "Sam Lee", imageUrl: "https://placehold.co/200x200.png" },
+  { role: "Treasurer", name: "Harsh", imageUrl: "https://placehold.co/200x200.png" },
+  { role: "Core Member", name: "Sam Lee", imageUrl: "https://placehold.co/200x200.png", vacant: true },
   { role: "Core Member", name: "Priya Singh", imageUrl: "https://placehold.co/200x200.png" },
   { role: "Core Member", name: "David Miller", imageUrl: "https://placehold.co/200x200.png" },
 ];
@@ -25,7 +25,6 @@ const operationsMembers: CouncilMember[] = [
     { role: "Ops Lead", name: "Frank Green", imageUrl: "https://placehold.co/200x200.png" },
     { role: "Ops Member", name: "Grace Hall", imageUrl: "https://placehold.co/200x200.png" },
     { role: "Ops Member", name: "Henry Irving", imageUrl: "https://placehold.co/200x200.png" },
-    { role: "Ops Member", name: "Ivy Jackson", imageUrl: "https://placehold.co/200x200.png" },
 ]
 
 const creativeMembers: CouncilMember[] = [
@@ -41,7 +40,6 @@ const marketingMembers: CouncilMember[] = [
     { role: "Marketing Member", name: "Paul Quinn", imageUrl: "https://placehold.co/200x200.png" },
     { role: "Marketing Member", name: "Rose Scott", imageUrl: "https://placehold.co/200x200.png" },
     { role: "Marketing Member", name: "Steve Taylor", imageUrl: "https://placehold.co/200x200.png" },
-    { role: "Marketing Member", name: "Zoe Adams", imageUrl: "https://placehold.co/200x200.png" },
 ]
 
 const communityMembers: CouncilMember[] = [
