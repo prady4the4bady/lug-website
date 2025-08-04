@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { collection, onSnapshot, query, where, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { EditProfileForm } from "./edit-profile-form";
-import { Button } from "../ui/button";
+import { CertificateGenerator } from "./certificate-generator";
 
 // This is just an example. In a real app, you'd fetch events the user has *actually* attended.
 // This might involve a subcollection on the user document or a separate 'attendance' collection.
@@ -140,15 +140,7 @@ export function ProfileTabs() {
                 </TabsContent>
             )}
             <TabsContent value="certificates">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Event Certificates</CardTitle>
-                        <CardDescription>Download certificates for events you have participated in.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-muted-foreground">Certificate generation is currently unavailable. Please check back later.</p>
-                    </CardContent>
-                </Card>
+                <CertificateGenerator events={participatedEvents} user={dbUser} />
             </TabsContent>
         </Tabs>
     );
