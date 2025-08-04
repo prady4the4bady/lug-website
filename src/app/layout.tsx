@@ -33,12 +33,12 @@ export default function RootLayout({
               <main className="flex-1">{children}</main>
               <Button
                 asChild
-                className="fixed bottom-4 left-4 bg-red-600 hover:bg-red-700 text-white shadow-lg"
+                className="group fixed bottom-4 left-4 bg-red-600 hover:bg-red-700 text-white shadow-lg transition-all duration-300 ease-in-out w-14 h-14 hover:w-44 rounded-full"
                 aria-label="Report a bug"
               >
-                <Link href="/forum">
-                  <Bug className="mr-2 h-4 w-4" />
-                  Report a Bug
+                <Link href="/forum" className="flex items-center justify-center overflow-hidden">
+                  <Bug className="h-6 w-6 shrink-0" />
+                  <span className="ml-2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out">Report a Bug</span>
                 </Link>
               </Button>
             </div>
