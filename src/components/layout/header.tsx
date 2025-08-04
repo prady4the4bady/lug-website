@@ -20,6 +20,7 @@ export function Header() {
     { href: "/events", label: "Events" },
     { href: "/forum", label: "Forum" },
     { href: "/profile", label: "Profile" },
+    { href: "/admin", label: "Admin" },
   ]
 
   return (
