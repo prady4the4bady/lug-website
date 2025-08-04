@@ -24,7 +24,7 @@ export default function Home() {
         </div>
         <div className="relative flex items-center justify-center h-[400px]">
           <Image
-            src="https://stablediffusion-prod.s3.amazonaws.com/4dd4195a-2736-4995-9344-93515437e2a9.png"
+            src="/images/tux.svg"
             alt="Tux Penguin Mascot"
             fill
             className="object-contain transition-all duration-300 ease-in-out hover:[filter:drop-shadow(0_0_2rem_hsl(var(--primary)/0.4))]"
