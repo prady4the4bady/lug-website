@@ -2,7 +2,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { onAuthStateChanged, User as FirebaseUser, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { onAuthStateChanged, User as FirebaseUser, GoogleAuthProvider, signInWithRedirect, signOut } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
@@ -84,8 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       'hd': 'dubai.bits-pilani.ac.in'
     });
     try {
-      await signInWithPopup(auth, provider);
-      router.push('/profile');
+      await signInWithRedirect(auth, provider);
     } catch (error) {
       console.error("Error during sign-in:", error);
     }
