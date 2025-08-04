@@ -5,8 +5,11 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
+import { getRedirectResult, GoogleAuthProvider } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import Link from "next/link";
 
 function GoogleIcon() {
     return (
@@ -46,9 +49,11 @@ export default function SignInPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-4">
-                    <Button variant="outline" onClick={signIn}>
-                        <GoogleIcon />
-                        Sign in with Google
+                     <Button variant="outline" onClick={signIn} asChild>
+                        <Link href="/profile" target="_top">
+                            <GoogleIcon />
+                            Sign in with Google
+                        </Link>
                     </Button>
                     <p className="text-xs text-center text-muted-foreground">
                         By signing in, you agree to our terms of service.
