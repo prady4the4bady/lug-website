@@ -1,5 +1,7 @@
 
 import type { Timestamp } from "firebase/firestore";
+import type * as z from "zod";
+import type { signInSchema, signUpSchema } from "./schemas";
 
 export type User = {
     id?: string;
@@ -34,3 +36,6 @@ export type ChatMessage = {
   timestamp: Timestamp;
   imageUrl?: string;
 };
+
+export type SignInValues = z.infer<typeof signInSchema>;
+export type SignUpValues = z.infer<typeof signUpSchema>;

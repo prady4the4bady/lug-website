@@ -1,19 +1,23 @@
 
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
-import { onAuthStateChanged, User as FirebaseUser, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { onAuthStateChanged, User as FirebaseUser, GoogleAuthProvider, signInWithPopup, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { doc, setDoc, onSnapshot, getDoc } from 'firebase/firestore';
 import type { User } from '@/lib/types';
+import { useToast } from './use-toast';
+import type { SignInValues, SignUpValues } from '@/lib/types';
 
 interface AuthContextType {
   user: FirebaseUser | null;
   dbUser: User | null;
   loading: boolean;
   isAdmin: boolean;
-  signIn: () => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
+  signUpWithEmail: (values: SignUpValues) => Promise<void>;
+  signInWithEmail: (values: SignInValues) => Promise<void>;
   signOutUser: () => Promise<void>;
 }
 
@@ -21,7 +25,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const DEFAULT_ADMIN_EMAIL = 'lugbpdc@dubai.bits-pilani.ac.in';
 
-const processAuth = async (authUser: FirebaseUser | null) => {
+const BITS_DOMAIN = 'dubai.bits-pilani.ac.in';
+
+const processAuth = async (authUser: FirebaseUser | null, name?: string) => {
     if (!authUser) {
       return null;
     }
@@ -32,9 +38,9 @@ const processAuth = async (authUser: FirebaseUser | null) => {
     if (!userDoc.exists()) {
       const isDefaultAdmin = authUser.email === DEFAULT_ADMIN_EMAIL;
       const newUser: User = {
-        name: authUser.displayName || 'New User',
+        name: name || authUser.displayName || 'New User',
         email: authUser.email!,
-        photoURL: authUser.photoURL!,
+        photoURL: authUser.photoURL || `https://placehold.co/128x128.png?text=${(name || authUser.displayName || 'U').charAt(0)}`,
         isAdmin: isDefaultAdmin,
         isCouncilMember: isDefaultAdmin,
         ...(isDefaultAdmin && {
@@ -58,6 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
   
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
@@ -84,11 +91,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => unsubscribe();
   }, []);
 
-  const signIn = async () => {
+  const signInWithGoogle = async () => {
     setLoading(true);
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
-      'hd': 'dubai.bits-pilani.ac.in'
+      'hd': BITS_DOMAIN
     });
 
     try {
@@ -99,10 +106,57 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
         console.error("Error during sign-in:", error);
+        toast({
+          title: "Sign-in Failed",
+          description: "There was a problem signing you in with Google. Please try again.",
+          variant: "destructive"
+        });
     } finally {
         setLoading(false);
     }
   };
+  
+  const signUpWithEmail = async ({ name, email, password }: SignUpValues) => {
+    if (!email.endsWith(`@${BITS_DOMAIN}`)) {
+        toast({
+            title: "Invalid Email",
+            description: `You must use a @${BITS_DOMAIN} email address to sign up.`,
+            variant: "destructive"
+        });
+        return;
+    }
+    setLoading(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName: name });
+      await processAuth(userCredential.user, name);
+      router.push('/profile');
+    } catch (error: any) {
+       toast({
+        title: "Sign-up Failed",
+        description: error.message || "An unknown error occurred.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const signInWithEmail = async ({ email, password }: SignInValues) => {
+    setLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.push('/profile');
+    } catch (error: any) {
+      toast({
+        title: "Sign-in Failed",
+        description: "Invalid email or password. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const signOutUser = async () => {
     await signOut(auth);
@@ -110,7 +164,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, dbUser, loading, isAdmin, signIn, signOutUser }}>
+    <AuthContext.Provider value={{ user, dbUser, loading, isAdmin, signInWithGoogle, signUpWithEmail, signInWithEmail, signOutUser }}>
       {children}
     </AuthContext.Provider>
   );
