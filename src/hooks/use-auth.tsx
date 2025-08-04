@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => {
         // The onAuthStateChanged listener below will handle the user state.
         // We can consider setting loading to false here if there are issues,
-        // but onAuthStateChanged should be the single source of truth.
+        // but onAuthStateChanged should be the single source of truth for loading state.
       });
 
     const unsubscribeAuth = onAuthStateChanged(auth, async (authUser) => {
