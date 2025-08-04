@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ThemeToggle, TerminalViewToggle } from "./theme-toggle"
-import { Menu, Mountain, Bug } from "lucide-react"
+import { Menu, Mountain } from "lucide-react"
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -88,11 +88,9 @@ export function Header() {
              {/* Future search bar can go here */}
           </div>
           <nav className="flex items-center gap-2">
-            <ThemeToggle />
-            <div className="hidden md:flex items-center gap-2">
-              <TerminalViewToggle />
-            </div>
             <Button variant="secondary" className="ml-2">Sign In</Button>
+            <TerminalViewToggle />
+            <ThemeToggle />
           </nav>
         </div>
       </div>

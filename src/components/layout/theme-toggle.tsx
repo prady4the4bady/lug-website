@@ -10,11 +10,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme()
+  const { setTheme } = useTheme()
 
   return (
     <DropdownMenu>
@@ -43,16 +41,9 @@ export function ThemeToggle() {
 export function TerminalViewToggle() {
     const { isTerminal, setIsTerminal } = useTheme()
     return (
-        <div className="flex items-center space-x-2">
-            <Label htmlFor="terminal-mode" className="text-sm font-medium flex items-center gap-2">
-                <TerminalIcon className="h-4 w-4"/>
-                <span>Terminal View</span>
-            </Label>
-            <Switch
-                id="terminal-mode"
-                checked={isTerminal}
-                onCheckedChange={setIsTerminal}
-            />
-        </div>
+        <Button variant="outline" size="sm" onClick={() => setIsTerminal(!isTerminal)}>
+            <TerminalIcon className="h-4 w-4 mr-2"/>
+            <span>Terminal View</span>
+        </Button>
     )
 }
