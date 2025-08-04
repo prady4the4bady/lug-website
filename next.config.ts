@@ -16,6 +16,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'stablediffusion-prod.s3.amazonaws.com',
+        port: '',
+        pathname: '/**',
+      }
     ],
   },
 };

@@ -26,7 +26,7 @@ export default function Home() {
         </div>
         <div className="relative w-full max-w-md h-96 mx-auto lg:mx-0">
           <Image
-            src="https://placehold.co/600x600.png"
+            src="https://stablediffusion-prod.s3.amazonaws.com/9ea5879e-4592-4f81-817a-51368a5793de.jpeg"
             alt="3D Tux Penguin"
             fill
             className="object-contain"
