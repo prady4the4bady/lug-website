@@ -24,7 +24,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Source+Code+Pro&display=swap" rel="stylesheet" />
       </head>
-      <body className="font-body antialiased min-h-screen bg-background text-foreground font-sans">
+      <body className="font-body antialiased min-h-screen bg-background text-foreground font-sans" suppressHydrationWarning>
         <ThemeProvider defaultTheme="dark" storageKey="lug-theme">
           <div className="relative flex min-h-screen flex-col">
             <Header />
