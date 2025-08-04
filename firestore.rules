@@ -1,46 +1,10 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper function to check if a user is an admin
-    function isAdmin(userId) {
-      return get(/databases/$(database)/documents/users/$(userId)).data.isAdmin == true;
-    }
-
-    // By default, deny all reads and writes
+    // By default, deny all reads and writes.
     match /{document=**} {
       allow read, write: if false;
-    }
-    
-    // USERS:
-    // 1. Allow any authenticated user to read any user's profile (for council page, etc.)
-    // 2. Allow a user to create their own profile document (on signup)
-    // 3. Allow a user to update their own profile document
-    // 4. Allow an admin to update any user document
-    match /users/{userId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth.uid == userId;
-      allow update: if request.auth.uid == userId || isAdmin(request.auth.uid);
-      allow delete: if isAdmin(request.auth.uid);
-    }
-    
-    // EVENTS:
-    // 1. Allow anyone (even unauthenticated) to read events.
-    // 2. Only admins can create, update, or delete events.
-    match /events/{eventId} {
-      allow read: if true;
-      allow write: if request.auth != null && isAdmin(request.auth.uid);
-    }
-    
-    // MESSAGES:
-    // 1. Any authenticated user can read all messages.
-    // 2. Any authenticated user can create a new message.
-    // 3. Only admins can delete messages.
-    match /messages/{messageId} {
-        allow read, create: if request.auth != null;
-        allow delete: if request.auth != null && isAdmin(request.auth.uid);
     }
   }
 }
