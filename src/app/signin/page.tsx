@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 
 function GoogleIcon() {
@@ -36,36 +36,25 @@ export default function SignInPage() {
         )
     }
 
-    // This case handles when the user is not logged in and not in the process of logging in.
-    if (!user) {
-        return (
-            <div className="flex items-center justify-center min-h-[80vh]">
-                <Card className="w-full max-w-sm">
-                    <CardHeader className="text-center">
-                        <CardTitle className="text-2xl">Sign In</CardTitle>
-                        <CardDescription>
-                            Access to the LUG dashboard is restricted to members with a BITS Pilani email.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex flex-col gap-4">
-                        <Button variant="outline" onClick={signIn}>
-                            <GoogleIcon />
-                            Sign in with Google
-                        </Button>
-                        <p className="text-xs text-center text-muted-foreground">
-                            By signing in, you agree to our terms of service.
-                        </p>
-                    </CardContent>
-                </Card>
-            </div>
-        );
-    }
-
-    // This is a fallback case, for example, if the redirect to '/profile' is pending.
     return (
-        <div className="flex justify-center items-center h-screen">
-            <Loader2 className="h-8 w-8 animate-spin" />
-            <p className="ml-4 text-muted-foreground">Redirecting...</p>
+        <div className="flex items-center justify-center min-h-[80vh]">
+            <Card className="w-full max-w-sm">
+                <CardHeader className="text-center">
+                    <CardTitle className="text-2xl">Sign In</CardTitle>
+                    <CardDescription>
+                        Access to the LUG dashboard is restricted to members with a BITS Pilani email.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-4">
+                    <Button variant="outline" onClick={signIn}>
+                        <GoogleIcon />
+                        Sign in with Google
+                    </Button>
+                    <p className="text-xs text-center text-muted-foreground">
+                        By signing in, you agree to our terms of service.
+                    </p>
+                </CardContent>
+            </Card>
         </div>
     );
 }

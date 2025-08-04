@@ -5,7 +5,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { onAuthStateChanged, User as FirebaseUser, GoogleAuthProvider, signInWithRedirect, signOut, getRedirectResult } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
-import { doc, setDoc, onSnapshot } from 'firebase/firestore';
+import { doc, setDoc, onSnapshot, DocumentData } from 'firebase/firestore';
 import type { User } from '@/lib/types';
 
 interface AuthContextType {
@@ -29,18 +29,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    // This effect handles the result of a redirect sign-in
-    getRedirectResult(auth)
-      .catch((error) => {
-        // Handle Errors here.
-        console.error("Error getting redirect result:", error);
-      })
-      .finally(() => {
-        // The onAuthStateChanged listener below will handle the user state.
-        // We can consider setting loading to false here if there are issues,
-        // but onAuthStateChanged should be the single source of truth for loading state.
-      });
+    const processAuth = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          // User has just signed in via redirect. The onAuthStateChanged will handle the rest.
+        }
+      } catch (error) {
+        console.error("Error processing redirect result:", error);
+      }
+    };
 
+    processAuth();
+    
     const unsubscribeAuth = onAuthStateChanged(auth, async (authUser) => {
       if (authUser) {
         setUser(authUser);
@@ -88,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = async () => {
-    setLoading(true); // Set loading to true before redirect
+    setLoading(true);
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
       'hd': 'dubai.bits-pilani.ac.in'
@@ -97,7 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await signInWithRedirect(auth, provider);
     } catch (error) {
       console.error("Error during sign-in:", error);
-      setLoading(false); // Set loading to false on error
+      setLoading(false);
     }
   };
 
