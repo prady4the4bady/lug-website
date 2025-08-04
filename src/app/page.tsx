@@ -30,7 +30,7 @@ export default function Home() {
             alt="3D Tux Penguin"
             fill
             className="object-contain"
-            data-ai-hint="3d penguin"
+            data-ai-hint="Tux penguin"
           />
         </div>
       </section>
