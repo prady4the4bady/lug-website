@@ -3,7 +3,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CertificateGenerator } from "@/components/profile/certificate-generator";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import type { Event } from "@/lib/types";
 import { format } from "date-fns";
@@ -14,6 +13,7 @@ import { useEffect, useState } from "react";
 import { collection, onSnapshot, query, where, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { EditProfileForm } from "./edit-profile-form";
+import { Button } from "../ui/button";
 
 // This is just an example. In a real app, you'd fetch events the user has *actually* attended.
 // This might involve a subcollection on the user document or a separate 'attendance' collection.
@@ -67,8 +67,8 @@ export function ProfileTabs() {
                 <TabsList>
                     <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
                     <TabsTrigger value="history">Event History</TabsTrigger>
-                    <TabsTrigger value="certificates">Certificates</TabsTrigger>
                     {isCouncilMember && <TabsTrigger value="edit-profile">Edit Profile</TabsTrigger>}
+                    <TabsTrigger value="certificates">Certificates</TabsTrigger>
                 </TabsList>
             </div>
             <TabsContent value="dashboard">
@@ -134,14 +134,22 @@ export function ProfileTabs() {
                     </CardContent>
                 </Card>
             </TabsContent>
-            <TabsContent value="certificates">
-                <CertificateGenerator events={participatedEvents} userName={userName} />
-            </TabsContent>
             {isCouncilMember && (
                 <TabsContent value="edit-profile">
                     <EditProfileForm user={dbUser} />
                 </TabsContent>
             )}
+            <TabsContent value="certificates">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Event Certificates</CardTitle>
+                        <CardDescription>Download certificates for events you have participated in.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-muted-foreground">Certificate generation is currently unavailable. Please check back later.</p>
+                    </CardContent>
+                </Card>
+            </TabsContent>
         </Tabs>
     );
 }

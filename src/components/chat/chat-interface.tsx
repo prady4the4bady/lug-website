@@ -5,20 +5,21 @@ import { useState, useEffect } from 'react';
 import type { ChatMessage } from '@/lib/types';
 import { ChatMessages } from '@/components/chat/chat-messages';
 import { ChatInput } from '@/components/chat/chat-input';
-import { ImageTagger } from '@/components/chat/image-tagger';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ImageIcon } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { db, storage } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
+import { Button } from '../ui/button';
+import Image from 'next/image';
+import { Loader2 } from 'lucide-react';
 
 export function ChatInterface() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [imageDataUri, setImageDataUri] = useState<string | null>(null);
   const { user } = useAuth();
   const router = useRouter();
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     const q = query(collection(db, "messages"), orderBy("timestamp", "asc"));
@@ -54,57 +55,42 @@ export function ChatInterface() {
     });
   };
   
-  const handleImageSelect = (dataUri: string) => {
+  const handleImageUpload = async (imageDataUri: string) => {
     if (!user) {
       router.push('/signin');
       return;
     }
-    setImageDataUri(dataUri);
-  }
-  
-  const handleImageUpload = async (tags: string[]) => {
-    if (!user || !imageDataUri) {
-      router.push('/signin');
-      return;
-    }
-
+    setUploading(true);
+    
     const storageRef = ref(storage, `chat-images/${Date.now()}`);
     const uploadResult = await uploadString(storageRef, imageDataUri, 'data_url');
     const downloadURL = await getDownloadURL(uploadResult.ref);
 
     await addDoc(collection(db, "messages"), {
-      text: `Uploaded an image with tags: ${tags.join(', ')}`,
+      text: `Uploaded an image.`,
       user: user.displayName || 'You',
       avatarUrl: user.photoURL || 'https://placehold.co/40x40.png',
       timestamp: serverTimestamp(),
       imageUrl: downloadURL,
     });
     
-    setImageDataUri(null);
+    setUploading(false);
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <Card className="lg:col-span-2 flex flex-col h-[70vh]">
-        <CardHeader>
-          <CardTitle>Forum Chat</CardTitle>
-          <CardDescription>Real-time discussion with club members.</CardDescription>
-        </CardHeader>
-        <ChatMessages messages={messages} />
-        <ChatInput onSendMessage={handleSendMessage} onImageSelect={handleImageSelect} />
-      </Card>
-      <div className="lg:col-span-1">
-        {imageDataUri ? (
-            <ImageTagger imageDataUri={imageDataUri} onUpload={handleImageUpload} />
-        ) : (
-            <Card className="h-full flex items-center justify-center bg-muted/30 border-dashed">
-                <CardContent className="text-center">
-                    <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <p className="mt-4 text-muted-foreground">Select an image to see AI-powered tag suggestions.</p>
-                </CardContent>
-            </Card>
-        )}
-      </div>
-    </div>
+    <Card className="flex flex-col h-[70vh]">
+      <CardHeader>
+        <CardTitle>Forum Chat</CardTitle>
+        <CardDescription>Real-time discussion with club members.</CardDescription>
+      </CardHeader>
+      <ChatMessages messages={messages} />
+      {uploading && (
+        <div className="flex items-center justify-center p-4 border-t">
+          <Loader2 className="h-5 w-5 animate-spin mr-2" />
+          <span>Uploading...</span>
+        </div>
+      )}
+      <ChatInput onSendMessage={handleSendMessage} onImageSelect={handleImageUpload} disabled={uploading} />
+    </Card>
   );
 }
