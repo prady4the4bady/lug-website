@@ -1,38 +1,27 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Helper function to check if a user is an admin
-    function isAdmin() {
-      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
-    }
 
-    // Users can be read by any authenticated user, but only modified by themselves or an admin.
-    // New users can create their own document.
-    match /users/{userId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update: if request.auth.uid == userId || isAdmin();
-      allow delete: if isAdmin();
-    }
-    
-    // Events can be read by anyone. They can only be created, updated, or deleted by an admin.
+    // Allow public read access for events
     match /events/{eventId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if request.auth.token.admin == true;
     }
-    
-    // Messages can be read by any authenticated user.
-    // Users can create their own messages.
-    // Admins can delete any message.
+
+    // Users can read all user profiles, but only write to their own (or if admin)
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == userId || request.auth.token.admin == true;
+    }
+
+    // Authenticated users can read/create messages, but only admins can delete.
+    // Users cannot edit existing messages.
     match /messages/{messageId} {
       allow read: if request.auth != null;
       allow create: if request.auth != null;
-      allow update: if false; // Messages are immutable
-      allow delete: if isAdmin();
+      allow update: if false; // Prevent users from editing messages
+      allow delete: if request.auth.token.admin == true;
     }
   }
 }
