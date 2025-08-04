@@ -3,6 +3,9 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { Header } from "@/components/layout/header";
+import { Button } from '@/components/ui/button';
+import { Bug } from 'lucide-react';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Linux User Group - BITS Pilani Dubai',
@@ -26,6 +29,16 @@ export default function RootLayout({
           <div className="relative flex min-h-screen flex-col">
             <Header />
             <main className="flex-1">{children}</main>
+            <Button
+              asChild
+              className="fixed bottom-4 left-4 bg-red-600 hover:bg-red-700 text-white shadow-lg"
+              aria-label="Report a bug"
+            >
+              <Link href="https://lug.im/bugs" target="_blank">
+                <Bug className="mr-2 h-4 w-4" />
+                Report a Bug
+              </Link>
+            </Button>
           </div>
           <Toaster />
         </ThemeProvider>

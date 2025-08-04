@@ -91,11 +91,6 @@ export function Header() {
             <ThemeToggle />
             <div className="hidden md:flex items-center gap-2">
               <TerminalViewToggle />
-              <Button asChild variant="ghost" size="icon" aria-label="Report a bug">
-                  <a href="https://lug.im/bugs" target="_blank">
-                      <Bug/>
-                  </a>
-              </Button>
             </div>
             <Button variant="secondary" className="ml-2">Sign In</Button>
           </nav>
