@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Rocket, Code, Users } from "lucide-react";
+import Link from "next/link";
 
 function Tux3DModel() {
   return (
@@ -36,8 +37,8 @@ export default function Home() {
           <p className="text-base text-foreground/80 max-w-lg mx-auto lg:mx-0">
             A community of open-source enthusiasts, developers, and innovators. Explore the world of Linux and FOSS with us.
           </p>
-          <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg px-8 py-6">
-            Get Started
+          <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg px-8 py-6" asChild>
+            <Link href="/signin">Get Started</Link>
           </Button>
         </div>
         <Tux3DModel />

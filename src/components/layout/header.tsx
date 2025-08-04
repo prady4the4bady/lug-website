@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ThemeToggle } from "./theme-toggle"
-import { Menu, Mountain, TerminalIcon } from "lucide-react"
+import { Menu, Mountain, TerminalIcon, Bug } from "lucide-react"
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -88,7 +88,9 @@ export function Header() {
              {/* Future search bar can go here */}
           </div>
           <nav className="flex items-center gap-2">
-            <Button variant="secondary" className="ml-2">Sign In</Button>
+            <Button variant="secondary" className="ml-2" asChild>
+                <Link href="/signin">Sign In</Link>
+            </Button>
             <Button variant="outline" size="sm" asChild>
                 <Link href="https://lug12.netlify.app/" target="_blank" rel="noopener noreferrer">
                     <TerminalIcon className="h-4 w-4 mr-2"/>
