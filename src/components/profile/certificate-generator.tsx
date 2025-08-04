@@ -45,7 +45,7 @@ export function CertificateGenerator({ events, userName }: CertificateGeneratorP
 
       const link = document.createElement('a');
       link.href = result.certificateDataUri;
-      const fileExtension = result.certificateDataUri.split(';')[0].split('/')[1] || 'png';
+      const fileExtension = result.certificateDataUri.split(';')[0].split('/')[1]?.split('+')[0] || 'svg';
       link.download = `Certificate_${event.title.replace(/\s/g, '_')}.${fileExtension}`;
       document.body.appendChild(link);
       link.click();
