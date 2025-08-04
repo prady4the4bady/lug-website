@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { ThemeToggle } from "./theme-toggle"
+import { ThemeToggle, TerminalViewToggle } from "./theme-toggle"
 import { Menu, Mountain } from "lucide-react"
 
 export function Header() {
@@ -87,8 +87,11 @@ export function Header() {
           <div className="w-full flex-1 md:w-auto md:flex-none">
              {/* Future search bar can go here */}
           </div>
-          <nav className="flex items-center">
+          <nav className="flex items-center gap-4">
             <ThemeToggle />
+            <div className="hidden md:flex">
+              <TerminalViewToggle />
+            </div>
             <Button variant="secondary" className="ml-2">Sign In</Button>
           </nav>
         </div>

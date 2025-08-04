@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, useMemo } from "react"
 
-type Theme = "light" | "dark" | "terminal"
+type Theme = "light" | "dark"
 
 type ThemeProviderProps = {
   children: React.ReactNode
@@ -13,11 +13,15 @@ type ThemeProviderProps = {
 type ThemeProviderState = {
   theme: Theme
   setTheme: (theme: Theme) => void
+  isTerminal: boolean
+  setIsTerminal: (isTerminal: boolean) => void
 }
 
 const initialState: ThemeProviderState = {
   theme: "light",
   setTheme: () => null,
+  isTerminal: false,
+  setIsTerminal: () => null,
 }
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
@@ -25,10 +29,12 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 export function ThemeProvider({
   children,
   defaultTheme = "light",
-  storageKey = "ui-theme",
+  storageKey = "lug-theme",
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(defaultTheme);
+  const [isTerminal, setIsTerminal] = useState(false);
+
 
   useEffect(() => {
     try {
@@ -36,6 +42,8 @@ export function ThemeProvider({
       if (storedTheme) {
         setTheme(storedTheme);
       }
+      const storedTerminal = localStorage.getItem(`${storageKey}-terminal`) === 'true';
+      setIsTerminal(storedTerminal);
     } catch (e) {
       // Ignore localStorage errors
     }
@@ -45,15 +53,13 @@ export function ThemeProvider({
     const root = window.document.documentElement
     root.classList.remove("light", "dark", "terminal")
     
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches ? "dark" : "light"
-      root.classList.add(systemTheme)
-      return
+    if(isTerminal) {
+      root.classList.add("terminal");
+    } else {
+      root.classList.add(theme)
     }
 
-    root.classList.add(theme)
-  }, [theme])
+  }, [theme, isTerminal])
 
   const value = useMemo(() => ({
     theme,
@@ -65,7 +71,16 @@ export function ThemeProvider({
       }
       setTheme(newTheme)
     },
-  }), [theme, storageKey]);
+    isTerminal,
+    setIsTerminal: (newIsTerminal: boolean) => {
+      try {
+        localStorage.setItem(`${storageKey}-terminal`, String(newIsTerminal));
+      } catch (e) {
+        // Ignore localStorage errors
+      }
+      setIsTerminal(newIsTerminal);
+    }
+  }), [theme, storageKey, isTerminal]);
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>
