@@ -3,11 +3,12 @@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { ChatMessage } from "@/lib/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { formatDistanceToNow } from "date-fns";
+import { format, isToday, isYesterday, formatDistanceToNow } from "date-fns";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { Separator } from "../ui/separator";
 
 function ChatMessageItem({ message }: { message: ChatMessage }) {
   const [isClient, setIsClient] = useState(false);
@@ -43,15 +44,51 @@ function ChatMessageItem({ message }: { message: ChatMessage }) {
   );
 }
 
+function DateSeparator({ date }: { date: Date }) {
+    const formatDate = (date: Date) => {
+        if (isToday(date)) return "Today";
+        if (isYesterday(date)) return "Yesterday";
+        return format(date, "MMMM d, yyyy");
+    };
+
+    return (
+        <div className="relative my-4">
+            <Separator />
+            <div className="absolute inset-0 flex items-center justify-center">
+                <span className="bg-background px-2 text-xs text-muted-foreground">
+                    {formatDate(date)}
+                </span>
+            </div>
+        </div>
+    );
+}
 
 export function ChatMessages({ messages }: { messages: ChatMessage[] }) {
-  return (
-    <ScrollArea className="flex-1 p-4">
-      <div className="space-y-6">
-        {messages.map((message) => (
-          <ChatMessageItem key={message.id} message={message} />
-        ))}
-      </div>
-    </ScrollArea>
-  );
+    const renderMessagesWithSeparators = () => {
+        let lastDate: string | null = null;
+        return messages.map((message, index) => {
+            if (!message.timestamp) return <ChatMessageItem key={message.id} message={message} />;
+
+            const messageDate = message.timestamp.toDate().toDateString();
+            const showSeparator = messageDate !== lastDate;
+            lastDate = messageDate;
+
+            return (
+                <Fragment key={message.id}>
+                    {showSeparator && (
+                        <DateSeparator date={message.timestamp.toDate()} />
+                    )}
+                    <ChatMessageItem message={message} />
+                </Fragment>
+            );
+        });
+    };
+
+    return (
+        <ScrollArea className="flex-1 p-4">
+            <div className="space-y-6">
+                {renderMessagesWithSeparators()}
+            </div>
+        </ScrollArea>
+    );
 }
