@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,18 +9,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { Event } from '@/lib/types';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { Trash2, Edit } from 'lucide-react';
-
-const mockEvents: Event[] = [
-  { id: "1", title: "Intro to Linux Workshop", description: "Learn the basics of the Linux command line.", date: new Date(new Date().setDate(new Date().getDate() + 2))},
-  { id: "2", title: "Python Scripting Session", description: "Automate tasks with Python scripts.", date: new Date(new Date().setDate(new Date().getDate() + 7))},
-  { id: "3", title: "Guest Talk: DevOps with Kubernetes", description: "An industry expert shares insights.", date: new Date(new Date().setDate(new Date().getDate() + 7))},
-  { id: "4", title: "Arch Linux Install Fest", description: "Install Arch Linux with help from experienced users.", date: new Date(new Date().setDate(new Date().getDate() + 15))},
-];
+import { db } from '@/lib/firebase';
+import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, Timestamp } from 'firebase/firestore';
 
 export function EventManager() {
-    const [events, setEvents] = useState<Event[]>(mockEvents);
+    const [events, setEvents] = useState<Event[]>([]);
     const [editingEvent, setEditingEvent] = useState<Event | null>(null);
 
     const [title, setTitle] = useState('');
@@ -28,11 +23,28 @@ export function EventManager() {
     const [date, setDate] = useState('');
     const [link, setLink] = useState('');
 
+    useEffect(() => {
+        const q = query(collection(db, "events"), orderBy("date", "desc"));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const eventsData = snapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    ...data,
+                    date: (data.date as Timestamp).toDate(),
+                } as Event;
+            });
+            setEvents(eventsData);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
     const handleEditClick = (event: Event) => {
         setEditingEvent(event);
         setTitle(event.title);
         setDescription(event.description);
-        const formattedDate = event.date ? format(new Date(event.date), "yyyy-MM-dd'T'HH:mm") : '';
+        const formattedDate = event.date ? new Date(event.date).toISOString().slice(0, 16) : '';
         setDate(formattedDate);
         setLink(event.link || '');
     };
@@ -45,35 +57,30 @@ export function EventManager() {
         setEditingEvent(null);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!title || !description || !date) {
             alert("Please fill in all required fields.");
             return;
         }
 
+        const eventData = {
+            title,
+            description,
+            date: new Date(date),
+            link,
+        };
+
         if (editingEvent) {
-            // Update event
-            setEvents(events.map(event =>
-                event.id === editingEvent.id
-                    ? { ...event, title, description, date: parseISO(date), link }
-                    : event
-            ));
+            const eventDocRef = doc(db, "events", editingEvent.id);
+            await updateDoc(eventDocRef, eventData);
         } else {
-            // Create new event
-            const newEvent: Event = {
-                id: (events.length + 1).toString(),
-                title,
-                description,
-                date: parseISO(date),
-                link,
-            };
-            setEvents([...events, newEvent]);
+            await addDoc(collection(db, "events"), eventData);
         }
         clearForm();
     };
 
-    const handleDelete = (eventId: string) => {
-        setEvents(events.filter(event => event.id !== eventId));
+    const handleDelete = async (eventId: string) => {
+        await deleteDoc(doc(db, "events", eventId));
     };
 
     return (

@@ -10,7 +10,7 @@ import { X } from "lucide-react";
 interface CouncilCardProps {
   member: CouncilMember;
   isAdmin: boolean;
-  onDelete: (name: string) => void;
+  onDelete: (id: string) => void;
 }
 
 export function CouncilCard({ member, isAdmin, onDelete }: CouncilCardProps) {
@@ -21,7 +21,7 @@ export function CouncilCard({ member, isAdmin, onDelete }: CouncilCardProps) {
           variant="ghost"
           size="icon"
           className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-          onClick={() => onDelete(member.name)}
+          onClick={() => onDelete(member.id!)}
         >
           <X className="h-4 w-4" />
           <span className="sr-only">Remove member</span>

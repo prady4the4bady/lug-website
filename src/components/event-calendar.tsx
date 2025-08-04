@@ -1,27 +1,40 @@
 "use client"
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { Event } from "@/lib/types";
 import { format } from "date-fns";
-import { ExternalLink } from "lucide-react";
-
-// Mock data
-const mockEvents: Event[] = [
-  { id: "1", title: "Intro to Linux Workshop", description: "Learn the basics of the Linux command line.", date: new Date(new Date().setDate(new Date().getDate() + 2)), link: "#" },
-  { id: "2", title: "Python Scripting Session", description: "Automate tasks with Python scripts.", date: new Date(new Date().setDate(new Date().getDate() + 7)), link: "#" },
-  { id: "3", title: "Guest Talk: DevOps with Kubernetes", description: "An industry expert shares insights.", date: new Date(new Date().setDate(new Date().getDate() + 7)), link: "#" },
-  { id: "4", title: "Arch Linux Install Fest", description: "Install Arch Linux with help from experienced users.", date: new Date(new Date().setDate(new Date().getDate() + 15)), link: "#" },
-];
+import { ExternalLink, Loader2 } from "lucide-react";
+import { db } from "@/lib/firebase";
+import { collection, onSnapshot, query, orderBy, Timestamp } from "firebase/firestore";
 
 export function EventCalendar() {
   const [date, setDate] = useState<Date | undefined>(new Date());
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const q = query(collection(db, "events"), orderBy("date", "desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const eventsData = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return { 
+          id: doc.id, 
+          ...data,
+          date: (data.date as Timestamp).toDate()
+        } as Event
+      });
+      setEvents(eventsData);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
 
   const eventsForSelectedDay = date
-    ? mockEvents.filter(event => format(event.date, "yyyy-MM-dd") === format(date, "yyyy-MM-dd"))
+    ? events.filter(event => format(event.date, "yyyy-MM-dd") === format(date, "yyyy-MM-dd"))
     : [];
 
   return (
@@ -35,7 +48,7 @@ export function EventCalendar() {
               onSelect={setDate}
               className="p-3"
               modifiers={{
-                events: mockEvents.map(e => e.date)
+                events: events.map(e => e.date)
               }}
               modifiersStyles={{
                 events: {
@@ -52,7 +65,11 @@ export function EventCalendar() {
           Events on {date ? format(date, "MMMM d, yyyy") : "..."}
         </h2>
         <div className="space-y-4">
-          {eventsForSelectedDay.length > 0 ? (
+          {loading ? (
+             <div className="flex justify-center items-center h-40">
+                <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          ) : eventsForSelectedDay.length > 0 ? (
             eventsForSelectedDay.map(event => (
               <Card key={event.id}>
                 <CardHeader>

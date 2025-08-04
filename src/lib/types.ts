@@ -1,7 +1,9 @@
 export type CouncilMember = {
+  id?: string;
   role: string;
   name: string;
   imageUrl: string;
+  department: string;
   vacant?: boolean;
 };
 
@@ -21,3 +23,4 @@ export type ChatMessage = {
   timestamp: Date;
   imageUrl?: string;
 };
+

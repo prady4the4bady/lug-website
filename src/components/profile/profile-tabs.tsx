@@ -9,17 +9,45 @@ import { format } from "date-fns";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/hooks/use-auth";
 import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { collection, onSnapshot, query, where, Timestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
-const participatedEvents: Event[] = [
-  { id: "1", title: "Intro to Linux Workshop", description: "Learned the basics of the Linux command line.", date: new Date(2023, 10, 15) },
-  { id: "2", title: "Python Scripting Session", description: "Automated tasks with Python scripts.", date: new Date(2023, 9, 20) },
-];
+// This is just an example. In a real app, you'd fetch events the user has *actually* attended.
+// This might involve a subcollection on the user document or a separate 'attendance' collection.
+// For now, we'll just fetch all events and pretend the user attended them for demonstration.
+const useParticipatedEvents = () => {
+    const [events, setEvents] = useState<Event[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        // In a real app, you would query based on the logged-in user's ID
+        const q = query(collection(db, "events")); 
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const eventsData = snapshot.docs.map(doc => {
+                 const data = doc.data();
+                return {
+                    id: doc.id,
+                    ...data,
+                    date: (data.date as Timestamp).toDate(),
+                } as Event
+            });
+            setEvents(eventsData);
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    return { events, loading: loading };
+}
 
 
 export function ProfileTabs() {
-    const { user, loading } = useAuth();
+    const { user, loading: authLoading } = useAuth();
+    const { events: participatedEvents, loading: eventsLoading } = useParticipatedEvents();
 
-    if (loading) {
+    if (authLoading || eventsLoading) {
         return (
           <div className="flex justify-center items-center h-40">
             <Loader2 className="h-8 w-8 animate-spin" />

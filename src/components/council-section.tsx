@@ -2,20 +2,15 @@
 
 import { CouncilCard } from "@/components/council-card";
 import type { CouncilMember } from "@/lib/types";
-import { useState } from "react";
 
 interface CouncilSectionProps {
   title?: string;
   members: CouncilMember[];
   isAdmin: boolean;
+  onDelete: (memberId: string) => void;
 }
 
-export function CouncilSection({ title, members: initialMembers, isAdmin }: CouncilSectionProps) {
-  const [members, setMembers] = useState(initialMembers);
-
-  const handleDeleteMember = (memberName: string) => {
-    setMembers(members.filter(member => member.name !== memberName));
-  };
+export function CouncilSection({ title, members, isAdmin, onDelete }: CouncilSectionProps) {
 
   return (
     <section>
@@ -23,10 +18,10 @@ export function CouncilSection({ title, members: initialMembers, isAdmin }: Coun
       <div className="flex flex-wrap gap-8 justify-center">
         {members.map((member) => (
           <CouncilCard
-            key={member.name}
+            key={member.id}
             member={member}
             isAdmin={isAdmin}
-            onDelete={handleDeleteMember}
+            onDelete={() => onDelete(member.id!)}
           />
         ))}
       </div>
