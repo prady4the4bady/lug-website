@@ -104,13 +104,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await processAuth(result.user);
         router.push('/profile');
       }
-    } catch (error) {
-        console.error("Error during sign-in:", error);
-        toast({
-          title: "Sign-in Failed",
-          description: "There was a problem signing you in with Google. Please try again.",
-          variant: "destructive"
-        });
+    } catch (error: any) {
+        if (error.code === 'auth/popup-blocked') {
+            toast({
+              title: "Pop-up Blocked",
+              description: "Your browser blocked the sign-in pop-up. Please allow pop-ups for this site and try again.",
+              variant: "destructive"
+            });
+        } else {
+            console.error("Error during sign-in:", error);
+            toast({
+              title: "Sign-in Failed",
+              description: "There was a problem signing you in with Google. Please try again.",
+              variant: "destructive"
+            });
+        }
     } finally {
         setLoading(false);
     }
