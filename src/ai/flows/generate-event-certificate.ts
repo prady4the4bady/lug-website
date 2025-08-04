@@ -18,7 +18,8 @@ const GenerateEventCertificateInputSchema = z.object({
   certificateTemplate: z
     .string()
     .describe(
-      'The certificate template as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'    ),
+      'The certificate template as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'
+    ),
 });
 export type GenerateEventCertificateInput = z.infer<typeof GenerateEventCertificateInputSchema>;
 
@@ -26,7 +27,8 @@ const GenerateEventCertificateOutputSchema = z.object({
   certificateDataUri: z
     .string()
     .describe(
-      'The generated certificate as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'    ),
+      'The generated certificate as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:image/png;base64,<encoded_data>\'.'
+    ),
 });
 export type GenerateEventCertificateOutput = z.infer<typeof GenerateEventCertificateOutputSchema>;
 
@@ -40,18 +42,20 @@ const prompt = ai.definePrompt({
   name: 'generateEventCertificatePrompt',
   input: {schema: GenerateEventCertificateInputSchema},
   output: {schema: GenerateEventCertificateOutputSchema},
-  prompt: `You are an expert certificate generator.
+  prompt: `You are an expert certificate designer.
 
-You will take the provided certificate template and fill in the user's name, event name, and event date.
+You will take the provided SVG certificate template and fill in the user's name, event name, and event date in the designated placeholder fields (USER_NAME_HERE, EVENT_NAME_HERE, EVENT_DATE_HERE).
 
-Return the generated certificate as a data URI with base64 encoding.
+Replace the placeholder text in the SVG with the provided information. Do not change the styling or layout of the SVG.
+
+Return the modified certificate as a PNG image, encoded as a data URI.
 
 User Name: {{{userName}}}
 Event Name: {{{eventName}}}
 Event Date: {{{eventDate}}}
 Certificate Template: {{media url=certificateTemplate}}
 
-Ensure that the generated certificate is a valid PDF format.
+The output must be a valid PNG data URI.
 `,
 });
 
