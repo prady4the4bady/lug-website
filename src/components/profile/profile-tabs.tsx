@@ -63,12 +63,14 @@ export function ProfileTabs() {
 
     return (
         <Tabs defaultValue="dashboard" className="w-full">
-            <TabsList className={`grid w-full grid-cols-${isCouncilMember ? 4 : 3}`}>
-                <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-                <TabsTrigger value="history">Event History</TabsTrigger>
-                <TabsTrigger value="certificates">Certificates</TabsTrigger>
-                {isCouncilMember && <TabsTrigger value="edit-profile">Edit Profile</TabsTrigger>}
-            </TabsList>
+            <div className="flex justify-center">
+                <TabsList>
+                    <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+                    <TabsTrigger value="history">Event History</TabsTrigger>
+                    <TabsTrigger value="certificates">Certificates</TabsTrigger>
+                    {isCouncilMember && <TabsTrigger value="edit-profile">Edit Profile</TabsTrigger>}
+                </TabsList>
+            </div>
             <TabsContent value="dashboard">
                 <Card>
                     <CardHeader>
