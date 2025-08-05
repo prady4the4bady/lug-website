@@ -6,27 +6,30 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/com
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartBar, RechartsPrimitive } from "@/components/ui/chart";
 import { db } from '@/lib/firebase';
 import { collection, onSnapshot, query, orderBy, Timestamp } from 'firebase/firestore';
-import { format, subDays, startOfMonth, endOfMonth, eachDayOfInterval } from 'date-fns';
+import { format, subDays, startOfDay } from 'date-fns';
 import type { User, Event, ChatMessage } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 
 const aggregateDataByDay = (items: { createdAt?: Timestamp }[] | { date: Timestamp }[] | { timestamp: Timestamp | null }[], dateKey: 'createdAt' | 'date' | 'timestamp') => {
-    const now = new Date();
-    const last30Days = eachDayOfInterval({ start: subDays(now, 29), end: now });
-    
-    const dailyCounts = last30Days.reduce((acc, day) => {
-        acc[format(day, 'MMM d')] = 0;
-        return acc;
-    }, {} as Record<string, number>);
+    const dailyCounts: Record<string, number> = {};
+    const today = startOfDay(new Date());
+
+    for (let i = 29; i >= 0; i--) {
+        const day = subDays(today, i);
+        const dayStr = format(day, 'MMM d');
+        dailyCounts[dayStr] = 0;
+    }
 
     items.forEach(item => {
         // @ts-ignore
         const itemTimestamp = item[dateKey];
         if (itemTimestamp) {
             const itemDate = itemTimestamp.toDate();
-            const dayStr = format(itemDate, 'MMM d');
-            if (dayStr in dailyCounts) {
-                dailyCounts[dayStr]++;
+            if (itemDate >= subDays(today, 29)) {
+              const dayStr = format(itemDate, 'MMM d');
+              if (dayStr in dailyCounts) {
+                  dailyCounts[dayStr]++;
+              }
             }
         }
     });
@@ -91,7 +94,7 @@ export function AdminAnalytics() {
                 <CardContent>
                     <ChartContainer config={chartConfig} className="h-64">
                         <RechartsPrimitive.BarChart data={userChartData}>
-                           <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} interval={6} />
+                           <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value.split(' ')[1]} interval={6} />
                            <RechartsPrimitive.YAxis domain={[0, 1000]} ticks={[0, 250, 500, 750, 1000]} />
                            <ChartTooltip content={<ChartTooltipContent />} />
                            <ChartBar dataKey="count" fill="var(--color-count)" radius={4} />
@@ -107,7 +110,7 @@ export function AdminAnalytics() {
                 <CardContent>
                     <ChartContainer config={chartConfig} className="h-64">
                         <RechartsPrimitive.BarChart data={eventChartData}>
-                           <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} interval={6} />
+                           <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value.split(' ')[1]} interval={6} />
                            <RechartsPrimitive.YAxis domain={[0, 20]} ticks={[0, 5, 10, 15, 20]} />
                            <ChartTooltip content={<ChartTooltipContent />} />
                            <ChartBar dataKey="count" fill="var(--color-count)" radius={4} />
@@ -123,7 +126,7 @@ export function AdminAnalytics() {
                 <CardContent>
                     <ChartContainer config={chartConfig} className="h-64">
                         <RechartsPrimitive.BarChart data={messageChartData}>
-                           <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} interval={6} />
+                           <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value.split(' ')[1]} interval={6} />
                            <RechartsPrimitive.YAxis domain={[0, 1000]} ticks={[0, 250, 500, 750, 1000]} />
                            <ChartTooltip content={<ChartTooltipContent />} />
                            <ChartBar dataKey="count" fill="var(--color-count)" radius={4} />
