@@ -8,14 +8,18 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { ThemeToggle } from "./theme-toggle"
-import { Menu, TerminalIcon, LogOut } from "lucide-react"
+import { Menu, TerminalIcon, LogOut, Moon, Sun } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import Image from "next/image"
+import { useTheme } from "./theme-provider"
+import { Switch } from "../ui/switch"
+import { Label } from "../ui/label"
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
-  const { user, isAdmin, signIn, signOutUser } = useAuth();
+  const { user, isAdmin, signOutUser } = useAuth();
+  const { isTerminal, setIsTerminal } = useTheme();
 
   const navLinks = [
     { href: "/about", label: "About" },
@@ -111,12 +115,11 @@ export function Header() {
                 <Link href="/signin">Sign In</Link>
               </Button>
             )}
-            <Button variant="outline" size="sm" asChild>
-                <Link href="https://lug12.netlify.app/" target="_blank" rel="noopener noreferrer">
-                    <TerminalIcon className="h-4 w-4 mr-2"/>
-                    <span>Terminal View</span>
-                </Link>
-            </Button>
+            <div className="flex items-center gap-2">
+              <Label htmlFor="terminal-mode" className="sr-only">Terminal Mode</Label>
+              <Switch id="terminal-mode" checked={isTerminal} onCheckedChange={setIsTerminal} />
+              <TerminalIcon className="h-4 w-4" />
+            </div>
             <ThemeToggle />
           </nav>
         </div>
