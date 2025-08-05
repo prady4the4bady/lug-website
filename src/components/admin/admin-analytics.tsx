@@ -14,8 +14,8 @@ const aggregateDataByMonth = (items: { createdAt?: Timestamp }[] | { date: Times
     const monthlyCounts: Record<string, number> = {};
     const now = new Date();
     
-    // Initialize the last 3 months
-    for (let i = 2; i >= 0; i--) {
+    // Initialize the last 5 months
+    for (let i = 4; i >= 0; i--) {
         const month = subMonths(now, i);
         const monthStr = format(month, 'MMM');
         monthlyCounts[monthStr] = 0;
@@ -26,10 +26,10 @@ const aggregateDataByMonth = (items: { createdAt?: Timestamp }[] | { date: Times
         const itemTimestamp = item[dateKey];
         if (itemTimestamp) {
             const itemDate = itemTimestamp.toDate();
-            const threeMonthsAgo = startOfMonth(subMonths(now, 2));
+            const fiveMonthsAgo = startOfMonth(subMonths(now, 4));
             const endOfThisMonth = endOfMonth(now);
 
-            if (isWithinInterval(itemDate, { start: threeMonthsAgo, end: endOfThisMonth })) {
+            if (isWithinInterval(itemDate, { start: fiveMonthsAgo, end: endOfThisMonth })) {
                 const monthStr = format(itemDate, 'MMM');
                 if (monthStr in monthlyCounts) {
                     monthlyCounts[monthStr]++;
@@ -97,7 +97,7 @@ export function AdminAnalytics() {
             <Card className="lg:col-span-1">
                 <CardHeader>
                     <CardTitle>New Users</CardTitle>
-                    <CardDescription>Sign-ups over the last 3 months.</CardDescription>
+                    <CardDescription>Sign-ups over the last 5 months.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <ChartContainer config={chartConfig} className="h-64">
@@ -113,7 +113,7 @@ export function AdminAnalytics() {
             <Card className="lg:col-span-1">
                 <CardHeader>
                     <CardTitle>Events Created</CardTitle>
-                    <CardDescription>Events scheduled over the last 3 months.</CardDescription>
+                    <CardDescription>Events scheduled over the last 5 months.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <ChartContainer config={chartConfig} className="h-64">
@@ -129,7 +129,7 @@ export function AdminAnalytics() {
             <Card className="lg:col-span-1">
                 <CardHeader>
                     <CardTitle>Forum Activity</CardTitle>
-                    <CardDescription>Messages posted over the last 3 months.</CardDescription>
+                    <CardDescription>Messages posted over the last 5 months.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <ChartContainer config={chartConfig} className="h-64">
