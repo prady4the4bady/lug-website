@@ -48,7 +48,8 @@ const reportBugFlow = ai.defineFlow(
     outputSchema: ReportBugOutputSchema,
   },
   async (input) => {
-    const { category } = await categorizationPrompt({ description: input.description });
+    const { output } = await categorizationPrompt({ description: input.description });
+    const category = output?.category || 'Other';
     
     const newReportRef = doc(collection(db, 'reports'));
     
