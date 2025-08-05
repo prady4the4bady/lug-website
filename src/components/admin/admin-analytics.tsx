@@ -92,7 +92,7 @@ export function AdminAnalytics() {
                     <ChartContainer config={chartConfig} className="h-64">
                         <RechartsPrimitive.BarChart data={userChartData}>
                            <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} interval={6} />
-                           <RechartsPrimitive.YAxis />
+                           <RechartsPrimitive.YAxis domain={[0, 250]} />
                            <ChartTooltip content={<ChartTooltipContent />} />
                            <ChartBar dataKey="count" fill="var(--color-count)" radius={4} />
                         </RechartsPrimitive.BarChart>
@@ -108,7 +108,7 @@ export function AdminAnalytics() {
                     <ChartContainer config={chartConfig} className="h-64">
                         <RechartsPrimitive.BarChart data={eventChartData}>
                            <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} interval={6} />
-                           <RechartsPrimitive.YAxis />
+                           <RechartsPrimitive.YAxis domain={[0, 250]} />
                            <ChartTooltip content={<ChartTooltipContent />} />
                            <ChartBar dataKey="count" fill="var(--color-count)" radius={4} />
                         </RechartsPrimitive.BarChart>
@@ -124,7 +124,7 @@ export function AdminAnalytics() {
                     <ChartContainer config={chartConfig} className="h-64">
                         <RechartsPrimitive.BarChart data={messageChartData}>
                            <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} interval={6} />
-                           <RechartsPrimitive.YAxis />
+                           <RechartsPrimitive.YAxis domain={[0, 250]} />
                            <ChartTooltip content={<ChartTooltipContent />} />
                            <ChartBar dataKey="count" fill="var(--color-count)" radius={4} />
                         </RechartsPrimitive.BarChart>
