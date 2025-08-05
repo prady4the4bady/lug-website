@@ -12,6 +12,35 @@ interface ChatInputProps {
   disabled?: boolean;
 }
 
+const compressImage = (file: File, maxWidth: number = 1080, quality: number = 0.7): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target?.result as string;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const scaleRatio = maxWidth / img.width;
+                const width = img.width > maxWidth ? maxWidth : img.width;
+                const height = img.width > maxWidth ? img.height * scaleRatio : img.height;
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) {
+                    return reject(new Error('Could not get canvas context'));
+                }
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL(file.type, quality));
+            };
+            img.onerror = (error) => reject(error);
+        };
+        reader.onerror = (error) => reject(error);
+    });
+};
+
+
 export function ChatInput({ onSendMessage, onFileSelect, disabled }: ChatInputProps) {
   const [text, setText] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -23,17 +52,30 @@ export function ChatInput({ onSendMessage, onFileSelect, disabled }: ChatInputPr
     }
   };
   
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        onFileSelect(e.target?.result as string, file);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
+      if (file.type.startsWith('image/')) {
+        try {
+            const compressedDataUri = await compressImage(file);
+            onFileSelect(compressedDataUri, file);
+        } catch (error) {
+            
+            // Fallback to original file if compression fails
+            const reader = new FileReader();
+            reader.onload = (e) => onFileSelect(e.target?.result as string, file);
+            reader.readAsDataURL(file);
         }
-      };
-      reader.readAsDataURL(file);
+      } else {
+        // For non-image files like videos, don't compress
+        const reader = new FileReader();
+        reader.onload = (e) => onFileSelect(e.target?.result as string, file);
+        reader.readAsDataURL(file);
+      }
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
