@@ -27,8 +27,9 @@ const aggregateDataByMonth = (items: { createdAt?: Timestamp }[] | { date: Times
         if (itemTimestamp) {
             const itemDate = itemTimestamp.toDate();
             const threeMonthsAgo = startOfMonth(subMonths(now, 2));
+            const endOfThisMonth = endOfMonth(now);
 
-            if (itemDate >= threeMonthsAgo) {
+            if (isWithinInterval(itemDate, { start: threeMonthsAgo, end: endOfThisMonth })) {
                 const monthStr = format(itemDate, 'MMM');
                 if (monthStr in monthlyCounts) {
                     monthlyCounts[monthStr]++;
