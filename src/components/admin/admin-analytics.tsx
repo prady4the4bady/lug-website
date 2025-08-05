@@ -5,19 +5,20 @@ import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartBar, RechartsPrimitive } from "@/components/ui/chart";
 import { db } from '@/lib/firebase';
-import { collection, onSnapshot, query, orderBy, Timestamp } from 'firebase/firestore';
-import { format, subDays, startOfDay } from 'date-fns';
+import { collection, onSnapshot, query, Timestamp } from 'firebase/firestore';
+import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import type { User, Event, ChatMessage } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
 
-const aggregateDataByDay = (items: { createdAt?: Timestamp }[] | { date: Timestamp }[] | { timestamp: Timestamp | null }[], dateKey: 'createdAt' | 'date' | 'timestamp') => {
-    const dailyCounts: Record<string, number> = {};
-    const today = startOfDay(new Date());
-
-    for (let i = 29; i >= 0; i--) {
-        const day = subDays(today, i);
-        const dayStr = format(day, 'MMM d');
-        dailyCounts[dayStr] = 0;
+const aggregateDataByMonth = (items: { createdAt?: Timestamp }[] | { date: Timestamp }[] | { timestamp: Timestamp | null }[], dateKey: 'createdAt' | 'date' | 'timestamp') => {
+    const monthlyCounts: Record<string, number> = {};
+    const now = new Date();
+    
+    // Initialize the last 3 months
+    for (let i = 2; i >= 0; i--) {
+        const month = subMonths(now, i);
+        const monthStr = format(month, 'MMM');
+        monthlyCounts[monthStr] = 0;
     }
 
     items.forEach(item => {
@@ -25,16 +26,18 @@ const aggregateDataByDay = (items: { createdAt?: Timestamp }[] | { date: Timesta
         const itemTimestamp = item[dateKey];
         if (itemTimestamp) {
             const itemDate = itemTimestamp.toDate();
-            if (itemDate >= subDays(today, 29)) {
-              const dayStr = format(itemDate, 'MMM d');
-              if (dayStr in dailyCounts) {
-                  dailyCounts[dayStr]++;
-              }
+            const threeMonthsAgo = startOfMonth(subMonths(now, 2));
+
+            if (itemDate >= threeMonthsAgo) {
+                const monthStr = format(itemDate, 'MMM');
+                if (monthStr in monthlyCounts) {
+                    monthlyCounts[monthStr]++;
+                }
             }
         }
     });
 
-    return Object.entries(dailyCounts).map(([date, count]) => ({ date, count }));
+    return Object.entries(monthlyCounts).map(([month, count]) => ({ month, count }));
 };
 
 
@@ -65,9 +68,9 @@ export function AdminAnalytics() {
         };
     }, []);
 
-    const userChartData = aggregateDataByDay(users, 'createdAt');
-    const eventChartData = aggregateDataByDay(events, 'date');
-    const messageChartData = aggregateDataByDay(messages, 'timestamp');
+    const userChartData = aggregateDataByMonth(users, 'createdAt');
+    const eventChartData = aggregateDataByMonth(events, 'date');
+    const messageChartData = aggregateDataByMonth(messages, 'timestamp');
     
     const chartConfig = {
         count: {
@@ -84,18 +87,22 @@ export function AdminAnalytics() {
         );
     }
     
+    const maxUserCount = Math.max(...userChartData.map(d => d.count), 10);
+    const maxMessageCount = Math.max(...messageChartData.map(d => d.count), 10);
+
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
             <Card className="lg:col-span-1">
                 <CardHeader>
                     <CardTitle>New Users</CardTitle>
-                    <CardDescription>Sign-ups over the last 30 days.</CardDescription>
+                    <CardDescription>Sign-ups over the last 3 months.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <ChartContainer config={chartConfig} className="h-64">
                         <RechartsPrimitive.BarChart data={userChartData}>
-                           <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} interval={6} />
-                           <RechartsPrimitive.YAxis domain={[0, 1000]} ticks={[0, 250, 500, 750, 1000]} />
+                           <RechartsPrimitive.XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
+                           <RechartsPrimitive.YAxis domain={[0, maxUserCount]} />
                            <ChartTooltip content={<ChartTooltipContent />} />
                            <ChartBar dataKey="count" fill="var(--color-count)" radius={4} />
                         </RechartsPrimitive.BarChart>
@@ -105,12 +112,12 @@ export function AdminAnalytics() {
             <Card className="lg:col-span-1">
                 <CardHeader>
                     <CardTitle>Events Created</CardTitle>
-                    <CardDescription>Events scheduled over the last 30 days.</CardDescription>
+                    <CardDescription>Events scheduled over the last 3 months.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <ChartContainer config={chartConfig} className="h-64">
                         <RechartsPrimitive.BarChart data={eventChartData}>
-                           <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} interval={6} />
+                           <RechartsPrimitive.XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
                            <RechartsPrimitive.YAxis domain={[0, 20]} ticks={[0, 5, 10, 15, 20]} />
                            <ChartTooltip content={<ChartTooltipContent />} />
                            <ChartBar dataKey="count" fill="var(--color-count)" radius={4} />
@@ -121,13 +128,13 @@ export function AdminAnalytics() {
             <Card className="lg:col-span-1">
                 <CardHeader>
                     <CardTitle>Forum Activity</CardTitle>
-                    <CardDescription>Messages posted over the last 30 days.</CardDescription>
+                    <CardDescription>Messages posted over the last 3 months.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <ChartContainer config={chartConfig} className="h-64">
                         <RechartsPrimitive.BarChart data={messageChartData}>
-                           <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} interval={6} />
-                           <RechartsPrimitive.YAxis domain={[0, 1000]} ticks={[0, 250, 500, 750, 1000]} />
+                           <RechartsPrimitive.XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
+                           <RechartsPrimitive.YAxis domain={[0, maxMessageCount]} />
                            <ChartTooltip content={<ChartTooltipContent />} />
                            <ChartBar dataKey="count" fill="var(--color-count)" radius={4} />
                         </RechartsPrimitive.BarChart>
