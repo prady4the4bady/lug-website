@@ -88,7 +88,7 @@ export function CouncilManager() {
     return (
         <div className="grid md:grid-cols-3 gap-8 mt-6">
             <div className="md:col-span-1">
-                <Card>
+                <Card className="bg-card/60 backdrop-blur-sm">
                     <CardHeader>
                         <CardTitle>{editingMember ? 'Edit Council Member' : 'Add Council Member'}</CardTitle>
                         <CardDescription>{editingMember ? 'Update the role or department of a member.' : 'Assign a user to a council position.'}</CardDescription>
@@ -136,7 +136,7 @@ export function CouncilManager() {
                 </Card>
             </div>
             <div className="md:col-span-2">
-                <Card>
+                <Card className="bg-card/60 backdrop-blur-sm">
                     <CardHeader>
                         <CardTitle>Manage Council</CardTitle>
                         <CardDescription>Edit or remove existing council members.</CardDescription>

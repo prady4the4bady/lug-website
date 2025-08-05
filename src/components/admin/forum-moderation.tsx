@@ -43,7 +43,7 @@ export function ForumModeration() {
     }
 
     return (
-        <Card className="mt-6">
+        <Card className="mt-6 bg-card/60 backdrop-blur-sm">
             <CardHeader>
                 <CardTitle>Forum Moderation</CardTitle>
                 <CardDescription>Review and delete messages from the forum.</CardDescription>

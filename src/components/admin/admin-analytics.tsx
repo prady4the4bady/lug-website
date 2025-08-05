@@ -97,7 +97,7 @@ export function AdminAnalytics() {
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-            <Card className="lg:col-span-1">
+            <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
                 <CardHeader>
                     <CardTitle>New Users</CardTitle>
                     <CardDescription>Sign-ups over the last 5 months.</CardDescription>
@@ -113,7 +113,7 @@ export function AdminAnalytics() {
                     </ChartContainer>
                 </CardContent>
             </Card>
-            <Card className="lg:col-span-1">
+            <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
                 <CardHeader>
                     <CardTitle>Events Created</CardTitle>
                     <CardDescription>Events scheduled over the last 5 months.</CardDescription>
@@ -129,7 +129,7 @@ export function AdminAnalytics() {
                     </ChartContainer>
                 </CardContent>
             </Card>
-            <Card className="lg:col-span-1">
+            <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
                 <CardHeader>
                     <CardTitle>Forum Activity</CardTitle>
                     <CardDescription>Messages posted over the last 5 months.</CardDescription>

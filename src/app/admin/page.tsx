@@ -69,85 +69,90 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="container py-12 md:py-20">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-headline font-bold">Admin Panel</h1>
-        <p className="text-lg text-muted-foreground mt-2">Manage users, events, council, and forum content.</p>
+    <div className="relative w-full overflow-hidden">
+      <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
+        <div className="absolute left-0 right-0 top-1/4 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/10 blur-[100px]"></div>
       </div>
+      <div className="container py-12 md:py-20">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-headline font-bold">Admin Panel</h1>
+          <p className="text-lg text-muted-foreground mt-2">Manage users, events, council, and forum content.</p>
+        </div>
 
-      <div className="grid md:grid-cols-4 gap-8 mb-8">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{userCount}</div>
-            <p className="text-xs text-muted-foreground">Live user count</p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Events Managed</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{eventCount}</div>
-            <p className="text-xs text-muted-foreground">Total events scheduled</p>
-          </CardContent>
-        </Card>
+        <div className="grid md:grid-cols-4 gap-8 mb-8">
+          <Card className="bg-card/60 backdrop-blur-sm">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{userCount}</div>
+              <p className="text-xs text-muted-foreground">Live user count</p>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-card/60 backdrop-blur-sm">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Events Managed</CardTitle>
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{eventCount}</div>
+              <p className="text-xs text-muted-foreground">Total events scheduled</p>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Forum Posts</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{forumPostCount}</div>
-            <p className="text-xs text-muted-foreground">Total messages in forum</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Bug Reports</CardTitle>
-            <Bug className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{reportCount}</div>
-            <p className="text-xs text-muted-foreground">Open reports</p>
-          </CardContent>
-        </Card>
+          <Card className="bg-card/60 backdrop-blur-sm">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Forum Posts</CardTitle>
+              <MessageSquare className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{forumPostCount}</div>
+              <p className="text-xs text-muted-foreground">Total messages in forum</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-card/60 backdrop-blur-sm">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Bug Reports</CardTitle>
+              <Bug className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{reportCount}</div>
+              <p className="text-xs text-muted-foreground">Open reports</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Tabs defaultValue="analytics" className="w-full">
+          <TabsList className="grid w-full grid-cols-6 bg-card/60 backdrop-blur-sm">
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="events">Events</TabsTrigger>
+            <TabsTrigger value="users">Users</TabsTrigger>
+            <TabsTrigger value="council">Council</TabsTrigger>
+            <TabsTrigger value="forum">Forum</TabsTrigger>
+            <TabsTrigger value="reports">Reports</TabsTrigger>
+          </TabsList>
+          <TabsContent value="analytics">
+            <AdminAnalytics />
+          </TabsContent>
+          <TabsContent value="events">
+            <EventManager />
+          </TabsContent>
+          <TabsContent value="users">
+            <UserManager />
+          </TabsContent>
+          <TabsContent value="council">
+            <CouncilManager />
+          </TabsContent>
+          <TabsContent value="forum">
+            <ForumModeration />
+          </TabsContent>
+          <TabsContent value="reports">
+            <ReportsManager />
+          </TabsContent>
+        </Tabs>
       </div>
-
-      <Tabs defaultValue="analytics" className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="events">Events</TabsTrigger>
-          <TabsTrigger value="users">Users</TabsTrigger>
-          <TabsTrigger value="council">Council</TabsTrigger>
-          <TabsTrigger value="forum">Forum</TabsTrigger>
-          <TabsTrigger value="reports">Reports</TabsTrigger>
-        </TabsList>
-        <TabsContent value="analytics">
-          <AdminAnalytics />
-        </TabsContent>
-        <TabsContent value="events">
-          <EventManager />
-        </TabsContent>
-        <TabsContent value="users">
-          <UserManager />
-        </TabsContent>
-         <TabsContent value="council">
-          <CouncilManager />
-        </TabsContent>
-        <TabsContent value="forum">
-          <ForumModeration />
-        </TabsContent>
-        <TabsContent value="reports">
-          <ReportsManager />
-        </TabsContent>
-      </Tabs>
     </div>
   )
 }

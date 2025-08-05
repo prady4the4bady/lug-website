@@ -85,7 +85,7 @@ export function EventManager() {
     return (
         <div className="grid md:grid-cols-3 gap-8 mt-6">
             <div className="md:col-span-1">
-                <Card>
+                <Card className="bg-card/60 backdrop-blur-sm">
                     <CardHeader>
                         <CardTitle>{editingEvent ? 'Edit Event' : 'Create Event'}</CardTitle>
                         <CardDescription>{editingEvent ? 'Update the details of the event.' : 'Add a new event to the calendar.'}</CardDescription>
@@ -115,7 +115,7 @@ export function EventManager() {
                 </Card>
             </div>
             <div className="md:col-span-2">
-                <Card>
+                <Card className="bg-card/60 backdrop-blur-sm">
                     <CardHeader>
                         <CardTitle>Manage Events</CardTitle>
                         <CardDescription>Edit or delete existing events.</CardDescription>

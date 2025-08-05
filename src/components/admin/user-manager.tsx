@@ -48,7 +48,7 @@ export function UserManager() {
 
     return (
         <>
-            <Card className="mt-6">
+            <Card className="mt-6 bg-card/60 backdrop-blur-sm">
                 <CardHeader>
                     
                     <div>

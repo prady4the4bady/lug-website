@@ -61,7 +61,7 @@ export function ReportsManager() {
     };
 
     return (
-        <Card className="mt-6">
+        <Card className="mt-6 bg-card/60 backdrop-blur-sm">
             <CardHeader>
                 <CardTitle>Bug Reports</CardTitle>
                 <CardDescription>Manage and track user-submitted bug reports and feature requests.</CardDescription>
