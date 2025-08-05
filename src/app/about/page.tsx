@@ -12,8 +12,8 @@ export default function AboutPage() {
       <div className="grid md:grid-cols-3 gap-8">
         <Card className="flex flex-col">
           <CardHeader className="flex flex-row items-center gap-4">
-            <div className="p-3 bg-primary/10 rounded-md">
-              <Users className="w-8 h-8 text-primary" />
+            <div className="p-3 bg-orange-500/10 rounded-md">
+              <Users className="w-8 h-8 text-orange-500" />
             </div>
             <CardTitle className="font-headline text-2xl">Who We Are</CardTitle>
           </CardHeader>
@@ -26,8 +26,8 @@ export default function AboutPage() {
         
         <Card className="flex flex-col">
           <CardHeader className="flex flex-row items-center gap-4">
-             <div className="p-3 bg-primary/10 rounded-md">
-              <Target className="w-8 h-8 text-primary" />
+             <div className="p-3 bg-orange-500/10 rounded-md">
+              <Target className="w-8 h-8 text-orange-500" />
             </div>
             <CardTitle className="font-headline text-2xl">Our Mission</CardTitle>
           </CardHeader>
@@ -40,8 +40,8 @@ export default function AboutPage() {
         
         <Card className="flex flex-col">
           <CardHeader className="flex flex-row items-center gap-4">
-             <div className="p-3 bg-primary/10 rounded-md">
-              <Rocket className="w-8 h-8 text-primary" />
+             <div className="p-3 bg-orange-500/10 rounded-md">
+              <Rocket className="w-8 h-8 text-orange-500" />
             </div>
             <CardTitle className="font-headline text-2xl">What We Do</CardTitle>
           </CardHeader>

@@ -33,12 +33,12 @@ export function CouncilCard({ member, isAdmin, onDelete }: CouncilCardProps) {
             src={member.photoURL || `https://placehold.co/128x128.png`}
             alt={`Photo of ${member.name}`}
             fill
-            className="rounded-full object-cover border-4 border-primary/50 transition-all duration-300 group-hover:border-primary"
+            className="rounded-full object-cover border-4 border-orange-500/50 transition-all duration-300 group-hover:border-orange-500"
             data-ai-hint="person portrait"
           />
         </div>
         <CardTitle className="font-headline text-2xl">{member.name}</CardTitle>
-        <CardDescription className="text-primary font-semibold">{member.councilRole}</CardDescription>
+        <CardDescription className="text-orange-500 font-semibold">{member.councilRole}</CardDescription>
       </CardHeader>
       {member.description && (
         <CardContent className="flex-grow">

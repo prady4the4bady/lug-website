@@ -43,8 +43,8 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <Card className="text-center bg-card/80 backdrop-blur">
                   <CardHeader>
-                    <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit">
-                        <Users className="h-8 w-8 text-primary" />
+                    <div className="mx-auto bg-orange-500/10 p-3 rounded-full w-fit">
+                        <Users className="h-8 w-8 text-orange-500" />
                     </div>
                     <CardTitle className="font-headline">Workshops</CardTitle>
                   </CardHeader>
@@ -54,8 +54,8 @@ export default function Home() {
                 </Card>
                 <Card className="text-center bg-card/80 backdrop-blur">
                   <CardHeader>
-                    <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit">
-                        <Code className="h-8 w-8 text-primary" />
+                    <div className="mx-auto bg-orange-500/10 p-3 rounded-full w-fit">
+                        <Code className="h-8 w-8 text-orange-500" />
                     </div>
                     <CardTitle className="font-headline">Guest Lectures</CardTitle>
                   </CardHeader>
@@ -65,8 +65,8 @@ export default function Home() {
                 </Card>
                 <Card className="text-center bg-card/80 backdrop-blur">
                   <CardHeader>
-                    <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit">
-                        <Rocket className="h-8 w-8 text-primary" />
+                    <div className="mx-auto bg-orange-500/10 p-3 rounded-full w-fit">
+                        <Rocket className="h-8 w-8 text-orange-500" />
                     </div>
                     <CardTitle className="font-headline">Community Projects</CardTitle>
                   </CardHeader>
