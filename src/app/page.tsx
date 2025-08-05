@@ -30,7 +30,7 @@ export default function Home() {
             src="https://imagepng.org/wp-content/uploads/2017/06/pinguim-linux-tux.png"
             alt="Tux Penguin Mascot"
             fill
-            className="object-contain transition-all duration-300 ease-in-out hover:[filter:drop-shadow(0_0_2rem_hsl(var(--primary)/0.4))]"
+            className="object-contain transition-all duration-300 ease-in-out hover:[filter:drop-shadow(0_0_3rem_hsl(var(--primary)/0.5))]"
             data-ai-hint="Tux penguin"
             priority
           />
@@ -45,7 +45,7 @@ export default function Home() {
                 From hands-on workshops to expert talks, we provide a platform for learning, collaboration, and growth.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Card className="text-center bg-card/80 backdrop-blur animate-fadeInUp [animation-delay:200ms]">
+                <Card className="text-center bg-card/80 backdrop-blur animate-fadeInUp [animation-delay:200ms] transition-all duration-300 hover:shadow-primary/20 hover:shadow-lg hover:-translate-y-2">
                   <CardHeader>
                     <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit">
                         <Users className="h-8 w-8 text-primary" />
@@ -56,7 +56,7 @@ export default function Home() {
                     <p className="text-muted-foreground">Practical sessions on Linux, programming, and more.</p>
                   </CardContent>
                 </Card>
-                <Card className="text-center bg-card/80 backdrop-blur animate-fadeInUp [animation-delay:300ms]">
+                <Card className="text-center bg-card/80 backdrop-blur animate-fadeInUp [animation-delay:300ms] transition-all duration-300 hover:shadow-primary/20 hover:shadow-lg hover:-translate-y-2">
                   <CardHeader>
                     <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit">
                         <Code className="h-8 w-8 text-primary" />
@@ -67,7 +67,7 @@ export default function Home() {
                     <p className="text-muted-foreground">Insights from industry experts on cutting-edge tech.</p>
                   </CardContent>
                 </Card>
-                <Card className="text-center bg-card/80 backdrop-blur animate-fadeInUp [animation-delay:400ms]">
+                <Card className="text-center bg-card/80 backdrop-blur animate-fadeInUp [animation-delay:400ms] transition-all duration-300 hover:shadow-primary/20 hover:shadow-lg hover:-translate-y-2">
                   <CardHeader>
                     <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit">
                         <Rocket className="h-8 w-8 text-primary" />
