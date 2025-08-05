@@ -39,12 +39,12 @@ export default function Home() {
 
       <section className="bg-muted/30 dark:bg-card/20 py-20 pt-32">
         <div className="container text-center">
-            <h2 className="text-3xl md:text-4xl font-headline font-bold mb-4">What We Offer</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto mb-12">
+            <h2 className="text-3xl md:text-4xl font-headline font-bold mb-4 animate-fadeInUp">What We Offer</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto mb-12 animate-fadeInUp [animation-delay:100ms]">
                 From hands-on workshops to expert talks, we provide a platform for learning, collaboration, and growth.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Card className="text-center bg-card/80 backdrop-blur">
+                <Card className="text-center bg-card/80 backdrop-blur animate-fadeInUp [animation-delay:200ms]">
                   <CardHeader>
                     <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit">
                         <Users className="h-8 w-8 text-primary" />
@@ -55,7 +55,7 @@ export default function Home() {
                     <p className="text-muted-foreground">Practical sessions on Linux, programming, and more.</p>
                   </CardContent>
                 </Card>
-                <Card className="text-center bg-card/80 backdrop-blur">
+                <Card className="text-center bg-card/80 backdrop-blur animate-fadeInUp [animation-delay:300ms]">
                   <CardHeader>
                     <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit">
                         <Code className="h-8 w-8 text-primary" />
@@ -66,7 +66,7 @@ export default function Home() {
                     <p className="text-muted-foreground">Insights from industry experts on cutting-edge tech.</p>
                   </CardContent>
                 </Card>
-                <Card className="text-center bg-card/80 backdrop-blur">
+                <Card className="text-center bg-card/80 backdrop-blur animate-fadeInUp [animation-delay:400ms]">
                   <CardHeader>
                     <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit">
                         <Rocket className="h-8 w-8 text-primary" />
