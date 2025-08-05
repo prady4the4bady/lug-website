@@ -4,25 +4,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import type { Event } from "@/lib/types";
+import type { Event, User } from "@/lib/types";
 import { format } from "date-fns";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/hooks/use-auth";
-import { Loader2 } from "lucide-react";
+import { Download, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { collection, onSnapshot, query, where, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { EditProfileForm } from "./edit-profile-form";
+import { Button } from "../ui/button";
+import { generateCertificate } from "@/ai/flows/generate-certificate-flow";
+import { useToast } from "@/hooks/use-toast";
 
-// This is just an example. In a real app, you'd fetch events the user has *actually* attended.
-// This might involve a subcollection on the user document or a separate 'attendance' collection.
-// For now, we'll just fetch all events and pretend the user attended them for demonstration.
 const useParticipatedEvents = () => {
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // In a real app, you would query based on the logged-in user's ID
         const q = query(collection(db, "events")); 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const eventsData = snapshot.docs.map(doc => {
@@ -43,11 +42,103 @@ const useParticipatedEvents = () => {
 }
 
 
+function EventHistoryTab() {
+    const { user } = useAuth();
+    const { events: participatedEvents, loading: eventsLoading } = useParticipatedEvents();
+    const [generatingId, setGeneratingId] = useState<string | null>(null);
+    const { toast } = useToast();
+
+    const handleGenerateCertificate = async (event: Event) => {
+        if (!user) return;
+        setGeneratingId(event.id);
+        try {
+            const result = await generateCertificate({
+                userName: user.displayName || "LUG Member",
+                eventTitle: event.title,
+                eventDate: format(event.date.toDate(), "PPP"),
+            });
+            
+            const link = document.createElement('a');
+            link.href = result.certificateDataUri;
+            link.download = `LUG_Certificate_${event.title.replace(/\s/g, '_')}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+        } catch (e) {
+            console.error(e);
+            toast({
+                title: "Certificate Generation Failed",
+                description: "There was an error creating your certificate. Please try again later.",
+                variant: "destructive"
+            });
+        } finally {
+            setGeneratingId(null);
+        }
+    };
+    
+    if (eventsLoading) {
+        return (
+          <div className="flex justify-center items-center h-40">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        );
+    }
+
+    return (
+         <Card>
+            <CardHeader>
+                <CardTitle>Event Participation History</CardTitle>
+                <CardDescription>A log of all the events you have attended.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Event</TableHead>
+                            <TableHead>Date</TableHead>
+                            <TableHead className="text-right">Certificate</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {participatedEvents.map(event => (
+                            <TableRow key={event.id}>
+                                <TableCell className="font-medium">{event.title}</TableCell>
+                                <TableCell>{format(event.date.toDate(), "PPP")}</TableCell>
+                                <TableCell className="text-right">
+                                    <Button
+                                      size="sm"
+                                      onClick={() => handleGenerateCertificate(event)}
+                                      disabled={generatingId === event.id}
+                                    >
+                                        {generatingId === event.id ? (
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        ) : (
+                                            <Download className="mr-2 h-4 w-4" />
+                                        )}
+                                        {generatingId === event.id ? 'Generating...' : 'Get Certificate'}
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                        {participatedEvents.length === 0 && (
+                            <TableRow>
+                                <TableCell colSpan={3} className="text-center text-muted-foreground">
+                                    No event history found.
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </CardContent>
+        </Card>
+    )
+}
+
 export function ProfileTabs() {
     const { user, dbUser, loading: authLoading } = useAuth();
-    const { events: participatedEvents, loading: eventsLoading } = useParticipatedEvents();
 
-    if (authLoading || eventsLoading) {
+    if (authLoading) {
         return (
           <div className="flex justify-center items-center h-40">
             <Loader2 className="h-8 w-8 animate-spin" />
@@ -100,37 +191,7 @@ export function ProfileTabs() {
                 </Card>
             </TabsContent>
             <TabsContent value="history">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Event Participation History</CardTitle>
-                        <CardDescription>A log of all the events you have attended.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Event</TableHead>
-                                    <TableHead>Date</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {participatedEvents.map(event => (
-                                    <TableRow key={event.id}>
-                                        <TableCell className="font-medium">{event.title}</TableCell>
-                                        <TableCell>{format(event.date.toDate(), "PPP")}</TableCell>
-                                    </TableRow>
-                                ))}
-                                {participatedEvents.length === 0 && (
-                                    <TableRow>
-                                        <TableCell colSpan={2} className="text-center text-muted-foreground">
-                                            No event history found.
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
+                <EventHistoryTab />
             </TabsContent>
             {isCouncilMember && (
                 <TabsContent value="edit-profile">

@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
@@ -31,16 +32,18 @@ export default function RootLayout({
             <div className="relative flex min-h-screen flex-col">
               <Header />
               <main className="flex-1">{children}</main>
-              <Button
-                asChild
-                className="group fixed bottom-4 left-4 bg-red-600 hover:bg-red-700 text-white shadow-lg transition-all duration-300 ease-in-out w-14 h-14 hover:w-44 rounded-full"
-                aria-label="Report a bug"
-              >
-                <Link href="/signin" className="flex items-center justify-center">
-                  <Bug className="h-6 w-6 shrink-0 transition-all duration-300 ease-in-out group-hover:-translate-x-4" />
-                  <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out absolute group-hover:static">Report a Bug</span>
-                </Link>
-              </Button>
+                <Button
+                    asChild
+                    className="group fixed bottom-4 left-4 bg-red-600 hover:bg-red-700 text-white shadow-lg transition-all duration-300 ease-in-out w-14 h-14 hover:w-44 rounded-full"
+                    aria-label="Report a bug"
+                >
+                    <Link href="/report-a-bug" className="w-full h-full flex items-center justify-center">
+                        <Bug className="h-6 w-6 shrink-0 transition-transform duration-300 ease-in-out group-hover:-translate-x-5" />
+                        <span className="whitespace-nowrap absolute opacity-0 group-hover:opacity-100 transition-opacity group-hover:translate-x-4 duration-300 ease-in-out">
+                            Report a Bug
+                        </span>
+                    </Link>
+                </Button>
             </div>
             <Toaster />
           </AuthProvider>

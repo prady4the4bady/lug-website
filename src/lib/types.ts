@@ -1,7 +1,7 @@
 
 import type { Timestamp } from "firebase/firestore";
 import type * as z from "zod";
-import type { signInSchema, signUpSchema } from "./schemas";
+import type { signInSchema, signUpSchema, reportBugSchema } from "./schemas";
 
 export type User = {
     id?: string;
@@ -13,6 +13,7 @@ export type User = {
     councilRole?: string;
     councilDepartment?: string;
     description?: string;
+    createdAt?: Timestamp;
 }
 
 export type CouncilMember = User & {
@@ -23,7 +24,7 @@ export type CouncilMember = User & {
 export type Event = {
   id: string;
   title: string;
-  description: string;
+  description:string;
   date: Timestamp;
   link?: string;
 };
@@ -38,5 +39,18 @@ export type ChatMessage = {
   imageUrl?: string;
 };
 
+export type Report = {
+    id: string;
+    summary: string;
+    description: string;
+    userId: string;
+    userEmail: string;
+    userName: string;
+    createdAt: Timestamp;
+    category: 'UI/UX' | 'Backend' | 'Feature Request' | 'Other';
+    status: 'New' | 'In Progress' | 'Resolved';
+}
+
 export type SignInValues = z.infer<typeof signInSchema>;
 export type SignUpValues = z.infer<typeof signUpSchema>;
+export type ReportBugValues = z.infer<typeof reportBugSchema>;

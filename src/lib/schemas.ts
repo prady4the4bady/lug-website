@@ -11,3 +11,8 @@ export const signUpSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8, "Password must be at least 8 characters."),
 });
+
+export const reportBugSchema = z.object({
+    summary: z.string().min(10, "Summary must be at least 10 characters.").max(100, "Summary must be 100 characters or less."),
+    description: z.string().min(20, "Description must be at least 20 characters.").max(1000, "Description must be 1000 characters or less.")
+});

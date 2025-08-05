@@ -1,9 +1,10 @@
+
 "use client";
 
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Loader2, Users, Calendar, MessageSquare, Shield } from "lucide-react";
+import { Loader2, Users, Calendar, MessageSquare, Shield, Activity, Bug } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EventManager } from "@/components/admin/event-manager";
@@ -12,6 +13,8 @@ import { ForumModeration } from "@/components/admin/forum-moderation";
 import { CouncilManager } from "@/components/admin/council-manager";
 import { db } from "@/lib/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
+import { AdminAnalytics } from "@/components/admin/admin-analytics";
+import { ReportsManager } from "@/components/admin/reports-manager";
 
 export default function AdminPage() {
   const { isAdmin, loading } = useAuth();
@@ -20,6 +23,7 @@ export default function AdminPage() {
   const [userCount, setUserCount] = useState(0);
   const [eventCount, setEventCount] = useState(0);
   const [forumPostCount, setForumPostCount] = useState(0);
+  const [reportCount, setReportCount] = useState(0);
 
 
   useEffect(() => {
@@ -43,10 +47,15 @@ export default function AdminPage() {
       setForumPostCount(snapshot.size);
     });
     
+    const unsubReports = onSnapshot(collection(db, "reports"), (snapshot) => {
+      setReportCount(snapshot.size);
+    });
+    
     return () => {
       unsubUsers();
       unsubEvents();
       unsubMessages();
+      unsubReports();
     }
 
   }, [isAdmin]);
@@ -66,7 +75,7 @@ export default function AdminPage() {
         <p className="text-lg text-muted-foreground mt-2">Manage users, events, council, and forum content.</p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-8 mb-8">
+      <div className="grid md:grid-cols-4 gap-8 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -99,15 +108,30 @@ export default function AdminPage() {
             <p className="text-xs text-muted-foreground">Total messages in forum</p>
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Bug Reports</CardTitle>
+            <Bug className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{reportCount}</div>
+            <p className="text-xs text-muted-foreground">Open reports</p>
+          </CardContent>
+        </Card>
       </div>
 
-      <Tabs defaultValue="events" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+      <Tabs defaultValue="analytics" className="w-full">
+        <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="events">Events</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="council">Council</TabsTrigger>
           <TabsTrigger value="forum">Forum</TabsTrigger>
+          <TabsTrigger value="reports">Reports</TabsTrigger>
         </TabsList>
+        <TabsContent value="analytics">
+          <AdminAnalytics />
+        </TabsContent>
         <TabsContent value="events">
           <EventManager />
         </TabsContent>
@@ -119,6 +143,9 @@ export default function AdminPage() {
         </TabsContent>
         <TabsContent value="forum">
           <ForumModeration />
+        </TabsContent>
+        <TabsContent value="reports">
+          <ReportsManager />
         </TabsContent>
       </Tabs>
     </div>

@@ -5,7 +5,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { onAuthStateChanged, User as FirebaseUser, GoogleAuthProvider, signInWithPopup, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
-import { doc, setDoc, onSnapshot, getDoc } from 'firebase/firestore';
+import { doc, setDoc, onSnapshot, getDoc, serverTimestamp } from 'firebase/firestore';
 import type { User } from '@/lib/types';
 import { useToast } from './use-toast';
 import type { SignInValues, SignUpValues } from '@/lib/types';
@@ -43,6 +43,7 @@ const processAuth = async (authUser: FirebaseUser | null, name?: string) => {
         photoURL: authUser.photoURL || `https://placehold.co/128x128.png?text=${(name || authUser.displayName || 'U').charAt(0)}`,
         isAdmin: isDefaultAdmin,
         isCouncilMember: isDefaultAdmin,
+        createdAt: serverTimestamp() as any,
         ...(isDefaultAdmin && {
           councilDepartment: "Faculty In-Charge",
           councilRole: "Faculty In-Charge"

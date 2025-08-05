@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -254,7 +255,7 @@ const ChartTooltipContent = React.forwardRef<
     )
   }
 )
-ChartTooltipContent.displayName = "ChartTooltip"
+ChartTooltipContent.displayName = "ChartTooltipContent"
 
 const ChartLegend = RechartsPrimitive.Legend
 
@@ -291,7 +292,7 @@ const ChartLegendContent = React.forwardRef<
 
           return (
             <div
-              key={item.value}
+              key={item.value as string}
               className={cn(
                 "flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground"
               )}
@@ -355,6 +356,12 @@ function getPayloadConfigFromPayload(
     : config[key as keyof typeof config]
 }
 
+const ChartBar = RechartsPrimitive.Bar
+const ChartLine = RechartsPrimitive.Line
+const ChartArea = RechartsPrimitive.Area
+const ChartRadar = RechartsPrimitive.Radar
+const ChartPie = RechartsPrimitive.Pie
+
 export {
   ChartContainer,
   ChartTooltip,
@@ -362,4 +369,10 @@ export {
   ChartLegend,
   ChartLegendContent,
   ChartStyle,
+  ChartBar,
+  ChartLine,
+  ChartArea,
+  ChartRadar,
+  ChartPie,
+  RechartsPrimitive,
 }
