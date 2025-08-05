@@ -50,7 +50,7 @@ export default function Home() {
                         <Users className="h-8 w-8 text-primary" />
                     </div>
                     <CardTitle className="font-headline">Workshops</CardTitle>
-                  </Header>
+                  </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground">Practical sessions on Linux, programming, and more.</p>
                   </CardContent>
@@ -61,7 +61,7 @@ export default function Home() {
                         <Code className="h-8 w-8 text-primary" />
                     </div>
                     <CardTitle className="font-headline">Guest Lectures</CardTitle>
-                  </Header>
+                  </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground">Insights from industry experts on cutting-edge tech.</p>
                   </CardContent>
@@ -72,7 +72,7 @@ export default function Home() {
                         <Rocket className="h-8 w-8 text-primary" />
                     </div>
                     <CardTitle className="font-headline">Community Projects</CardTitle>
-                  </Header>
+                  </CardHeader>
                   <CardContent>
                     <p className="text-muted-foreground">Collaborate on real-world open-source projects.</p>
                   </CardContent>
