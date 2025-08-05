@@ -1,3 +1,4 @@
+
 "use client"
 
 import Link from "next/link"
@@ -38,18 +39,10 @@ export function Header() {
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2 group">
             <Image src="https://i.ibb.co/L0Sj9h2/tux.png" alt="LUG Logo" width={56} height={56} className="h-14 w-14" data-ai-hint="logo" />
-            <div className="font-bold sm:inline-block overflow-hidden whitespace-nowrap">
-              <span>L</span>
-              <span className="inline-block max-w-0 group-hover:max-w-xs transition-all duration-300 ease-in-out">
-                inux&nbsp;
-              </span>
-              <span>U</span>
-              <span className="inline-block max-w-0 group-hover:max-w-xs transition-all duration-300 ease-in-out">
-                ser&nbsp;
-              </span>
-               <span>G</span>
-               <span className="inline-block max-w-0 group-hover:max-w-xs transition-all duration-300 ease-in-out">
-                roup
+            <div className="font-bold sm:inline-block relative overflow-hidden whitespace-nowrap">
+              <span className="opacity-100 group-hover:opacity-0 transition-opacity duration-300">LUG</span>
+              <span className="absolute left-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                Linux User Group
               </span>
             </div>
           </Link>
