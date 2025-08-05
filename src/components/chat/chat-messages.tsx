@@ -48,8 +48,13 @@ function ChatMessageItem({ message }: { message: ChatMessage }) {
         </div>
         <ChatBubble isYou={isYou}>
           <p className="whitespace-pre-wrap">{message.text}</p>
-          {message.imageUrl && (
-              <Image src={message.imageUrl} alt="Uploaded content" width={300} height={200} className="mt-2 rounded-lg" data-ai-hint="user uploaded" />
+          {message.mediaUrl && message.mediaType === 'image' && (
+              <Image src={message.mediaUrl} alt="Uploaded content" width={300} height={200} className="mt-2 rounded-lg" data-ai-hint="user uploaded" />
+          )}
+          {message.mediaUrl && message.mediaType === 'video' && (
+             <video src={message.mediaUrl} controls className="mt-2 rounded-lg max-w-full" data-ai-hint="user uploaded video">
+                Your browser does not support the video tag.
+             </video>
           )}
         </ChatBubble>
       </div>

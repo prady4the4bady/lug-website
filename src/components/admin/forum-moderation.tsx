@@ -28,7 +28,8 @@ export function ForumModeration() {
                     user: data.user,
                     avatarUrl: data.avatarUrl,
                     timestamp: (data.timestamp as Timestamp),
-                    imageUrl: data.imageUrl,
+                    mediaUrl: data.mediaUrl,
+                    mediaType: data.mediaType
                 });
             });
             setMessages(msgs);
@@ -71,8 +72,11 @@ export function ForumModeration() {
                                 </TableCell>
                                 <TableCell>
                                     <p>{message.text}</p>
-                                     {message.imageUrl && (
-                                        <Image src={message.imageUrl} alt="Uploaded content" width={150} height={100} className="mt-2 rounded-lg" data-ai-hint="user uploaded" />
+                                     {message.mediaType === 'image' && message.mediaUrl && (
+                                        <Image src={message.mediaUrl} alt="Uploaded content" width={150} height={100} className="mt-2 rounded-lg" data-ai-hint="user uploaded" />
+                                    )}
+                                    {message.mediaType === 'video' && message.mediaUrl && (
+                                        <video src={message.mediaUrl} controls width="250" className="mt-2 rounded-lg" data-ai-hint="user uploaded video" />
                                     )}
                                 </TableCell>
                                 <TableCell className="text-muted-foreground">{formatDistanceToNow(message.timestamp.toDate(), { addSuffix: true })}</TableCell>

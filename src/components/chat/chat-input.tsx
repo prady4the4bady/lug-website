@@ -8,11 +8,11 @@ import { CardFooter } from '@/components/ui/card';
 
 interface ChatInputProps {
   onSendMessage: (text: string) => void;
-  onImageSelect: (dataUri: string) => void;
+  onFileSelect: (dataUri: string, file: File) => void;
   disabled?: boolean;
 }
 
-export function ChatInput({ onSendMessage, onImageSelect, disabled }: ChatInputProps) {
+export function ChatInput({ onSendMessage, onFileSelect, disabled }: ChatInputProps) {
   const [text, setText] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -28,7 +28,7 @@ export function ChatInput({ onSendMessage, onImageSelect, disabled }: ChatInputP
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        onImageSelect(e.target?.result as string);
+        onFileSelect(e.target?.result as string, file);
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
@@ -40,10 +40,10 @@ export function ChatInput({ onSendMessage, onImageSelect, disabled }: ChatInputP
   return (
     <CardFooter className="p-4 border-t">
       <div className="flex w-full items-center space-x-2">
-        <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" disabled={disabled} />
+        <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*,video/*" className="hidden" disabled={disabled} />
         <Button variant="ghost" size="icon" onClick={() => fileInputRef.current?.click()} disabled={disabled}>
           <Paperclip className="h-5 w-5" />
-          <span className="sr-only">Attach image</span>
+          <span className="sr-only">Attach media</span>
         </Button>
         <Textarea
           value={text}

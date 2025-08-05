@@ -34,7 +34,8 @@ export function ChatInterface() {
           avatarUrl: data.avatarUrl,
           timestamp: data.timestamp, // Can be null initially
           clientTimestamp: data.clientTimestamp,
-          imageUrl: data.imageUrl,
+          mediaUrl: data.mediaUrl,
+          mediaType: data.mediaType,
         });
       });
       setMessages(msgs);
@@ -59,28 +60,37 @@ export function ChatInterface() {
     await logActivity(user.uid, "Posted Message", `Sent a message in the forum. Message ID: ${messageDoc.id}`);
   };
   
-  const handleImageUpload = async (imageDataUri: string) => {
+  const handleFileUpload = async (mediaDataUri: string, file: File) => {
     if (!user) {
       router.push('/signin');
       return;
     }
     setUploading(true);
     
-    const storageRef = ref(storage, `chat-images/${Date.now()}`);
-    const uploadResult = await uploadString(storageRef, imageDataUri, 'data_url');
-    const downloadURL = await getDownloadURL(uploadResult.ref);
-
-    const messageDoc = await addDoc(collection(db, "messages"), {
-      text: `Uploaded an image.`,
-      user: user.displayName || 'You',
-      avatarUrl: user.photoURL || 'https://placehold.co/40x40.png',
-      timestamp: serverTimestamp(),
-      clientTimestamp: Timestamp.now(),
-      imageUrl: downloadURL,
-    });
+    const mediaType = file.type.startsWith('image/') ? 'image' : 'video';
+    const storageRef = ref(storage, `chat-media/${Date.now()}_${file.name}`);
     
-    await logActivity(user.uid, "Uploaded Image", `Uploaded an image to the forum. Message ID: ${messageDoc.id}`);
-    setUploading(false);
+    try {
+      const uploadResult = await uploadString(storageRef, mediaDataUri, 'data_url');
+      const downloadURL = await getDownloadURL(uploadResult.ref);
+
+      const messageDoc = await addDoc(collection(db, "messages"), {
+        text: `Uploaded a ${mediaType}.`,
+        user: user.displayName || 'You',
+        avatarUrl: user.photoURL || 'https://placehold.co/40x40.png',
+        timestamp: serverTimestamp(),
+        clientTimestamp: Timestamp.now(),
+        mediaUrl: downloadURL,
+        mediaType: mediaType
+      });
+      
+      await logActivity(user.uid, "Uploaded Media", `Uploaded a ${mediaType} to the forum. Message ID: ${messageDoc.id}`);
+
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    } finally {
+      setUploading(false);
+    }
   }
 
   return (
@@ -96,7 +106,7 @@ export function ChatInterface() {
           <span>Uploading...</span>
         </div>
       )}
-      <ChatInput onSendMessage={handleSendMessage} onImageSelect={handleImageUpload} disabled={uploading || loading} />
+      <ChatInput onSendMessage={handleSendMessage} onFileSelect={handleFileUpload} disabled={uploading || loading} />
     </Card>
   );
 }

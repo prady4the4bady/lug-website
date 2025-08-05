@@ -36,7 +36,8 @@ export type ChatMessage = {
   avatarUrl: string;
   timestamp: Timestamp | null; // Can be null when server timestamp is pending
   clientTimestamp?: Timestamp; // For immediate display
-  imageUrl?: string;
+  mediaUrl?: string;
+  mediaType?: 'image' | 'video';
 };
 
 export type Report = {
