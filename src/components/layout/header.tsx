@@ -38,7 +38,7 @@ export function Header() {
       <div className="container flex h-20 max-w-screen-2xl items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2 group">
-            <Image src="https://i.ibb.co/L0Sj9h2/tux.png" alt="LUG Logo" width={56} height={56} className="h-14 w-14" data-ai-hint="logo" />
+            <Image src="/images/lug_logo.png" alt="LUG Logo" width={56} height={56} className="h-14 w-14" data-ai-hint="logo" />
             <div className="font-bold sm:inline-block relative whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out w-10 group-hover:w-40">
               <span className="opacity-100 group-hover:opacity-0 transition-opacity duration-300">LUG</span>
               <span className="absolute left-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -74,7 +74,7 @@ export function Header() {
           </SheetTrigger>
           <SheetContent side="left" className="pr-0">
             <Link href="/" className="flex items-center" onClick={() => setIsOpen(false)}>
-              <Image src="https://i.ibb.co/L0Sj9h2/tux.png" alt="LUG Logo" width={56} height={56} className="mr-2 h-14 w-14" data-ai-hint="logo" />
+              <Image src="/images/lug_logo.png" alt="LUG Logo" width={56} height={56} className="mr-2 h-14 w-14" data-ai-hint="logo" />
               <span className="font-bold">LUG</span>
             </Link>
             <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
