@@ -1,4 +1,8 @@
+
 import { ProfileTabs } from "@/components/profile/profile-tabs";
+import { Button } from "@/components/ui/button";
+import { Bug } from "lucide-react";
+import Link from "next/link";
 
 export default function ProfilePage() {
     return (
@@ -8,6 +12,19 @@ export default function ProfilePage() {
                 <p className="text-lg text-muted-foreground mt-2">Manage your profile, events, and certificates.</p>
             </div>
             <ProfileTabs />
+
+            <Button
+                asChild
+                className="group fixed bottom-4 left-4 bg-red-600 hover:bg-red-700 text-white shadow-lg transition-all duration-300 ease-in-out hover:w-40 rounded-full"
+                aria-label="Report a bug"
+            >
+                <Link href="/report-a-bug" className="w-12 h-12 flex items-center justify-center">
+                    <Bug className="h-5 w-5 shrink-0 transition-transform duration-300 ease-in-out group-hover:-translate-x-5" />
+                    <span className="whitespace-nowrap absolute opacity-0 group-hover:opacity-100 transition-opacity group-hover:translate-x-4 duration-300 ease-in-out">
+                        Report a Bug
+                    </span>
+                </Link>
+            </Button>
         </div>
     );
 }
