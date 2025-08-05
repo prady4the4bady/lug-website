@@ -2,7 +2,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -10,11 +10,17 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, TerminalIcon, LogOut } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import Image from "next/image"
+import { Skeleton } from "../ui/skeleton"
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isClient, setIsClient] = useState(false)
   const pathname = usePathname()
   const { user, isAdmin, signOutUser } = useAuth();
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   const navLinks = [
     { href: "/about", label: "About" },
@@ -107,15 +113,19 @@ export function Header() {
             <Button variant="ghost" size="icon" onClick={handleTerminalLink} aria-label="Open Terminal View">
                 <TerminalIcon className="h-5 w-5" />
             </Button>
-            {user ? (
-                <Button variant="ghost" size="sm" onClick={signOutUser}>
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Sign Out
+            {isClient ? (
+              user ? (
+                  <Button variant="ghost" size="sm" onClick={signOutUser}>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign Out
+                  </Button>
+              ) : (
+                <Button asChild>
+                  <Link href="/signin">Sign In</Link>
                 </Button>
+              )
             ) : (
-              <Button asChild>
-                <Link href="/signin">Sign In</Link>
-              </Button>
+              <Skeleton className="h-9 w-24" />
             )}
           </nav>
         </div>
