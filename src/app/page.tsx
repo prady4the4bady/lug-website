@@ -8,13 +8,14 @@ import Image from "next/image";
 export default function Home() {
   return (
     <div className="w-full">
-      <section className="container grid lg:grid-cols-2 gap-12 items-center py-20 md:py-32">
+      <section className="relative container grid lg:grid-cols-2 gap-12 items-center py-20 md:py-32">
+        <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"><div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/10 blur-[100px]"></div></div>
         <div className="flex flex-col gap-6 items-start text-left">
-          <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tighter">
+          <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
             Linux User Group
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-md font-headline">
-            BITS Pilani Dubai Campus
+            Welcome to the home of open-source enthusiasts at <span className="text-primary/80 font-semibold">BITS Pilani Dubai Campus</span>.
           </p>
           <div className="pt-4">
             <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xl px-10 py-8" asChild>
