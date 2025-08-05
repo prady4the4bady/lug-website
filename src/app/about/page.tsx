@@ -9,7 +9,7 @@ export default function AboutPage() {
       title: "Who We Are",
       content: "We are a passionate group of students at BITS Pilani Dubai Campus, united by our interest in Linux, open-source software, and technology. Our community welcomes everyone, from beginners to experienced developers.",
       image: {
-        src: "https://placehold.co/600x400.png",
+        src: "/images/who.png",
         alt: "A group of students collaborating in a workshop.",
         hint: "collaboration workshop"
       }
@@ -19,7 +19,7 @@ export default function AboutPage() {
       title: "Our Mission",
       content: "Our mission is to foster a collaborative environment for learning and innovation. We aim to promote the use of open-source technologies and empower students with practical skills for their future careers.",
        image: {
-        src: "https://placehold.co/600x400.png",
+        src: "/images/mission.png",
         alt: "A person writing code on a laptop with stickers.",
         hint: "coding laptop"
       }
@@ -29,7 +29,7 @@ export default function AboutPage() {
       title: "What We Do",
       content: "We organize a variety of activities including workshops, coding sessions, tech talks by industry experts, and collaborative projects. We also maintain a forum for members to discuss, share knowledge, and seek help.",
        image: {
-        src: "https://placehold.co/600x400.png",
+        src: "/images/what.png",
         alt: "A speaker presenting at a tech conference.",
         hint: "tech conference"
       }
