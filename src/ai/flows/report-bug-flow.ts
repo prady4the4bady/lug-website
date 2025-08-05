@@ -33,7 +33,7 @@ const CategorizationSchema = z.object({
 const categorizationPrompt = ai.definePrompt({
     name: 'categorizeBugPrompt',
     input: { schema: z.object({ description: z.string() }) },
-    output: { schema: CategorizationSchema },
+    output: { schema: CategorizationSchema, format: 'json' },
     prompt: `Analyze the following bug report description and classify it into one of the categories: UI/UX, Backend, Feature Request, or Other.
 
 Description: {{{description}}}
