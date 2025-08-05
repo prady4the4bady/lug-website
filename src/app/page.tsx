@@ -37,7 +37,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="bg-muted/30 dark:bg-card/20 py-20 pt-32">
+      <section className="relative py-20 pt-32">
+        <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
         <div className="container text-center">
             <h2 className="text-3xl md:text-4xl font-headline font-bold mb-4 animate-fadeInUp">What We Offer</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto mb-12 animate-fadeInUp [animation-delay:100ms]">
