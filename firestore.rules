@@ -3,54 +3,59 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper Functions
-    function isAuth() {
-      return request.auth != null;
-    }
-
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-    
+  
+    // Helper function to check for Admin role
     function isAdmin() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
-    }
-
-    // Default deny all
-    match /{document=**} {
-      allow read, write: if false;
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
 
     // Users Collection
     match /users/{userId} {
-      allow create: if isAuth(); // Allow user creation on signup
-      allow read: if isAuth();   // Allow reading user profiles (for council page, etc.)
+      // READ: Any authenticated user can read public user profiles
+      allow read: if request.auth != null;
       
-      // Allow users to update their own non-sensitive info
-      allow update: if isOwner(userId) && !('isAdmin' in request.resource.data) && !('isCouncilMember' in request.resource.data);
-      
-      // Allow admins to update anything (including roles)
-      allow update, delete: if isAdmin();
+      // CREATE: A user can create their own document
+      allow create: if request.auth.uid == userId;
+
+      // UPDATE: 
+      // A user can update their own non-sensitive info
+      allow update: if request.auth.uid == userId && !("isAdmin" in request.resource.data);
+      // An admin can update any user's document (including roles)
+      allow update: if isAdmin();
+
+      // DELETE: Only admins can delete users
+      allow delete: if isAdmin();
     }
 
     // Events Collection
     match /events/{eventId} {
-      allow read: if isAuth();
-      allow write: if isAdmin(); // Only admins can create, update, delete events
+      // READ: Any authenticated user can read events
+      allow read: if request.auth != null;
+
+      // WRITE (Create, Update, Delete): Only admins can write to events
+      allow write: if isAdmin();
     }
 
     // Messages Collection
     match /messages/{messageId} {
-      allow read, create: if isAuth();
-      allow delete: if isAdmin(); // Only admins can delete messages
+      // READ, LIST: Any authenticated user can read chat messages
+      allow get, list: if request.auth != null;
+
+      // CREATE: Any authenticated user can create a message
+      allow create: if request.auth != null;
+
+      // DELETE: Only admins can delete messages
+      allow delete: if isAdmin();
     }
-    
+
     // Reports Collection
     match /reports/{reportId} {
-      allow create: if isAuth();
-      // Only admins can read, update status, or delete reports
-      allow read, update, delete: if isAdmin();
+      // READ, UPDATE, DELETE: Only admins can manage reports
+      allow get, list, update, delete: if isAdmin();
+      
+      // CREATE: Any authenticated user can create a new report
+      allow create: if request.auth != null;
     }
   }
 }

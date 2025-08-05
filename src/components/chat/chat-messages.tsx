@@ -11,14 +11,19 @@ import { useAuth } from "@/hooks/use-auth";
 import { Separator } from "../ui/separator";
 
 function ChatMessageItem({ message }: { message: ChatMessage }) {
-  const [isClient, setIsClient] = useState(false);
   const { user } = useAuth();
-  const isYou = user?.displayName ? message.user === user.displayName : message.user === 'You';
-
-
+  const [isClient, setIsClient] = useState(false);
+  
   useEffect(() => {
     setIsClient(true);
   }, []);
+  
+  // Render nothing until the user object is loaded on the client
+  if (!user) {
+    return null;
+  }
+
+  const isYou = message.user === user.displayName || (user.displayName === null && message.user === 'You');
 
   const getTimestamp = () => {
     if (!message.timestamp && !message.clientTimestamp) return null;
@@ -41,7 +46,7 @@ function ChatMessageItem({ message }: { message: ChatMessage }) {
           </p>
         </div>
         <div className={cn("p-3 rounded-lg mt-1", isYou ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
-          <p className="text-foreground/90">{message.text}</p>
+          <p className="text-foreground/90 whitespace-pre-wrap">{message.text}</p>
           {message.imageUrl && (
               <Image src={message.imageUrl} alt="Uploaded content" width={300} height={200} className="mt-2 rounded-lg" data-ai-hint="user uploaded" />
           )}

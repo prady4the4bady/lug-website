@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartBar, RechartsPrimitive } from "@/components/ui/chart";
 import { db } from '@/lib/firebase';
-import { collection, onSnapshot, query, Timestamp } from 'firebase/firestore';
+import { collection, onSnapshot, query, Timestamp, limit, orderBy } from 'firebase/firestore';
 import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import type { User, Event, ChatMessage } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
@@ -55,7 +55,10 @@ export function AdminAnalytics() {
         const eventsUnsub = onSnapshot(collection(db, "events"), (snapshot) => {
             setEvents(snapshot.docs.map(doc => doc.data() as Event));
         });
-        const messagesUnsub = onSnapshot(collection(db, "messages"), (snapshot) => {
+        
+        // Optimize query by limiting to last 1000 messages for analytics
+        const messagesQuery = query(collection(db, "messages"), orderBy("timestamp", "desc"), limit(1000));
+        const messagesUnsub = onSnapshot(messagesQuery, (snapshot) => {
             setMessages(snapshot.docs.map(doc => doc.data() as ChatMessage));
         });
 

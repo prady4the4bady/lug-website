@@ -27,35 +27,33 @@ const DEFAULT_ADMIN_EMAIL = 'lugbpdc@dubai.bits-pilani.ac.in';
 
 const BITS_DOMAIN = 'dubai.bits-pilani.ac.in';
 
-const processAuth = async (authUser: FirebaseUser | null, name?: string) => {
-    if (!authUser) {
-      return null;
-    }
-    
-    const userDocRef = doc(db, "users", authUser.uid);
-    const userDoc = await getDoc(userDocRef);
+const processAuth = async (authUser: FirebaseUser, name?: string) => {
+    if (!authUser) return;
 
-    if (!userDoc.exists()) {
-      const isDefaultAdmin = authUser.email === DEFAULT_ADMIN_EMAIL;
-      const newUser: User = {
-        name: name || authUser.displayName || 'New User',
-        email: authUser.email!,
-        photoURL: authUser.photoURL || `https://placehold.co/128x128.png?text=${(name || authUser.displayName || 'U').charAt(0)}`,
-        isAdmin: isDefaultAdmin,
-        isCouncilMember: isDefaultAdmin,
-        createdAt: serverTimestamp() as any,
-        ...(isDefaultAdmin && {
-          councilDepartment: "Faculty In-Charge",
-          councilRole: "Faculty In-Charge"
-        })
-      };
-      try {
-        await setDoc(userDocRef, newUser);
-      } catch(e) {
-          console.error("Error creating user document:", e);
-      }
+    const userDocRef = doc(db, "users", authUser.uid);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (!userDocSnap.exists()) {
+        const isDefaultAdmin = authUser.email === DEFAULT_ADMIN_EMAIL;
+        const displayName = name || authUser.displayName || 'New User';
+        const newUser: User = {
+            name: displayName,
+            email: authUser.email!,
+            photoURL: authUser.photoURL || `https://placehold.co/128x128.png?text=${displayName.charAt(0)}`,
+            isAdmin: isDefaultAdmin,
+            isCouncilMember: isDefaultAdmin,
+            createdAt: serverTimestamp() as any,
+            ...(isDefaultAdmin && {
+                councilDepartment: "Faculty In-Charge",
+                councilRole: "Faculty In-Charge"
+            })
+        };
+        try {
+            await setDoc(userDocRef, newUser);
+        } catch(e) {
+            console.error("Error creating user document:", e);
+        }
     }
-    return authUser;
 };
 
 
@@ -101,10 +99,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     try {
       const result = await signInWithPopup(auth, provider);
-      if (result.user) {
-        await processAuth(result.user);
-        router.push('/profile');
-      }
+      await processAuth(result.user);
+      router.push('/profile');
     } catch (error: any) {
         if (error.code === 'auth/popup-blocked') {
             toast({
