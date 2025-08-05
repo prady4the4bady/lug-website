@@ -51,7 +51,7 @@ const processAuth = async (authUser: FirebaseUser, name?: string) => {
         try {
             await setDoc(userDocRef, newUser);
         } catch(e) {
-            console.error("Error creating user document:", e);
+            
         }
     }
 };
@@ -109,7 +109,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               variant: "destructive"
             });
         } else {
-            console.error("Error during sign-in:", error);
+            
             toast({
               title: "Sign-in Failed",
               description: "There was a problem signing you in with Google. Please try again.",

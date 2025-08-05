@@ -60,7 +60,7 @@ export default function ReportBugPage() {
             router.push('/');
 
         } catch (error) {
-            console.error("Failed to submit bug report:", error);
+            
             toast({
                 title: "Submission Failed",
                 description: "There was a problem submitting your report. Please try again.",

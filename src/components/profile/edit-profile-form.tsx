@@ -78,7 +78,7 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
       });
 
     } catch (error) {
-      console.error("Error updating profile:", error);
+      
       toast({
         variant: "destructive",
         title: "Update Failed",
