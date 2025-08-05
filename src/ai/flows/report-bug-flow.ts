@@ -13,6 +13,7 @@ import { db } from '@/lib/firebase';
 const ReportBugInputSchema = z.object({
   summary: z.string().describe('A brief summary of the bug report.'),
   description: z.string().describe('A detailed description of the bug.'),
+  category: z.enum(['UI/UX', 'Backend', 'Feature Request', 'Other']).describe("The user-selected category of the bug report."),
   user: z.object({
     id: z.string().describe('The ID of the user reporting the bug.'),
     email: z.string().describe('The email of the user.'),
@@ -26,20 +27,6 @@ const ReportBugOutputSchema = z.object({
 });
 export type ReportBugOutput = z.infer<typeof ReportBugOutputSchema>;
 
-const CategorizationSchema = z.object({
-    category: z.enum(['UI/UX', 'Backend', 'Feature Request', 'Other']).describe("The categorized type of the bug report.")
-});
-
-const categorizationPrompt = ai.definePrompt({
-    name: 'categorizeBugPrompt',
-    input: { schema: z.object({ description: z.string() }) },
-    output: { schema: CategorizationSchema, format: 'json' },
-    prompt: `Analyze the following bug report description and classify it into one of the categories: UI/UX, Backend, Feature Request, or Other.
-
-Description: {{{description}}}
-
-Provide only the category classification.`
-});
 
 const reportBugFlow = ai.defineFlow(
   {
@@ -48,9 +35,6 @@ const reportBugFlow = ai.defineFlow(
     outputSchema: ReportBugOutputSchema,
   },
   async (input) => {
-    const { output } = await categorizationPrompt({ description: input.description });
-    const category = output?.category || 'Other';
-    
     const newReportRef = doc(collection(db, 'reports'));
     
     const newReport = {
@@ -61,7 +45,7 @@ const reportBugFlow = ai.defineFlow(
       userEmail: input.user.email,
       userName: input.user.name,
       createdAt: serverTimestamp(),
-      category: category,
+      category: input.category,
       status: 'New',
     };
 

@@ -8,13 +8,12 @@ import type { Event } from "@/lib/types";
 import { format } from "date-fns";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/hooks/use-auth";
-import { Download, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { collection, onSnapshot, query, where, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { EditProfileForm } from "./edit-profile-form";
 import { Button } from "../ui/button";
-import { generateCertificate } from "@/ai/flows/generate-certificate-flow";
 import { useToast } from "@/hooks/use-toast";
 import { logActivity } from "@/lib/activity-logger";
 import { UserActivityLog } from "./user-activity-log";
@@ -51,38 +50,6 @@ const useParticipatedEvents = () => {
 function EventHistoryTab() {
     const { user } = useAuth();
     const { events: participatedEvents, loading: eventsLoading } = useParticipatedEvents();
-    const [generatingId, setGeneratingId] = useState<string | null>(null);
-    const { toast } = useToast();
-
-    const handleGenerateCertificate = async (event: Event) => {
-        if (!user) return;
-        setGeneratingId(event.id);
-        try {
-            const result = await generateCertificate({
-                userName: user.displayName || "LUG Member",
-                eventTitle: event.title,
-                eventDate: format(event.date.toDate(), "PPP"),
-            });
-
-            await logActivity(user.uid, "Certificate Downloaded", `Downloaded certificate for event: ${event.title}`);
-            
-            const link = document.createElement('a');
-            link.href = result.certificateDataUri;
-            link.download = `LUG_Certificate_${event.title.replace(/\s/g, '_')}.png`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-        } catch (error) {
-            toast({
-                title: "Certificate Generation Failed",
-                description: "There was an error creating your certificate. Please try again later.",
-                variant: "destructive"
-            });
-        } finally {
-            setGeneratingId(null);
-        }
-    };
     
     if (eventsLoading) {
         return (
@@ -104,7 +71,6 @@ function EventHistoryTab() {
                         <TableRow>
                             <TableHead>Event</TableHead>
                             <TableHead>Date</TableHead>
-                            <TableHead className="text-right">Certificate</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -112,20 +78,6 @@ function EventHistoryTab() {
                             <TableRow key={event.id}>
                                 <TableCell className="font-medium">{event.title}</TableCell>
                                 <TableCell>{format(event.date.toDate(), "PPP")}</TableCell>
-                                <TableCell className="text-right">
-                                    <Button
-                                      size="sm"
-                                      onClick={() => handleGenerateCertificate(event)}
-                                      disabled={generatingId === event.id}
-                                    >
-                                        {generatingId === event.id ? (
-                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        ) : (
-                                            <Download className="mr-2 h-4 w-4" />
-                                        )}
-                                        {generatingId === event.id ? 'Generating...' : 'Get Certificate'}
-                                    </Button>
-                                </TableCell>
                             </TableRow>
                         ))}
                         {participatedEvents.length === 0 && (

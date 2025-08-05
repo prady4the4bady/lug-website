@@ -16,6 +16,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { reportBug } from "@/ai/flows/report-bug-flow";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const CATEGORIES = ['UI/UX', 'Backend', 'Feature Request', 'Other'] as const;
+
 
 export default function ReportBugPage() {
     const { user } = useAuth();
@@ -28,6 +32,7 @@ export default function ReportBugPage() {
         defaultValues: {
             summary: "",
             description: "",
+            category: "UI/UX",
         },
     });
 
@@ -45,6 +50,7 @@ export default function ReportBugPage() {
             await reportBug({
                 summary: data.summary,
                 description: data.description,
+                category: data.category,
                 user: {
                     id: user.uid,
                     email: user.email!,
@@ -92,6 +98,28 @@ export default function ReportBugPage() {
                                         <FormControl>
                                             <Input placeholder="e.g., Profile page not loading" {...field} />
                                         </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                             <FormField
+                                control={form.control}
+                                name="category"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Category</FormLabel>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a category" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {CATEGORIES.map((category) => (
+                                                    <SelectItem key={category} value={category}>{category}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                         <FormMessage />
                                     </FormItem>
                                 )}
