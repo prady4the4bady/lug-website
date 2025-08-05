@@ -1,68 +1,64 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper functions to improve readability
-    function isSignedIn() {
+    // Helper function to check if the user is an admin
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+    
+    // Helper function to check if the user is authenticated
+    function isAuthenticated() {
       return request.auth != null;
     }
 
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-    
-    function isAppAdmin() {
-        // Checks for a custom claim on the user's auth token.
-        // This is more secure than checking a field in the database.
-        return request.auth.token.isAdmin == true;
-    }
-
-    function getRole() {
-        return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
-    }
-
+    // Users collection rules
     match /users/{userId} {
-      // Anyone can see who is a council member.
-      allow get: if isSignedIn();
-      // Any authenticated user can see the list of council members.
-      allow list: if isSignedIn();
+      // Anyone authenticated can read user profiles (for council page, etc.)
+      allow read: if isAuthenticated();
 
-      // A user can create their own profile.
-      allow create: if isOwner(userId);
+      // A user can create their own document
+      allow create: if request.auth.uid == userId;
+
+      // A user can update their own profile, but cannot make themselves an admin or council member
+      // Admins can update any user profile
+      allow update: if (request.auth.uid == userId && !("isAdmin" in request.resource.data)) || isAdmin();
       
-      // A user can update their own profile, but not change their roles.
-      // An admin can update anything.
-      allow update: if (isOwner(userId) && !("isAdmin" in request.resource.data) && !("isCouncilMember" in request.resource.data)) || isAppAdmin();
-      
-      // Only an admin can delete a user.
-      allow delete: if isAppAdmin();
+      // Only admins can delete users
+      allow delete: if isAdmin();
     }
-    
+
+    // Events collection rules
     match /events/{eventId} {
-      // Anyone can read events.
-      allow get, list: if isSignedIn();
+      // Anyone can read events
+      allow read: if isAuthenticated();
       
-      // Only admins can create, update, or delete events.
-      allow write: if isAppAdmin();
+      // Only admins can create, update, or delete events
+      allow write: if isAdmin();
     }
-    
+
+    // Messages collection rules
     match /messages/{messageId} {
-      // Any signed-in user can read and create messages.
-      allow list, get, create: if isSignedIn();
-
-      // Only an admin can delete messages.
-      allow delete: if isAppAdmin();
+      // Anyone authenticated can read messages
+      allow read: if isAuthenticated();
+      
+      // Anyone authenticated can create a message
+      allow create: if isAuthenticated();
+      
+      // Only admins can delete messages
+      allow delete: if isAdmin();
     }
     
+    // Reports collection rules
     match /reports/{reportId} {
-        // The reportBugFlow runs on the server, so it won't be authenticated as a user.
-        // For now, we'll allow any create operation on the reports collection.
-        // In a production app, you'd want to secure this with a service account or other mechanism.
-        allow create: if true; 
+        // Anyone authenticated can create a report
+        allow create: if isAuthenticated();
 
-        // Admins can read, update, and delete reports.
-        allow get, list, update, delete: if isAppAdmin();
+        // Only admins can read, update (status), or delete reports
+        allow read, update, delete: if isAdmin();
     }
   }
 }
