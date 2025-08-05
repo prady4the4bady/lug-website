@@ -94,7 +94,7 @@ export function AdminAnalytics() {
                 <CardContent>
                     <ChartContainer config={chartConfig} className="h-64">
                         <RechartsPrimitive.BarChart data={userChartData}>
-                           <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value.split(' ')[1]} interval={6} />
+                           <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} interval={6} />
                            <RechartsPrimitive.YAxis domain={[0, 1000]} ticks={[0, 250, 500, 750, 1000]} />
                            <ChartTooltip content={<ChartTooltipContent />} />
                            <ChartBar dataKey="count" fill="var(--color-count)" radius={4} />
@@ -110,7 +110,7 @@ export function AdminAnalytics() {
                 <CardContent>
                     <ChartContainer config={chartConfig} className="h-64">
                         <RechartsPrimitive.BarChart data={eventChartData}>
-                           <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value.split(' ')[1]} interval={6} />
+                           <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} interval={6} />
                            <RechartsPrimitive.YAxis domain={[0, 20]} ticks={[0, 5, 10, 15, 20]} />
                            <ChartTooltip content={<ChartTooltipContent />} />
                            <ChartBar dataKey="count" fill="var(--color-count)" radius={4} />
@@ -126,7 +126,7 @@ export function AdminAnalytics() {
                 <CardContent>
                     <ChartContainer config={chartConfig} className="h-64">
                         <RechartsPrimitive.BarChart data={messageChartData}>
-                           <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value.split(' ')[1]} interval={6} />
+                           <RechartsPrimitive.XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tickFormatter={(value) => value} interval={6} />
                            <RechartsPrimitive.YAxis domain={[0, 1000]} ticks={[0, 250, 500, 750, 1000]} />
                            <ChartTooltip content={<ChartTooltipContent />} />
                            <ChartBar dataKey="count" fill="var(--color-count)" radius={4} />
