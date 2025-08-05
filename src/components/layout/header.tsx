@@ -11,15 +11,11 @@ import { ThemeToggle } from "./theme-toggle"
 import { Menu, TerminalIcon, LogOut, Moon, Sun } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import Image from "next/image"
-import { useTheme } from "./theme-provider"
-import { Switch } from "../ui/switch"
-import { Label } from "../ui/label"
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
   const { user, isAdmin, signOutUser } = useAuth();
-  const { isTerminal, setIsTerminal } = useTheme();
 
   const navLinks = [
     { href: "/about", label: "About" },
@@ -34,6 +30,10 @@ export function Header() {
   
   if (isAdmin) {
     navLinks.push({ href: "/admin", label: "Admin" });
+  }
+
+  const handleTerminalLink = () => {
+    window.open("https://lug12.netlify.app/", "_blank");
   }
 
   return (
@@ -115,11 +115,9 @@ export function Header() {
                 <Link href="/signin">Sign In</Link>
               </Button>
             )}
-            <div className="flex items-center gap-2">
-              <Label htmlFor="terminal-mode" className="sr-only">Terminal Mode</Label>
-              <Switch id="terminal-mode" checked={isTerminal} onCheckedChange={setIsTerminal} />
-              <TerminalIcon className="h-4 w-4" />
-            </div>
+             <Button variant="ghost" size="icon" onClick={handleTerminalLink} aria-label="Open Terminal View">
+                <TerminalIcon className="h-5 w-5" />
+            </Button>
             <ThemeToggle />
           </nav>
         </div>
