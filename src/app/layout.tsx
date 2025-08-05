@@ -36,9 +36,9 @@ export default function RootLayout({
                 className="group fixed bottom-4 left-4 bg-red-600 hover:bg-red-700 text-white shadow-lg transition-all duration-300 ease-in-out w-14 h-14 hover:w-44 rounded-full"
                 aria-label="Report a bug"
               >
-                <Link href="/signin" className="flex items-center justify-center gap-2">
-                  <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out">Report a Bug</span>
-                  <Bug className="h-6 w-6 shrink-0" />
+                <Link href="/signin" className="flex items-center justify-center">
+                  <Bug className="h-6 w-6 shrink-0 transition-all duration-300 ease-in-out group-hover:-translate-x-4" />
+                  <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out absolute group-hover:static">Report a Bug</span>
                 </Link>
               </Button>
             </div>
