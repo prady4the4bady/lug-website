@@ -39,14 +39,14 @@ export function Header() {
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2 group">
             <Image src="https://i.ibb.co/L0Sj9h2/tux.png" alt="LUG Logo" width={56} height={56} className="h-14 w-14" data-ai-hint="logo" />
-            <div className="font-bold sm:inline-block relative whitespace-nowrap">
+            <div className="font-bold sm:inline-block relative whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out w-10 group-hover:w-40">
               <span className="opacity-100 group-hover:opacity-0 transition-opacity duration-300">LUG</span>
               <span className="absolute left-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 Linux User Group
               </span>
             </div>
           </Link>
-          <nav className="flex items-center space-x-6 text-sm font-medium">
+          <nav className="flex items-center space-x-6 text-sm font-medium transition-all duration-300 ease-in-out">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
