@@ -41,8 +41,8 @@ export function CouncilCard({ member, isAdmin, onDelete }: CouncilCardProps) {
         <CardDescription className="text-primary font-semibold">{member.councilRole}</CardDescription>
       </CardHeader>
       {member.description && (
-        <CardContent className="flex-grow">
-          <p className="text-muted-foreground text-sm">{member.description}</p>
+        <CardContent className="flex-grow opacity-0 max-h-0 group-hover:opacity-100 group-hover:max-h-40 transition-all duration-300 ease-in-out overflow-hidden">
+          <p className="text-muted-foreground text-sm pt-4">{member.description}</p>
         </CardContent>
       )}
     </Card>
