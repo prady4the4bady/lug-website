@@ -13,6 +13,17 @@ import { Trash2 } from 'lucide-react';
 import { db } from '@/lib/firebase';
 import { collection, query, orderBy, onSnapshot, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -41,9 +52,7 @@ export function ReportsManager() {
     }, []);
 
     const handleDelete = async (reportId: string) => {
-        if (window.confirm("Are you sure you want to delete this report?")) {
-            await deleteDoc(doc(db, "reports", reportId));
-        }
+        await deleteDoc(doc(db, "reports", reportId));
     }
     
     const handleStatusChange = async (reportId: string, status: Report['status']) => {
@@ -92,7 +101,7 @@ export function ReportsManager() {
                                 </TableCell>
                                 <TableCell><Badge variant="outline">{report.category}</Badge></TableCell>
                                 <TableCell>{report.userName}</TableCell>
-                                <TableCell className="text-muted-foreground">{formatDistanceToNow(report.createdAt.toDate(), { addSuffix: true })}</TableCell>
+                                <TableCell className="text-muted-foreground">{report.createdAt ? formatDistanceToNow(report.createdAt.toDate(), { addSuffix: true }) : '...'}</TableCell>
                                 <TableCell>
                                     <Select value={report.status} onValueChange={(value) => handleStatusChange(report.id, value as Report['status'])}>
                                         <SelectTrigger className="w-36">
@@ -106,9 +115,25 @@ export function ReportsManager() {
                                     </Select>
                                 </TableCell>
                                 <TableCell className="text-right">
-                                    <Button variant="ghost" size="icon" onClick={() => handleDelete(report.id)}>
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        <Button variant="ghost" size="icon">
+                                          <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                          <AlertDialogDescription>
+                                            This action cannot be undone. This will permanently delete the report.
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                          <AlertDialogAction onClick={() => handleDelete(report.id)}>Delete</AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
                                 </TableCell>
                             </TableRow>
                         ))}
