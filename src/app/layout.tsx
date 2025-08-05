@@ -34,10 +34,10 @@ export default function RootLayout({
               <main className="flex-1">{children}</main>
                 <Button
                     asChild
-                    className="group fixed bottom-4 left-4 bg-red-600 hover:bg-red-700 text-white shadow-lg transition-all duration-300 ease-in-out w-12 h-12 hover:w-40 rounded-full"
+                    className="group fixed bottom-4 left-4 bg-red-600 hover:bg-red-700 text-white shadow-lg transition-all duration-300 ease-in-out hover:w-40 rounded-full"
                     aria-label="Report a bug"
                 >
-                    <Link href="/report-a-bug" className="w-full h-full flex items-center justify-center">
+                    <Link href="/report-a-bug" className="w-12 h-12 flex items-center justify-center">
                         <Bug className="h-5 w-5 shrink-0 transition-transform duration-300 ease-in-out group-hover:-translate-x-5" />
                         <span className="whitespace-nowrap absolute opacity-0 group-hover:opacity-100 transition-opacity group-hover:translate-x-4 duration-300 ease-in-out">
                             Report a Bug
