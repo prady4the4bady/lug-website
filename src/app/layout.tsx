@@ -37,8 +37,8 @@ export default function RootLayout({
                 aria-label="Report a bug"
               >
                 <Link href="/signin" className="flex items-center justify-center gap-2">
-                  <Bug className="h-6 w-6 shrink-0" />
                   <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out">Report a Bug</span>
+                  <Bug className="h-6 w-6 shrink-0" />
                 </Link>
               </Button>
             </div>
