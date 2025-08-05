@@ -7,8 +7,7 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { ThemeToggle } from "./theme-toggle"
-import { Menu, TerminalIcon, LogOut, Moon, Sun } from "lucide-react"
+import { Menu, TerminalIcon, LogOut } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import Image from "next/image"
 
@@ -118,7 +117,6 @@ export function Header() {
              <Button variant="ghost" size="icon" onClick={handleTerminalLink} aria-label="Open Terminal View">
                 <TerminalIcon className="h-5 w-5" />
             </Button>
-            <ThemeToggle />
           </nav>
         </div>
       </div>

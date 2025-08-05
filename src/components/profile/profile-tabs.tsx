@@ -65,8 +65,7 @@ function EventHistoryTab() {
             link.click();
             document.body.removeChild(link);
 
-        } catch (e) {
-            
+        } catch (error) {
             toast({
                 title: "Certificate Generation Failed",
                 description: "There was an error creating your certificate. Please try again later.",
