@@ -34,10 +34,10 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 max-w-screen-2xl items-center">
+      <div className="container flex h-20 max-w-screen-2xl items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Image src="/images/lug_logo.png" alt="LUG Logo" width={48} height={48} className="h-12 w-12" data-ai-hint="logo" />
+            <Image src="https://i.ibb.co/L0Sj9h2/tux.png" alt="LUG Logo" width={56} height={56} className="h-14 w-14" data-ai-hint="logo" />
             <span className="hidden font-bold sm:inline-block">
               Linux User Group
             </span>
@@ -70,7 +70,7 @@ export function Header() {
           </SheetTrigger>
           <SheetContent side="left" className="pr-0">
             <Link href="/" className="flex items-center" onClick={() => setIsOpen(false)}>
-              <Image src="/images/lug_logo.png" alt="LUG Logo" width={48} height={48} className="mr-2 h-12 w-12" data-ai-hint="logo" />
+              <Image src="https://i.ibb.co/L0Sj9h2/tux.png" alt="LUG Logo" width={56} height={56} className="mr-2 h-14 w-14" data-ai-hint="logo" />
               <span className="font-bold">LUG</span>
             </Link>
             <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
