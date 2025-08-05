@@ -18,7 +18,6 @@ export function Header() {
   const { user, isAdmin, signIn, signOutUser } = useAuth();
 
   const navLinks = [
-    { href: "/", label: "Home" },
     { href: "/about", label: "About" },
     { href: "/council", label: "Council" },
     { href: "/events", label: "Events" },
