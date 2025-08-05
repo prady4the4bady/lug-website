@@ -20,6 +20,13 @@ function ChatMessageItem({ message }: { message: ChatMessage }) {
     setIsClient(true);
   }, []);
 
+  const getTimestamp = () => {
+    if (!message.timestamp && !message.clientTimestamp) return null;
+    return (message.timestamp || message.clientTimestamp)!.toDate();
+  }
+
+  const timestampDate = getTimestamp();
+
   return (
     <div className={cn("flex items-start gap-3", isYou && 'flex-row-reverse')}>
       <Avatar>
@@ -30,7 +37,7 @@ function ChatMessageItem({ message }: { message: ChatMessage }) {
         <div className={cn("flex items-baseline gap-2", isYou && 'justify-end')}>
           <p className="font-semibold">{isYou ? 'You' : message.user}</p>
           <p className="text-xs text-muted-foreground">
-            {isClient && message.timestamp ? formatDistanceToNow(message.timestamp.toDate(), { addSuffix: true }) : '...'}
+            {isClient && timestampDate ? formatDistanceToNow(timestampDate, { addSuffix: true }) : '...'}
           </p>
         </div>
         <div className={cn("p-3 rounded-lg mt-1", isYou ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
@@ -44,11 +51,13 @@ function ChatMessageItem({ message }: { message: ChatMessage }) {
   );
 }
 
-function DateSeparator({ date }: { date: Date }) {
-    const formatDate = (date: Date) => {
-        if (isToday(date)) return "Today";
-        if (isYesterday(date)) return "Yesterday";
-        return format(date, "MMMM d, yyyy");
+function DateSeparator({ date }: { date: Date | null }) {
+    if (!date) return null;
+
+    const formatDate = (d: Date) => {
+        if (isToday(d)) return "Today";
+        if (isYesterday(d)) return "Yesterday";
+        return format(d, "MMMM d, yyyy");
     };
 
     return (
@@ -66,17 +75,18 @@ function DateSeparator({ date }: { date: Date }) {
 export function ChatMessages({ messages }: { messages: ChatMessage[] }) {
     const renderMessagesWithSeparators = () => {
         let lastDate: string | null = null;
-        return messages.map((message, index) => {
-            if (!message.timestamp) return <ChatMessageItem key={message.id} message={message} />;
-
-            const messageDate = message.timestamp.toDate().toDateString();
+        return messages.map((message) => {
+            const messageTimestamp = message.timestamp || message.clientTimestamp;
+            if (!messageTimestamp) return <ChatMessageItem key={message.id} message={message} />;
+            
+            const messageDate = messageTimestamp.toDate().toDateString();
             const showSeparator = messageDate !== lastDate;
             lastDate = messageDate;
 
             return (
                 <Fragment key={message.id}>
                     {showSeparator && (
-                        <DateSeparator date={message.timestamp.toDate()} />
+                        <DateSeparator date={messageTimestamp.toDate()} />
                     )}
                     <ChatMessageItem message={message} />
                 </Fragment>

@@ -33,7 +33,8 @@ export type ChatMessage = {
   text: string;
   user: string;
   avatarUrl: string;
-  timestamp: Timestamp;
+  timestamp: Timestamp | null; // Can be null when server timestamp is pending
+  clientTimestamp?: Timestamp; // For immediate display
   imageUrl?: string;
 };
 

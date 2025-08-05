@@ -30,7 +30,7 @@ export function ChatInterface() {
           text: data.text,
           user: data.user,
           avatarUrl: data.avatarUrl,
-          timestamp: (data.timestamp as Timestamp),
+          timestamp: data.timestamp, // Can be null initially
           imageUrl: data.imageUrl,
         });
       });
@@ -50,6 +50,7 @@ export function ChatInterface() {
       user: user.displayName || 'You',
       avatarUrl: user.photoURL || 'https://placehold.co/40x40.png',
       timestamp: serverTimestamp(),
+      clientTimestamp: Timestamp.now(),
     });
   };
   
@@ -69,6 +70,7 @@ export function ChatInterface() {
       user: user.displayName || 'You',
       avatarUrl: user.photoURL || 'https://placehold.co/40x40.png',
       timestamp: serverTimestamp(),
+      clientTimestamp: Timestamp.now(),
       imageUrl: downloadURL,
     });
     
