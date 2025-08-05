@@ -6,9 +6,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format, isToday, isYesterday, formatDistanceToNow } from "date-fns";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useEffect, useState, Fragment } from "react";
+import { useEffect, useState, Fragment, useRef } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Separator } from "../ui/separator";
+import { ChatBubble } from "./chat-bubble";
+import { Skeleton } from "../ui/skeleton";
 
 function ChatMessageItem({ message }: { message: ChatMessage }) {
   const { user } = useAuth();
@@ -18,7 +20,6 @@ function ChatMessageItem({ message }: { message: ChatMessage }) {
     setIsClient(true);
   }, []);
   
-  // Render nothing until the user object is loaded on the client
   if (!user) {
     return null;
   }
@@ -38,19 +39,19 @@ function ChatMessageItem({ message }: { message: ChatMessage }) {
         <AvatarImage src={message.avatarUrl} alt={message.user} data-ai-hint="person avatar" />
         <AvatarFallback>{message.user.charAt(0)}</AvatarFallback>
       </Avatar>
-      <div className={cn("flex-1 max-w-[75%]", isYou && 'text-right')}>
+      <div className={cn("flex flex-col items-start gap-1 max-w-[75%]", isYou && 'items-end')}>
         <div className={cn("flex items-baseline gap-2", isYou && 'justify-end')}>
           <p className="font-semibold">{isYou ? 'You' : message.user}</p>
           <p className="text-xs text-muted-foreground">
             {isClient && timestampDate ? formatDistanceToNow(timestampDate, { addSuffix: true }) : '...'}
           </p>
         </div>
-        <div className={cn("p-3 rounded-lg mt-1", isYou ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
-          <p className="text-foreground/90 whitespace-pre-wrap">{message.text}</p>
+        <ChatBubble isYou={isYou}>
+          <p className="whitespace-pre-wrap">{message.text}</p>
           {message.imageUrl && (
               <Image src={message.imageUrl} alt="Uploaded content" width={300} height={200} className="mt-2 rounded-lg" data-ai-hint="user uploaded" />
           )}
-        </div>
+        </ChatBubble>
       </div>
     </div>
   );
@@ -77,7 +78,36 @@ function DateSeparator({ date }: { date: Date | null }) {
     );
 }
 
-export function ChatMessages({ messages }: { messages: ChatMessage[] }) {
+const LoadingSkeleton = () => (
+    <div className="space-y-6 p-4">
+        {[...Array(3)].map((_, i) => (
+            <div key={i} className={cn("flex items-start gap-3", i % 2 !== 0 && "flex-row-reverse")}>
+                 <Skeleton className="h-10 w-10 rounded-full" />
+                 <div className={cn("flex flex-col gap-2", i % 2 !== 0 && "items-end")}>
+                    <div className="flex items-center gap-2">
+                        <Skeleton className="h-4 w-20" />
+                        <Skeleton className="h-3 w-16" />
+                    </div>
+                     <Skeleton className="h-12 w-48" />
+                 </div>
+            </div>
+        ))}
+    </div>
+)
+
+
+export function ChatMessages({ messages, loading }: { messages: ChatMessage[], loading: boolean }) {
+    const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (scrollAreaRef.current) {
+            scrollAreaRef.current.scrollTo({
+                top: scrollAreaRef.current.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    }, [messages]);
+
     const renderMessagesWithSeparators = () => {
         let lastDate: string | null = null;
         return messages.map((message) => {
@@ -100,10 +130,12 @@ export function ChatMessages({ messages }: { messages: ChatMessage[] }) {
     };
 
     return (
-        <ScrollArea className="flex-1 p-4">
-            <div className="space-y-6">
-                {renderMessagesWithSeparators()}
-            </div>
+        <ScrollArea className="flex-1" ref={scrollAreaRef}>
+             {loading ? <LoadingSkeleton /> : (
+                <div className="p-4 space-y-6">
+                    {renderMessagesWithSeparators()}
+                </div>
+            )}
         </ScrollArea>
     );
 }

@@ -16,6 +16,7 @@ import { logActivity } from '@/lib/activity-logger';
 
 export function ChatInterface() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const router = useRouter();
   const [uploading, setUploading] = useState(false);
@@ -32,10 +33,12 @@ export function ChatInterface() {
           user: data.user,
           avatarUrl: data.avatarUrl,
           timestamp: data.timestamp, // Can be null initially
+          clientTimestamp: data.clientTimestamp,
           imageUrl: data.imageUrl,
         });
       });
       setMessages(msgs);
+      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -81,19 +84,19 @@ export function ChatInterface() {
   }
 
   return (
-    <Card className="flex flex-col h-[70vh]">
+    <Card className="flex flex-col h-[70vh] bg-card/80 backdrop-blur-sm">
       <CardHeader>
         <CardTitle>Forum Chat</CardTitle>
         <CardDescription>Real-time discussion with club members.</CardDescription>
       </CardHeader>
-      <ChatMessages messages={messages} />
+      <ChatMessages messages={messages} loading={loading} />
       {uploading && (
         <div className="flex items-center justify-center p-4 border-t">
           <Loader2 className="h-5 w-5 animate-spin mr-2" />
           <span>Uploading...</span>
         </div>
       )}
-      <ChatInput onSendMessage={handleSendMessage} onImageSelect={handleImageUpload} disabled={uploading} />
+      <ChatInput onSendMessage={handleSendMessage} onImageSelect={handleImageUpload} disabled={uploading || loading} />
     </Card>
   );
 }
