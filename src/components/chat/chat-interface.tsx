@@ -32,7 +32,7 @@ export function ChatInterface() {
           text: data.text,
           user: data.user,
           avatarUrl: data.avatarUrl,
-          timestamp: data.timestamp, // Can be null initially
+          timestamp: data.timestamp, // Can be null when server timestamp is pending
           clientTimestamp: data.clientTimestamp,
           mediaUrl: data.mediaUrl,
           mediaType: data.mediaType,
