@@ -16,6 +16,7 @@ import { EditProfileForm } from "./edit-profile-form";
 import { Button } from "../ui/button";
 import { generateCertificate } from "@/ai/flows/generate-certificate-flow";
 import { useToast } from "@/hooks/use-toast";
+import { logActivity } from "@/lib/activity-logger";
 
 const useParticipatedEvents = () => {
     const [events, setEvents] = useState<Event[]>([]);
@@ -57,6 +58,8 @@ function EventHistoryTab() {
                 eventTitle: event.title,
                 eventDate: format(event.date.toDate(), "PPP"),
             });
+
+            await logActivity(user.uid, "Certificate Downloaded", `Downloaded certificate for event: ${event.title}`);
             
             const link = document.createElement('a');
             link.href = result.certificateDataUri;

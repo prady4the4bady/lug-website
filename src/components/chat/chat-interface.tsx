@@ -12,6 +12,7 @@ import { db, storage } from '@/lib/firebase';
 import { collection, addDoc, serverTimestamp, query, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { Loader2 } from 'lucide-react';
+import { logActivity } from '@/lib/activity-logger';
 
 export function ChatInterface() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -45,13 +46,14 @@ export function ChatInterface() {
       router.push('/signin');
       return;
     }
-    await addDoc(collection(db, "messages"), {
+    const messageDoc = await addDoc(collection(db, "messages"), {
       text,
       user: user.displayName || 'You',
       avatarUrl: user.photoURL || 'https://placehold.co/40x40.png',
       timestamp: serverTimestamp(),
       clientTimestamp: Timestamp.now(),
     });
+    await logActivity(user.uid, "Posted Message", `Sent a message in the forum. Message ID: ${messageDoc.id}`);
   };
   
   const handleImageUpload = async (imageDataUri: string) => {
@@ -65,7 +67,7 @@ export function ChatInterface() {
     const uploadResult = await uploadString(storageRef, imageDataUri, 'data_url');
     const downloadURL = await getDownloadURL(uploadResult.ref);
 
-    await addDoc(collection(db, "messages"), {
+    const messageDoc = await addDoc(collection(db, "messages"), {
       text: `Uploaded an image.`,
       user: user.displayName || 'You',
       avatarUrl: user.photoURL || 'https://placehold.co/40x40.png',
@@ -74,6 +76,7 @@ export function ChatInterface() {
       imageUrl: downloadURL,
     });
     
+    await logActivity(user.uid, "Uploaded Image", `Uploaded an image to the forum. Message ID: ${messageDoc.id}`);
     setUploading(false);
   }
 

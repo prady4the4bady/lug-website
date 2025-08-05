@@ -9,6 +9,7 @@ import { doc, setDoc, onSnapshot, getDoc, serverTimestamp } from 'firebase/fires
 import type { User } from '@/lib/types';
 import { useToast } from './use-toast';
 import type { SignInValues, SignUpValues } from '@/lib/types';
+import { logActivity } from '@/lib/activity-logger';
 
 interface AuthContextType {
   user: FirebaseUser | null;
@@ -32,8 +33,10 @@ const processAuth = async (authUser: FirebaseUser, name?: string) => {
 
     const userDocRef = doc(db, "users", authUser.uid);
     const userDocSnap = await getDoc(userDocRef);
+    let isNewUser = false;
 
     if (!userDocSnap.exists()) {
+        isNewUser = true;
         const isDefaultAdmin = authUser.email === DEFAULT_ADMIN_EMAIL;
         const displayName = name || authUser.displayName || 'New User';
         const newUser: User = {
@@ -54,6 +57,7 @@ const processAuth = async (authUser: FirebaseUser, name?: string) => {
             
         }
     }
+    return isNewUser;
 };
 
 
@@ -100,6 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const result = await signInWithPopup(auth, provider);
       await processAuth(result.user);
+      await logActivity(result.user.uid, 'Logged In', 'Logged in via Google.');
       router.push('/profile');
     } catch (error: any) {
         if (error.code === 'auth/popup-blocked') {
@@ -135,6 +140,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: name });
       await processAuth(userCredential.user, name);
+      await logActivity(userCredential.user.uid, 'Signed Up', 'Created an account with email.');
       router.push('/profile');
     } catch (error: any) {
        toast({
@@ -150,7 +156,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signInWithEmail = async ({ email, password }: SignInValues) => {
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      await logActivity(cred.user.uid, 'Logged In', 'Logged in via email.');
       router.push('/profile');
     } catch (error: any) {
       toast({
@@ -164,6 +171,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signOutUser = async () => {
+    if (user) {
+        await logActivity(user.uid, 'Logged Out', 'User signed out.');
+    }
     await signOut(auth);
     router.push('/');
   };

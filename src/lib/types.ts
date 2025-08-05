@@ -51,6 +51,13 @@ export type Report = {
     status: 'New' | 'In Progress' | 'Resolved';
 }
 
+export type UserActivity = {
+    userId: string;
+    action: string;
+    details: string;
+    timestamp: Timestamp;
+};
+
 export type SignInValues = z.infer<typeof signInSchema>;
 export type SignUpValues = z.infer<typeof signUpSchema>;
 export type ReportBugValues = z.infer<typeof reportBugSchema>;

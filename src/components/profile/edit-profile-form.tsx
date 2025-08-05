@@ -18,6 +18,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import type { User } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
+import { logActivity } from '@/lib/activity-logger';
 
 interface EditProfileFormProps {
   user: User | null;
@@ -59,11 +60,13 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
 
     try {
       let photoURL = user.photoURL;
+      let details = "Updated profile description.";
 
       if (newAvatar) {
         const storageRef = ref(storage, `avatars/${user.id}/${Date.now()}`);
         const uploadResult = await uploadString(storageRef, newAvatar, 'data_url');
         photoURL = await getDownloadURL(uploadResult.ref);
+        details = "Updated profile picture and description."
       }
       
       const userDocRef = doc(db, "users", user.id);
@@ -71,6 +74,8 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
         description: data.description,
         photoURL: photoURL
       });
+
+      await logActivity(user.id, "Profile Updated", details);
       
       toast({
         title: "Profile Updated",
