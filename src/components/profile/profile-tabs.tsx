@@ -8,7 +8,7 @@ import type { Event } from "@/lib/types";
 import { format } from "date-fns";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/hooks/use-auth";
-import { Loader2 } from "lucide-react";
+import { Loader2, Download } from "lucide-react";
 import { useEffect, useState } from "react";
 import { collection, onSnapshot, query, where, Timestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -17,6 +17,7 @@ import { Button } from "../ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { logActivity } from "@/lib/activity-logger";
 import { UserActivityLog } from "./user-activity-log";
+import { generateCertificate } from "@/lib/certificate-generator";
 
 const useParticipatedEvents = () => {
     const [events, setEvents] = useState<Event[]>([]);
@@ -50,6 +51,29 @@ const useParticipatedEvents = () => {
 function EventHistoryTab() {
     const { user } = useAuth();
     const { events: participatedEvents, loading: eventsLoading } = useParticipatedEvents();
+    const { toast } = useToast();
+    const [generatingId, setGeneratingId] = useState<string | null>(null);
+
+    const handleGetCertificate = async (event: Event) => {
+        if (!user) return;
+        setGeneratingId(event.id);
+        try {
+            await generateCertificate({
+                name: user.displayName || "LUG Member",
+                event: event.title,
+                date: format(event.date.toDate(), "MMMM d, yyyy")
+            });
+            await logActivity(user.uid, "Certificate Generated", `Downloaded certificate for event: ${event.title}`);
+        } catch (error) {
+            toast({
+                title: "Generation Failed",
+                description: "There was a problem generating your certificate. Please try again.",
+                variant: "destructive"
+            });
+        } finally {
+            setGeneratingId(null);
+        }
+    };
     
     if (eventsLoading) {
         return (
@@ -71,6 +95,7 @@ function EventHistoryTab() {
                         <TableRow>
                             <TableHead>Event</TableHead>
                             <TableHead>Date</TableHead>
+                            <TableHead className="text-right">Certificate</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -78,6 +103,20 @@ function EventHistoryTab() {
                             <TableRow key={event.id}>
                                 <TableCell className="font-medium">{event.title}</TableCell>
                                 <TableCell>{format(event.date.toDate(), "PPP")}</TableCell>
+                                <TableCell className="text-right">
+                                    <Button 
+                                        size="sm" 
+                                        onClick={() => handleGetCertificate(event)}
+                                        disabled={generatingId === event.id}
+                                    >
+                                        {generatingId === event.id ? (
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        ) : (
+                                            <Download className="mr-2 h-4 w-4" />
+                                        )}
+                                        Get Certificate
+                                    </Button>
+                                </TableCell>
                             </TableRow>
                         ))}
                         {participatedEvents.length === 0 && (
