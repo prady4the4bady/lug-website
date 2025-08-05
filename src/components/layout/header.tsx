@@ -36,11 +36,22 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-20 max-w-screen-2xl items-center">
         <div className="mr-4 hidden md:flex">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
+          <Link href="/" className="mr-6 flex items-center space-x-2 group">
             <Image src="https://i.ibb.co/L0Sj9h2/tux.png" alt="LUG Logo" width={56} height={56} className="h-14 w-14" data-ai-hint="logo" />
-            <span className="hidden font-bold sm:inline-block">
-              Linux User Group
-            </span>
+            <div className="font-bold sm:inline-block overflow-hidden whitespace-nowrap">
+              <span>L</span>
+              <span className="inline-block max-w-0 group-hover:max-w-xs transition-all duration-300 ease-in-out">
+                inux&nbsp;
+              </span>
+              <span>U</span>
+              <span className="inline-block max-w-0 group-hover:max-w-xs transition-all duration-300 ease-in-out">
+                ser&nbsp;
+              </span>
+               <span>G</span>
+               <span className="inline-block max-w-0 group-hover:max-w-xs transition-all duration-300 ease-in-out">
+                roup
+              </span>
+            </div>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
             {navLinks.map((link) => (
