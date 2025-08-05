@@ -104,6 +104,9 @@ export function Header() {
              {/* Future search bar can go here */}
           </div>
           <nav className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={handleTerminalLink} aria-label="Open Terminal View">
+                <TerminalIcon className="h-5 w-5" />
+            </Button>
             {user ? (
                 <Button variant="ghost" size="sm" onClick={signOutUser}>
                     <LogOut className="h-4 w-4 mr-2" />
@@ -114,9 +117,6 @@ export function Header() {
                 <Link href="/signin">Sign In</Link>
               </Button>
             )}
-             <Button variant="ghost" size="icon" onClick={handleTerminalLink} aria-label="Open Terminal View">
-                <TerminalIcon className="h-5 w-5" />
-            </Button>
           </nav>
         </div>
       </div>
