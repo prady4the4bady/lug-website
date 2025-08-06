@@ -5,41 +5,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Paperclip, Send } from 'lucide-react';
 import { CardFooter } from '@/components/ui/card';
+import { compressImage } from '@/lib/image-compressor';
 
 interface ChatInputProps {
   onSendMessage: (text: string) => void;
   onFileSelect: (dataUri: string, file: File) => void;
   disabled?: boolean;
 }
-
-const compressImage = (file: File, maxWidth: number = 1080, quality: number = 0.7): Promise<string> => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-            const img = new Image();
-            img.src = event.target?.result as string;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const scaleRatio = maxWidth / img.width;
-                const width = img.width > maxWidth ? maxWidth : img.width;
-                const height = img.width > maxWidth ? img.height * scaleRatio : img.height;
-
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                if (!ctx) {
-                    return reject(new Error('Could not get canvas context'));
-                }
-                ctx.drawImage(img, 0, 0, width, height);
-                resolve(canvas.toDataURL(file.type, quality));
-            };
-            img.onerror = (error) => reject(error);
-        };
-        reader.onerror = (error) => reject(error);
-    });
-};
-
 
 export function ChatInput({ onSendMessage, onFileSelect, disabled }: ChatInputProps) {
   const [text, setText] = useState('');

@@ -1,5 +1,3 @@
-
-'use server';
 /**
  * @fileOverview A bug reporting flow that analyzes a user's report,
  * categorizes it, and saves it to Firestore.

@@ -15,7 +15,6 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { reportBug } from "@/ai/flows/report-bug-flow";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const CATEGORIES = ['UI/UX', 'Backend', 'Feature Request', 'Other'] as const;
@@ -47,16 +46,26 @@ export default function ReportBugPage() {
         }
         setIsSubmitting(true);
         try {
-            await reportBug({
-                summary: data.summary,
-                description: data.description,
-                category: data.category,
-                user: {
-                    id: user.uid,
-                    email: user.email!,
-                    name: user.displayName || 'Anonymous'
-                }
+            const response = await fetch('/api/report-bug', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    summary: data.summary,
+                    description: data.description,
+                    category: data.category,
+                    user: {
+                        id: user.uid,
+                        email: user.email!,
+                        name: user.displayName || 'Anonymous'
+                    }
+                }),
             });
+
+            if (!response.ok) {
+                throw new Error('Failed to submit bug report');
+            }
 
             toast({
                 title: "Bug Report Submitted",
