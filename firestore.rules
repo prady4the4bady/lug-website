@@ -3,65 +3,53 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper function to check if the requesting user is an admin.
+    
+    // Admins have full access to everything
     function isAdmin() {
-      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
 
-    // Rules for the 'users' collection
+    // Users can read their own data and update certain fields
     match /users/{userId} {
-      // Admins can read/write any user document.
+      allow read, update: if request.auth.uid == userId;
       allow read, write: if isAdmin();
-      
-      // An authenticated user can read their own document.
-      allow get: if request.auth != null && request.auth.uid == userId;
-
-      // Authenticated users can query for council members.
-      allow list: if request.auth != null && request.query.where.isCouncilMember == true;
-
-      // An authenticated user can update their own document.
-      allow update: if request.auth != null && request.auth.uid == userId;
-      
-      // Allow users to be created during sign-up.
-      allow create: if request.auth != null;
     }
 
-    // Rules for the 'events' collection
+    // Council members are public
+    match /users/{userId} {
+        allow get: if true;
+        // This rule is for the query in the council page
+        allow list: if true;
+    }
+
+    // Events are public
     match /events/{eventId} {
-      // Any authenticated user can read events.
-      allow read: if request.auth != null;
-      // Only admins can create, update, or delete events.
+      allow read: if true;
       allow write: if isAdmin();
     }
 
-    // Rules for the 'messages' collection (Forum)
+    // Messages can be created by any authenticated user, but only read by admins or members.
+    // Deletion is admin-only.
     match /messages/{messageId} {
-      // Any authenticated user can read messages.
-      allow read: if request.auth != null;
-      // Any authenticated user can create a message.
+      allow read: if request.auth != null && (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subscriptionStatus == 'active' || isAdmin());
       allow create: if request.auth != null;
-      // A user can delete their own message, or an admin can delete any message.
-      allow delete: if (request.auth.uid == resource.data.userId) || isAdmin();
-    }
-
-    // Rules for the 'reports' collection (Bug Reports)
-    match /reports/{reportId} {
-        // Only admins can view reports.
-        allow read: if isAdmin();
-        // Any authenticated user can submit a report.
-        allow create: if request.auth != null;
-        // Only admins can update (change status) or delete reports.
-        allow update, delete: if isAdmin();
+      allow delete: if isAdmin();
     }
     
-    // Rules for the 'activities' collection
+    // Reports can be created by authenticated users, but only managed by admins
+    match /reports/{reportId} {
+        allow create: if request.auth != null;
+        allow read, write, delete: if isAdmin();
+    }
+    
+    // Activity logs can only be read/written by the user themselves or an admin
     match /activities/{activityId} {
-        // Only admins can read activity logs.
-        allow read: if isAdmin();
-        // Any authenticated user can create an activity log entry for themselves.
-        allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+        allow read, create: if request.auth.uid == resource.data.userId || isAdmin();
+    }
+    
+    // Members collection is admin-only
+    match /members/{memberId} {
+        allow read, write: if isAdmin();
     }
   }
 }
