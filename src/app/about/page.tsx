@@ -30,7 +30,7 @@ export default function AboutPage() {
       description: "We organize a variety of activities including workshops, coding sessions, tech talks by industry experts, and collaborative projects. We also maintain a forum for members to discuss, share knowledge, and seek help.",
       tags: ["Workshops", "Projects", "Talks"],
       imageUrl: "/images/what.png",
-      link: "https://www.linkedin.com/company/lugbpdc/posts/?feedView=all"
+      link: "https://www.instagram.com/lugbpdc/"
     }
   ];
 
