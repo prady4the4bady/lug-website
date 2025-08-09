@@ -1,3 +1,4 @@
+
 "use client";
 
 import { motion } from "framer-motion";
@@ -8,6 +9,7 @@ export interface MarqueeImage {
   alt: string;
   href?: string;
   target?: "_blank" | "_self" | "_parent" | "_top";
+  "data-ai-hint"?: string;
 }
 
 export interface ThreeDMarqueeProps {
@@ -86,6 +88,7 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
                           isClickable ? "cursor-pointer" : ""
                         }`}
                         onClick={() => handleImageClick(image, globalIndex)}
+                        data-ai-hint={image['data-ai-hint']}
                       />
                     </div>
                   );
