@@ -27,7 +27,7 @@ export function ForumModeration() {
                     text: data.text,
                     user: data.user,
                     avatarUrl: data.avatarUrl,
-                    timestamp: (data.timestamp as Timestamp),
+                    timestamp: (data.timestamp as Timestamp | null),
                     mediaUrl: data.mediaUrl,
                     mediaType: data.mediaType
                 });
@@ -79,7 +79,9 @@ export function ForumModeration() {
                                         <video src={message.mediaUrl} controls width="250" className="mt-2 rounded-lg" data-ai-hint="user uploaded video" />
                                     )}
                                 </TableCell>
-                                <TableCell className="text-muted-foreground">{formatDistanceToNow(message.timestamp.toDate(), { addSuffix: true })}</TableCell>
+                                <TableCell className="text-muted-foreground">
+                                    {message.timestamp ? formatDistanceToNow(message.timestamp.toDate(), { addSuffix: true }) : 'sending...'}
+                                </TableCell>
                                 <TableCell className="text-right">
                                     <Button variant="ghost" size="icon" onClick={() => handleDelete(message.id)}>
                                         <Trash2 className="h-4 w-4" />
