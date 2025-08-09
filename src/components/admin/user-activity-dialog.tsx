@@ -40,7 +40,7 @@ export function UserActivityDialog({ user, isOpen, onOpenChange }: UserActivityD
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const activitiesData = snapshot.docs.map(doc => doc.data() as UserActivity);
             // Sort activities by timestamp descending on the client.
-            activitiesData.sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis());
+            activitiesData.sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0));
             setActivities(activitiesData);
             setLoading(false);
         });
@@ -83,7 +83,9 @@ export function UserActivityDialog({ user, isOpen, onOpenChange }: UserActivityD
                                            <Badge variant="outline">{activity.action}</Badge>
                                        </TableCell>
                                        <TableCell>{activity.details}</TableCell>
-                                       <TableCell className="text-muted-foreground">{format(activity.timestamp.toDate(), "PPP p")}</TableCell>
+                                       <TableCell className="text-muted-foreground">
+                                           {activity.timestamp ? format(activity.timestamp.toDate(), "PPP p") : '...'}
+                                       </TableCell>
                                    </TableRow>
                                ))
                            ) : (

@@ -37,7 +37,7 @@ export function UserActivityLog({ userId }: UserActivityLogProps) {
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const activitiesData = snapshot.docs.map(doc => doc.data() as UserActivity);
             // Sort activities by timestamp descending on the client.
-            activitiesData.sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis());
+            activitiesData.sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0));
             setActivities(activitiesData);
             setLoading(false);
         });
@@ -65,7 +65,9 @@ export function UserActivityLog({ userId }: UserActivityLogProps) {
                                     <div className="flex-1">
                                         <div className="flex items-center justify-between">
                                             <p className="font-semibold">{activity.action}</p>
-                                            <p className="text-xs text-muted-foreground">{format(activity.timestamp.toDate(), "PPP p")}</p>
+                                            <p className="text-xs text-muted-foreground">
+                                                {activity.timestamp ? format(activity.timestamp.toDate(), "PPP p") : '...'}
+                                            </p>
                                         </div>
                                         <p className="text-sm text-muted-foreground">{activity.details}</p>
                                     </div>
