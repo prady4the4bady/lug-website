@@ -3,6 +3,9 @@ import type { Timestamp } from "firebase/firestore";
 import type * as z from "zod";
 import type { signInSchema, signUpSchema, reportBugSchema } from "./schemas";
 
+export type SubscriptionStatus = 'none' | 'pending' | 'active';
+export type SubscriptionTier = 'Annual' | 'Semester';
+
 export type User = {
     id?: string;
     name: string;
@@ -14,6 +17,8 @@ export type User = {
     councilDepartment?: string;
     description?: string;
     createdAt?: Timestamp;
+    subscriptionStatus?: SubscriptionStatus;
+    subscriptionTier?: SubscriptionTier;
 }
 
 export type CouncilMember = User & {
@@ -58,6 +63,16 @@ export type UserActivity = {
     details: string;
     timestamp: Timestamp;
 };
+
+export type Member = {
+    userId: string;
+    name: string;
+    email: string;
+    tier: SubscriptionTier;
+    joinedAt: Timestamp;
+    memberUntil: Timestamp;
+};
+
 
 export type SignInValues = z.infer<typeof signInSchema>;
 export type SignUpValues = z.infer<typeof signUpSchema>;

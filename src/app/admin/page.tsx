@@ -4,7 +4,7 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Loader2, Users, Calendar, MessageSquare, Shield, Activity, Bug } from "lucide-react";
+import { Loader2, Users, Calendar, MessageSquare, Shield, Activity, Bug, DollarSign } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EventManager } from "@/components/admin/event-manager";
@@ -12,9 +12,10 @@ import { UserManager } from "@/components/admin/user-manager";
 import { ForumModeration } from "@/components/admin/forum-moderation";
 import { CouncilManager } from "@/components/admin/council-manager";
 import { db } from "@/lib/firebase";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { AdminAnalytics } from "@/components/admin/admin-analytics";
 import { ReportsManager } from "@/components/admin/reports-manager";
+import { SubscriptionManager } from "@/components/admin/subscription-manager";
 
 export default function AdminPage() {
   const { isAdmin, loading } = useAuth();
@@ -24,6 +25,7 @@ export default function AdminPage() {
   const [eventCount, setEventCount] = useState(0);
   const [forumPostCount, setForumPostCount] = useState(0);
   const [reportCount, setReportCount] = useState(0);
+  const [pendingSubscribers, setPendingSubscribers] = useState(0);
 
 
   useEffect(() => {
@@ -51,11 +53,17 @@ export default function AdminPage() {
       setReportCount(snapshot.size);
     });
     
+    const q = query(collection(db, "users"), where("subscriptionStatus", "==", "pending"));
+    const unsubSubscribers = onSnapshot(q, (snapshot) => {
+        setPendingSubscribers(snapshot.size);
+    });
+    
     return () => {
       unsubUsers();
       unsubEvents();
       unsubMessages();
       unsubReports();
+      unsubSubscribers();
     }
 
   }, [isAdmin]);
@@ -79,7 +87,7 @@ export default function AdminPage() {
           <p className="text-lg text-muted-foreground mt-2">Manage users, events, council, and forum content.</p>
         </div>
 
-        <div className="grid md:grid-cols-4 gap-8 mb-8">
+        <div className="grid md:grid-cols-5 gap-8 mb-8">
           <Card className="bg-card/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -112,6 +120,16 @@ export default function AdminPage() {
               <p className="text-xs text-muted-foreground">Total messages in forum</p>
             </CardContent>
           </Card>
+           <Card className="bg-card/60 backdrop-blur-sm">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Pending Subscriptions</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{pendingSubscribers}</div>
+              <p className="text-xs text-muted-foreground">Awaiting payment</p>
+            </CardContent>
+          </Card>
           <Card className="bg-card/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Bug Reports</CardTitle>
@@ -125,8 +143,9 @@ export default function AdminPage() {
         </div>
 
         <Tabs defaultValue="analytics" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 bg-card/60 backdrop-blur-sm">
+          <TabsList className="grid w-full grid-cols-7 bg-card/60 backdrop-blur-sm">
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
             <TabsTrigger value="events">Events</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="council">Council</TabsTrigger>
@@ -135,6 +154,9 @@ export default function AdminPage() {
           </TabsList>
           <TabsContent value="analytics">
             <AdminAnalytics />
+          </TabsContent>
+           <TabsContent value="subscriptions">
+            <SubscriptionManager />
           </TabsContent>
           <TabsContent value="events">
             <EventManager />

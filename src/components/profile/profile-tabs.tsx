@@ -4,13 +4,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
-import type { Event } from "@/lib/types";
+import type { Event, SubscriptionTier } from "@/lib/types";
 import { format } from "date-fns";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/hooks/use-auth";
-import { Loader2, Download } from "lucide-react";
+import { Loader2, Download, CheckCircle, Clock } from "lucide-react";
 import { useEffect, useState } from "react";
-import { collection, onSnapshot, query, where, Timestamp } from "firebase/firestore";
+import { collection, onSnapshot, query, where, Timestamp, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { EditProfileForm } from "./edit-profile-form";
 import { Button } from "../ui/button";
@@ -133,6 +133,123 @@ function EventHistoryTab() {
     )
 }
 
+function MembershipTab() {
+    const { user, dbUser } = useAuth();
+    const { toast } = useToast();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleSubscription = async (tier: SubscriptionTier) => {
+        if (!user || !dbUser) return;
+        setIsSubmitting(true);
+        
+        try {
+            const userDocRef = doc(db, "users", user.uid);
+            await updateDoc(userDocRef, {
+                subscriptionStatus: 'pending',
+                subscriptionTier: tier
+            });
+            await logActivity(user.uid, 'Subscription Selected', `User selected the ${tier} plan.`);
+             toast({
+                title: 'Subscription Pending',
+                description: 'Please contact a council member to complete your payment.',
+            });
+        } catch (error) {
+            toast({
+                title: 'Subscription Failed',
+                description: 'Could not update your subscription status. Please try again.',
+                variant: 'destructive',
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    if (!dbUser) {
+        return <Loader2 className="h-8 w-8 animate-spin" />;
+    }
+    
+    if (dbUser.subscriptionStatus === 'active') {
+        return (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Active Member</CardTitle>
+                    <CardDescription>Your membership is currently active.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex items-center gap-4 text-green-500">
+                    <CheckCircle className="h-10 w-10" />
+                    <div>
+                        <p className="font-bold text-lg">You have full access to all member benefits.</p>
+                        <p>Your subscription tier: {dbUser.subscriptionTier}</p>
+                    </div>
+                </CardContent>
+            </Card>
+        );
+    }
+    
+    if (dbUser.subscriptionStatus === 'pending') {
+        return (
+             <Card>
+                <CardHeader>
+                    <CardTitle>Payment Pending</CardTitle>
+                    <CardDescription>Your membership is awaiting payment confirmation.</CardDescription>
+                </CardHeader>
+                <CardContent className="flex items-center gap-4 text-amber-500">
+                    <Clock className="h-10 w-10" />
+                    <div>
+                        <p className="font-bold text-lg">Please contact a council member to complete your payment for the {dbUser.subscriptionTier} plan.</p>
+                        <p>Once confirmed, you will gain access to member-only features.</p>
+                    </div>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    return (
+        <div className="grid md:grid-cols-2 gap-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Semester Membership</CardTitle>
+                    <CardDescription>Access for the current semester.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-3xl font-bold mb-4">AED 25</p>
+                    <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                        <li>Access to all workshops</li>
+                        <li>Priority for limited-seat events</li>
+                        <li>Access to the community forum</li>
+                    </ul>
+                </CardContent>
+                <CardContent>
+                    <Button className="w-full" onClick={() => handleSubscription('Semester')} disabled={isSubmitting}>
+                         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Choose Semester Plan
+                    </Button>
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Annual Membership</CardTitle>
+                    <CardDescription>Full access for the entire academic year.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                     <p className="text-3xl font-bold mb-4">AED 40</p>
+                    <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                        <li>All Semester benefits</li>
+                        <li>Exclusive access to archived content</li>
+                        <li>A cool LUG sticker pack!</li>
+                    </ul>
+                </CardContent>
+                <CardContent>
+                    <Button className="w-full" onClick={() => handleSubscription('Annual')} disabled={isSubmitting}>
+                         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Choose Annual Plan
+                    </Button>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}
+
 export function ProfileTabs() {
     const { user, dbUser, loading: authLoading } = useAuth();
 
@@ -154,6 +271,7 @@ export function ProfileTabs() {
             <div className="flex justify-center mb-6">
                 <TabsList>
                     <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+                    <TabsTrigger value="membership">Membership</TabsTrigger>
                     <TabsTrigger value="history">Event History</TabsTrigger>
                     {isCouncilMember && <TabsTrigger value="edit-profile">Edit Profile</TabsTrigger>}
                 </TabsList>
@@ -198,6 +316,9 @@ export function ProfileTabs() {
                          <UserActivityLog userId={user.uid} />
                     </div>
                 </div>
+            </TabsContent>
+            <TabsContent value="membership">
+                <MembershipTab />
             </TabsContent>
             <TabsContent value="history">
                 <EventHistoryTab />
