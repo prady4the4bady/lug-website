@@ -17,11 +17,13 @@ export default function CouncilPage() {
   useEffect(() => {
     const q = query(collection(db, "users"), where("isCouncilMember", "==", true));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const membersData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        userId: doc.id,
-        ...doc.data(),
-      } as CouncilMember));
+      const membersData = snapshot.docs.map(doc => {
+        const data = doc.data() as Omit<CouncilMember, 'id'>;
+        return {
+            id: doc.id,
+            ...data,
+        } as CouncilMember
+      });
       setMembers(membersData);
       setLoading(false);
     });
