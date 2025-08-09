@@ -13,12 +13,12 @@ export type User = {
     photoURL: string;
     isAdmin: boolean;
     isCouncilMember: boolean;
-    councilRole?: string;
-    councilDepartment?: string;
+    councilRole?: string | null;
+    councilDepartment?: string | null;
     description?: string;
     createdAt?: Timestamp;
     subscriptionStatus?: SubscriptionStatus;
-    subscriptionTier?: SubscriptionTier;
+    subscriptionTier?: SubscriptionTier | null;
 }
 
 export type CouncilMember = User & {

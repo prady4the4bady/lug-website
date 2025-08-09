@@ -27,8 +27,8 @@ function ChatMessageItem({ message }: { message: ChatMessage }) {
   const isYou = message.user === user.displayName || (user.displayName === null && message.user === 'You');
 
   const getTimestamp = () => {
-    if (!message.timestamp && !message.clientTimestamp) return null;
-    return (message.timestamp || message.clientTimestamp)!.toDate();
+    const ts = message.timestamp || message.clientTimestamp;
+    return ts ? ts.toDate() : null;
   }
 
   const timestampDate = getTimestamp();
