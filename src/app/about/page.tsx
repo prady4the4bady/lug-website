@@ -1,38 +1,36 @@
 
-import Image from "next/image";
-import { Users, Target, Rocket } from "lucide-react";
+"use client";
+
+import Carousel3D, { Carousel3DItem } from "@/components/carousel-3d";
 
 export default function AboutPage() {
-  const sections = [
+  const carouselItems: Carousel3DItem[] = [
     {
-      icon: <Users className="w-8 h-8 text-primary" />,
+      id: 1,
       title: "Who We Are",
-      content: "We are a passionate group of students at BITS Pilani Dubai Campus, united by our interest in Linux, open-source software, and technology. Our community welcomes everyone, from beginners to experienced developers.",
-      image: {
-        src: "/images/who.png",
-        alt: "A group of students collaborating in a workshop.",
-        hint: "collaboration workshop"
-      }
+      brand: "Community",
+      description: "We are a passionate group of students at BITS Pilani Dubai Campus, united by our interest in Linux, open-source software, and technology. Our community welcomes everyone, from beginners to experienced developers.",
+      tags: ["Open Source", "Collaboration", "Linux"],
+      imageUrl: "/images/who.png",
+      link: "#"
     },
     {
-      icon: <Target className="w-8 h-8 text-primary" />,
+      id: 2,
       title: "Our Mission",
-      content: "Our mission is to foster a collaborative environment for learning and innovation. We aim to promote the use of open-source technologies and empower students with practical skills for their future careers.",
-       image: {
-        src: "/images/mission.png",
-        alt: "A person writing code on a laptop with stickers.",
-        hint: "coding laptop"
-      }
+      brand: "Vision",
+      description: "Our mission is to foster a collaborative environment for learning and innovation. We aim to promote the use of open-source technologies and empower students with practical skills for their future careers.",
+      tags: ["Innovation", "Skills", "Technology"],
+      imageUrl: "/images/mission.png",
+      link: "#"
     },
     {
-      icon: <Rocket className="w-8 h-8 text-primary" />,
+      id: 3,
       title: "What We Do",
-      content: "We organize a variety of activities including workshops, coding sessions, tech talks by industry experts, and collaborative projects. We also maintain a forum for members to discuss, share knowledge, and seek help.",
-       image: {
-        src: "/images/what.png",
-        alt: "A speaker presenting at a tech conference.",
-        hint: "tech conference"
-      }
+      brand: "Activities",
+      description: "We organize a variety of activities including workshops, coding sessions, tech talks by industry experts, and collaborative projects. We also maintain a forum for members to discuss, share knowledge, and seek help.",
+      tags: ["Workshops", "Projects", "Talks"],
+      imageUrl: "/images/what.png",
+      link: "#"
     }
   ];
 
@@ -42,28 +40,13 @@ export default function AboutPage() {
         <div className="absolute left-0 right-0 top-1/4 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-primary/10 blur-[100px]"></div>
       </div>
 
-      <div className="container py-12 md:py-20">
+      <div className="container py-12 md:py-20 flex flex-col items-center justify-center">
         <div className="text-center mb-16 animate-fadeInUp">
           <h1 className="text-4xl md:text-5xl font-headline font-bold">About LUG</h1>
           <p className="text-lg text-muted-foreground mt-2">Learn more about our community and what drives us.</p>
         </div>
         
-        <div className="space-y-24">
-          {sections.map((section, index) => (
-            <div key={section.title} className="grid md:grid-cols-2 gap-12 items-center">
-              <div className={`flex flex-col items-start gap-4 ${index % 2 !== 0 ? 'md:order-last' : ''}`}>
-                <div className="p-3 bg-primary/10 rounded-full w-fit mb-4">
-                  {section.icon}
-                </div>
-                <h2 className="text-3xl font-headline font-bold">{section.title}</h2>
-                <p className="text-muted-foreground text-lg">{section.content}</p>
-              </div>
-              <div className={`relative aspect-video rounded-lg overflow-hidden shadow-xl transition-transform duration-300 hover:scale-105 ${index % 2 !== 0 ? '' : 'md:order-last'}`}>
-                  <Image src={section.image.src} alt={section.image.alt} fill className="object-cover" data-ai-hint={section.image.hint} />
-              </div>
-            </div>
-          ))}
-        </div>
+        <Carousel3D items={carouselItems} />
       </div>
     </div>
   )
