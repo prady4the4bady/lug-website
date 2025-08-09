@@ -12,7 +12,7 @@ export default function AboutPage() {
       description: "We are a passionate group of students at BITS Pilani Dubai Campus, united by our interest in Linux, open-source software, and technology. Our community welcomes everyone, from beginners to experienced developers.",
       tags: ["Open Source", "Collaboration", "Linux"],
       imageUrl: "/images/who.png",
-      link: "#"
+      link: "https://www.linkedin.com/company/lugbpdc/posts/?feedView=all"
     },
     {
       id: 2,
@@ -21,7 +21,7 @@ export default function AboutPage() {
       description: "Our mission is to foster a collaborative environment for learning and innovation. We aim to promote the use of open-source technologies and empower students with practical skills for their future careers.",
       tags: ["Innovation", "Skills", "Technology"],
       imageUrl: "/images/mission.png",
-      link: "#"
+      link: "https://www.linkedin.com/company/lugbpdc/posts/?feedView=all"
     },
     {
       id: 3,
@@ -30,7 +30,7 @@ export default function AboutPage() {
       description: "We organize a variety of activities including workshops, coding sessions, tech talks by industry experts, and collaborative projects. We also maintain a forum for members to discuss, share knowledge, and seek help.",
       tags: ["Workshops", "Projects", "Talks"],
       imageUrl: "/images/what.png",
-      link: "#"
+      link: "https://www.linkedin.com/company/lugbpdc/posts/?feedView=all"
     }
   ];
 
