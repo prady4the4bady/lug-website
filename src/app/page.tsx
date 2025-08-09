@@ -7,14 +7,14 @@ import Image from "next/image";
 import { ThreeDMarquee, type MarqueeImage } from "@/components/three-d-marquee";
 
 const marqueeImages: MarqueeImage[] = [
-    { src: 'https://placehold.co/400x300.png', alt: 'Linux', "data-ai-hint": "Linux mascot" },
-    { src: 'https://placehold.co/400x300.png', alt: 'Open Source', "data-ai-hint": "open source code" },
-    { src: 'https://placehold.co/400x300.png', alt: 'BITS Pilani', "data-ai-hint": "university building" },
-    { src: 'https://placehold.co/400x300.png', alt: 'Dubai', "data-ai-hint": "Dubai skyline" },
-    { src: 'https://placehold.co/400x300.png', alt: 'Technology', "data-ai-hint": "futuristic technology" },
-    { src: 'https://placehold.co/400x300.png', alt: 'Community', "data-ai-hint": "diverse community" },
-    { src: 'https://placehold.co/400x300.png', alt: 'Workshops', "data-ai-hint": "coding workshop" },
-    { src: 'https://placehold.co/400x300.png', alt: 'Events', "data-ai-hint": "tech conference" },
+    { src: '/images/1.png', alt: 'Linux', "data-ai-hint": "Linux mascot" },
+    { src: '/images/2.png', alt: 'Open Source', "data-ai-hint": "open source code" },
+    { src: '/images/3.png', alt: 'BITS Pilani', "data-ai-hint": "university building" },
+    { src: '/images/4.png', alt: 'Dubai', "data-ai-hint": "Dubai skyline" },
+    { src: '/images/5.png', alt: 'Technology', "data-ai-hint": "futuristic technology" },
+    { src: '/images/6.png', alt: 'Community', "data-ai-hint": "diverse community" },
+    { src: '/images/7.png', alt: 'Workshops', "data-ai-hint": "coding workshop" },
+    { src: '/images/8.png', alt: 'Events', "data-ai-hint": "tech conference" },
 ]
 
 export default function Home() {
