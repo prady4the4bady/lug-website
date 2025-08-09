@@ -251,7 +251,7 @@ function MembershipTab() {
 }
 
 export function ProfileTabs() {
-    const { user, dbUser, loading: authLoading } = useAuth();
+    const { user, dbUser, loading: authLoading, isAdmin } = useAuth();
 
     if (authLoading || !user) {
         return (
@@ -273,8 +273,8 @@ export function ProfileTabs() {
                 <TabsList>
                     <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
                     <TabsTrigger value="membership">Membership</TabsTrigger>
-                    {isActiveMember && <TabsTrigger value="history">Event History</TabsTrigger>}
-                    {isCouncilMember && <TabsTrigger value="edit-profile">Edit Profile</TabsTrigger>}
+                    {(isActiveMember || isAdmin) && <TabsTrigger value="history">Event History</TabsTrigger>}
+                    {(isCouncilMember || isAdmin) && <TabsTrigger value="edit-profile">Edit Profile</TabsTrigger>}
                 </TabsList>
             </div>
             <TabsContent value="dashboard">
@@ -321,12 +321,12 @@ export function ProfileTabs() {
             <TabsContent value="membership">
                 <MembershipTab />
             </TabsContent>
-            {isActiveMember && (
+            {(isActiveMember || isAdmin) && (
                 <TabsContent value="history">
                     <EventHistoryTab />
                 </TabsContent>
             )}
-            {isCouncilMember && (
+            {(isCouncilMember || isAdmin) && (
                 <TabsContent value="edit-profile">
                     <EditProfileForm user={dbUser} />
                 </TabsContent>
