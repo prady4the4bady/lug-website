@@ -265,6 +265,7 @@ export function ProfileTabs() {
     const userEmail = user.email || "No email provided";
     const userAvatar = user.photoURL || "https://placehold.co/100x100.png";
     const isCouncilMember = dbUser?.isCouncilMember || false;
+    const isActiveMember = dbUser?.subscriptionStatus === 'active';
 
     return (
         <Tabs defaultValue="dashboard" className="w-full">
@@ -272,7 +273,7 @@ export function ProfileTabs() {
                 <TabsList>
                     <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
                     <TabsTrigger value="membership">Membership</TabsTrigger>
-                    <TabsTrigger value="history">Event History</TabsTrigger>
+                    {isActiveMember && <TabsTrigger value="history">Event History</TabsTrigger>}
                     {isCouncilMember && <TabsTrigger value="edit-profile">Edit Profile</TabsTrigger>}
                 </TabsList>
             </div>
@@ -320,9 +321,11 @@ export function ProfileTabs() {
             <TabsContent value="membership">
                 <MembershipTab />
             </TabsContent>
-            <TabsContent value="history">
-                <EventHistoryTab />
-            </TabsContent>
+            {isActiveMember && (
+                <TabsContent value="history">
+                    <EventHistoryTab />
+                </TabsContent>
+            )}
             {isCouncilMember && (
                 <TabsContent value="edit-profile">
                     <EditProfileForm user={dbUser} />
