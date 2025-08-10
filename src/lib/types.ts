@@ -10,7 +10,7 @@ export type User = {
     id?: string;
     name: string;
     email: string;
-    photoURL: string;
+    photoURL?: string;
     isAdmin: boolean;
     isCouncilMember: boolean;
     councilRole?: string | null;

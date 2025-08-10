@@ -46,6 +46,7 @@ export default function Home() {
             alt="Tux Penguin Mascot"
             width={400}
             height={400}
+            style={{ height: "auto" }}
             className="object-contain transition-all duration-300 ease-in-out hover:[filter:drop-shadow(0_0_3rem_hsl(var(--primary)/0.5))]"
             data-ai-hint="Tux penguin"
             priority

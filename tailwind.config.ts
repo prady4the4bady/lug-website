@@ -80,8 +80,8 @@ export default {
             '50%': { transform: 'translateY(-10px)' },
         },
         "pulse-slow": {
-          "50%": { opacity: 0.7 },
-        },
+ "50%": { opacity: '0.7' },
+ },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
