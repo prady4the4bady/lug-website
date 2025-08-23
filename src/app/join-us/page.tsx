@@ -23,7 +23,7 @@ export default function JoinUsPage() {
             </p>
             <Button asChild size="lg">
               <Link href="https://lug12.netlify.app/" target="_blank">
-                Join Our Community Platform <ExternalLink className="ml-2 h-5 w-5" />
+                Join Our Community <ExternalLink className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           </CardContent>
