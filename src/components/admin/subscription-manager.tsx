@@ -36,10 +36,12 @@ export function SubscriptionManager() {
             
             const now = new Date();
             let expiryDate;
+            
+            // Create a new Date object for calculations to avoid mutating `now`
             if (user.subscriptionTier === 'Annual') {
-                expiryDate = new Date(now.setFullYear(now.getFullYear() + 1));
+                expiryDate = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
             } else { // Semester
-                expiryDate = new Date(now.setMonth(now.getMonth() + 4));
+                expiryDate = new Date(now.getFullYear(), now.getMonth() + 4, now.getDate());
             }
             
             const memberData: Member = {
