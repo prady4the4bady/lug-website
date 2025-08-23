@@ -4,49 +4,35 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { db } from '@/lib/firebase';
-import { collection, onSnapshot, query, Timestamp } from 'firebase/firestore';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDaysInMonth, subYears, addYears, getYear, getMonth, setYear, setMonth } from 'date-fns';
+import { collection, onSnapshot, Timestamp } from 'firebase/firestore';
+import { format, getYear, startOfYear, endOfYear, getMonth, addYears, subYears } from 'date-fns';
 import type { User, Event, ChatMessage } from '@/lib/types';
 import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BarChart, XAxis, YAxis, Bar, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 import { Button } from '../ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
-const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const YEARS = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-
-const aggregateDataByDay = (
+const aggregateDataByMonth = (
     items: { createdAt?: Timestamp; date?: Timestamp; timestamp?: Timestamp | null }[], 
     dateKey: 'createdAt' | 'date' | 'timestamp',
-    currentDate: Date
+    year: number
 ) => {
-    const dailyCounts: Record<string, number> = {};
-    const daysInMonth = eachDayOfInterval({
-        start: startOfMonth(currentDate),
-        end: endOfMonth(currentDate)
-    });
-
-    daysInMonth.forEach(day => {
-        const dayStr = format(day, 'd');
-        dailyCounts[dayStr] = 0;
-    });
+    const monthlyCounts = Array(12).fill(0);
 
     items.forEach(item => {
         // @ts-ignore
         const itemTimestamp = item[dateKey];
         if (itemTimestamp) {
             const itemDate = itemTimestamp.toDate();
-            if (itemDate.getFullYear() === currentDate.getFullYear() && itemDate.getMonth() === currentDate.getMonth()) {
-                const dayStr = format(itemDate, 'd');
-                if (dayStr in dailyCounts) {
-                    dailyCounts[dayStr]++;
-                }
+            if (getYear(itemDate) === year) {
+                const monthIndex = getMonth(itemDate);
+                monthlyCounts[monthIndex]++;
             }
         }
     });
     
-    return Object.entries(dailyCounts).map(([day, count]) => ({ day, count }));
+    return MONTHS.map((month, index) => ({ month, count: monthlyCounts[index] }));
 };
 
 
@@ -55,7 +41,7 @@ export function AdminAnalytics() {
     const [allEvents, setAllEvents] = useState<Event[]>([]);
     const [allMessages, setAllMessages] = useState<ChatMessage[]>([]);
     const [loading, setLoading] = useState(true);
-    const [currentDate, setCurrentDate] = useState(new Date());
+    const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
     useEffect(() => {
         const usersUnsub = onSnapshot(collection(db, "users"), (snapshot) => {
@@ -64,7 +50,6 @@ export function AdminAnalytics() {
         const eventsUnsub = onSnapshot(collection(db, "events"), (snapshot) => {
             setAllEvents(snapshot.docs.map(doc => doc.data() as Event));
         });
-        
         const messagesUnsub = onSnapshot(collection(db, "messages"), (snapshot) => {
             setAllMessages(snapshot.docs.map(doc => doc.data() as ChatMessage));
         });
@@ -79,9 +64,9 @@ export function AdminAnalytics() {
         };
     }, []);
 
-    const userChartData = useMemo(() => aggregateDataByDay(allUsers, 'createdAt', currentDate), [allUsers, currentDate]);
-    const eventChartData = useMemo(() => aggregateDataByDay(allEvents, 'date', currentDate), [allEvents, currentDate]);
-    const messageChartData = useMemo(() => aggregateDataByDay(allMessages, 'timestamp', currentDate), [allMessages, currentDate]);
+    const userChartData = useMemo(() => aggregateDataByMonth(allUsers, 'createdAt', currentYear), [allUsers, currentYear]);
+    const eventChartData = useMemo(() => aggregateDataByMonth(allEvents, 'date', currentYear), [allEvents, currentYear]);
+    const messageChartData = useMemo(() => aggregateDataByMonth(allMessages, 'timestamp', currentYear), [allMessages, currentYear]);
     
     if (loading) {
          return (
@@ -95,43 +80,21 @@ export function AdminAnalytics() {
     const maxEventCount = Math.max(...eventChartData.map(d => d.count), 5);
     const maxMessageCount = Math.max(...messageChartData.map(d => d.count), 10);
 
-    const handleDateChange = (year: number, month: number) => {
-        setCurrentDate(new Date(year, month));
+    const handleYearChange = (direction: 'prev' | 'next') => {
+        setCurrentYear(prevYear => direction === 'prev' ? prevYear - 1 : prevYear + 1);
     };
 
     return (
         <div className="mt-6 space-y-6">
             <Card className="bg-card/60 backdrop-blur-sm p-4">
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <h3 className="text-lg font-medium">Viewing Analytics For:</h3>
-                     <div className="flex items-center gap-2">
-                        <Select 
-                            value={String(getMonth(currentDate))}
-                            onValueChange={(val) => handleDateChange(getYear(currentDate), Number(val))}
-                        >
-                            <SelectTrigger className="w-36">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {MONTHS.map((month, index) => (
-                                    <SelectItem key={month} value={String(index)}>{month}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        <Select
-                            value={String(getYear(currentDate))}
-                             onValueChange={(val) => handleDateChange(Number(val), getMonth(currentDate))}
-                        >
-                            <SelectTrigger className="w-28">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {YEARS.map(year => (
-                                     <SelectItem key={year} value={String(year)}>{year}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
+                <div className="flex items-center justify-center gap-4">
+                    <Button variant="outline" size="icon" onClick={() => handleYearChange('prev')}>
+                        <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <h3 className="text-xl font-bold w-24 text-center">{currentYear}</h3>
+                    <Button variant="outline" size="icon" onClick={() => handleYearChange('next')} disabled={currentYear === new Date().getFullYear()}>
+                        <ChevronRight className="h-4 w-4" />
+                    </Button>
                 </div>
             </Card>
 
@@ -139,13 +102,13 @@ export function AdminAnalytics() {
                 <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
                     <CardHeader>
                         <CardTitle>New Users</CardTitle>
-                        <CardDescription>Daily sign-ups for {format(currentDate, 'MMMM yyyy')}.</CardDescription>
+                        <CardDescription>Monthly sign-ups for {currentYear}.</CardDescription>
                     </CardHeader>
                     <CardContent className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={userChartData}>
                                 <CartesianGrid vertical={false} />
-                                <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
+                                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
                                 <YAxis domain={[0, maxUserCount]} allowDecimals={false} fontSize={12} />
                                 <Tooltip
                                     contentStyle={{
@@ -153,7 +116,7 @@ export function AdminAnalytics() {
                                         borderColor: 'hsl(var(--border))',
                                     }}
                                 />
-                                <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
+                                <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>
@@ -161,13 +124,13 @@ export function AdminAnalytics() {
                 <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
                     <CardHeader>
                         <CardTitle>Events Created</CardTitle>
-                        <CardDescription>Daily events scheduled for {format(currentDate, 'MMMM yyyy')}.</CardDescription>
+                        <CardDescription>Monthly events scheduled for {currentYear}.</CardDescription>
                     </CardHeader>
                     <CardContent className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={eventChartData}>
                                 <CartesianGrid vertical={false} />
-                                <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
+                                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
                                 <YAxis domain={[0, maxEventCount]} allowDecimals={false} fontSize={12} />
                                 <Tooltip
                                     contentStyle={{
@@ -175,7 +138,7 @@ export function AdminAnalytics() {
                                         borderColor: 'hsl(var(--border))',
                                     }}
                                 />
-                                <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
+                                <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>
@@ -183,13 +146,13 @@ export function AdminAnalytics() {
                 <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
                     <CardHeader>
                         <CardTitle>Forum Activity</CardTitle>
-                        <CardDescription>Daily messages for {format(currentDate, 'MMMM yyyy')}.</CardDescription>
+                        <CardDescription>Monthly messages for {currentYear}.</CardDescription>
                     </CardHeader>
                     <CardContent className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={messageChartData}>
                                 <CartesianGrid vertical={false} />
-                                <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
+                                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
                                 <YAxis domain={[0, maxMessageCount]} allowDecimals={false} fontSize={12} />
                                 <Tooltip
                                     contentStyle={{
@@ -197,7 +160,7 @@ export function AdminAnalytics() {
                                         borderColor: 'hsl(var(--border))',
                                     }}
                                 />
-                                <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
+                                <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </CardContent>
@@ -206,5 +169,3 @@ export function AdminAnalytics() {
         </div>
     );
 }
-
-    
