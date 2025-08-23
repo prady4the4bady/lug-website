@@ -15,7 +15,7 @@ export function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const [isClient, setIsClient] = useState(false)
   const pathname = usePathname()
-  const { user, isAdmin, signOutUser } = useAuth();
+  const { user, dbUser, isAdmin, signOutUser } = useAuth();
 
   useEffect(() => {
     setIsClient(true)
@@ -27,6 +27,10 @@ export function Header() {
     { href: "/events", label: "Events" },
     { href: "/forum", label: "Forum" },
   ];
+  
+  if (dbUser?.subscriptionStatus !== 'active') {
+    navLinks.push({ href: "/profile", label: "Join Us" });
+  }
 
   if (user) {
     navLinks.push({ href: "/profile", label: "Profile" });
@@ -35,6 +39,14 @@ export function Header() {
   if (isAdmin) {
     navLinks.push({ href: "/admin", label: "Admin" });
   }
+  
+  // Remove duplicates
+  const uniqueNavLinks = navLinks.filter((link, index, self) =>
+    index === self.findIndex((l) => (
+      l.href === link.href && l.label === link.label
+    ))
+  );
+
 
   const handleTerminalLink = () => {
     window.open("https://lug12.netlify.app/", "_blank");
@@ -54,7 +66,7 @@ export function Header() {
             </div>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium transition-all duration-300 ease-in-out">
-            {navLinks.map((link) => (
+            {uniqueNavLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -90,7 +102,7 @@ export function Header() {
             </Link>
             <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
               <div className="flex flex-col space-y-3">
-                {navLinks.map((link) => (
+                {uniqueNavLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}

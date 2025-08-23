@@ -79,6 +79,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     const userData = doc.data() as User;
                     setDbUser({ id: doc.id, ...userData });
                     setIsAdmin(!!userData.isAdmin);
+                } else {
+                    // This can happen if the user exists in Auth but not in Firestore yet.
+                    // We can wait for processAuth to create it.
+                    setDbUser(null);
+                    setIsAdmin(false);
                 }
                 setLoading(false);
             });
