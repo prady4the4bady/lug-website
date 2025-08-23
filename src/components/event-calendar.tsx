@@ -12,11 +12,13 @@ import { ExternalLink, Loader2 } from "lucide-react";
 import { db } from "@/lib/firebase";
 import { collection, onSnapshot, query, orderBy, Timestamp } from "firebase/firestore";
 import { ScrollArea } from "./ui/scroll-area";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function EventCalendar() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const q = query(collection(db, "events"), orderBy("date", "desc"));
@@ -41,10 +43,10 @@ export function EventCalendar() {
     : [];
 
   return (
-    <div className="grid md:grid-cols-3 gap-8 items-start">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
       <div className="md:col-span-1">
         <Card>
-          <CardContent className="p-0">
+          <CardContent className="p-0 flex justify-center">
              <Calendar
               mode="single"
               selected={date}
@@ -67,7 +69,7 @@ export function EventCalendar() {
         <h2 className="text-2xl font-headline font-bold mb-4">
           Events on {date ? format(date, "MMMM d, yyyy") : "..."}
         </h2>
-        <ScrollArea className="h-[380px] pr-4">
+        <ScrollArea className="h-[300px] md:h-[380px] pr-4">
           <div className="space-y-4">
             {loading ? (
                <div className="flex justify-center items-center h-40">
