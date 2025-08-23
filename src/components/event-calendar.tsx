@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { ExternalLink, Loader2 } from "lucide-react";
 import { db } from "@/lib/firebase";
 import { collection, onSnapshot, query, orderBy, Timestamp } from "firebase/firestore";
+import { ScrollArea } from "./ui/scroll-area";
 
 export function EventCalendar() {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -40,7 +41,7 @@ export function EventCalendar() {
     : [];
 
   return (
-    <div className="grid md:grid-cols-3 gap-8">
+    <div className="grid md:grid-cols-3 gap-8 items-start">
       <div className="md:col-span-1">
         <Card>
           <CardContent className="p-0">
@@ -66,43 +67,47 @@ export function EventCalendar() {
         <h2 className="text-2xl font-headline font-bold mb-4">
           Events on {date ? format(date, "MMMM d, yyyy") : "..."}
         </h2>
-        <div className="space-y-4">
-          {loading ? (
-             <div className="flex justify-center items-center h-40">
-                <Loader2 className="h-8 w-8 animate-spin" />
-            </div>
-          ) : eventsForSelectedDay.length > 0 ? (
-            eventsForSelectedDay.map(event => (
-              <Card key={event.id}>
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle>{event.title}</CardTitle>
-                      <CardDescription>{format(event.date.toDate(), "p")}</CardDescription>
+        <ScrollArea className="h-[380px] pr-4">
+          <div className="space-y-4">
+            {loading ? (
+               <div className="flex justify-center items-center h-40">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+            ) : eventsForSelectedDay.length > 0 ? (
+              eventsForSelectedDay.map(event => (
+                <Card key={event.id}>
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle>{event.title}</CardTitle>
+                        <CardDescription>{format(event.date.toDate(), "p")}</CardDescription>
+                      </div>
+                      <Badge variant="secondary">Upcoming</Badge>
                     </div>
-                    <Badge variant="secondary">Upcoming</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p>{event.description}</p>
+                  </CardHeader>
+                  <CardContent>
+                    <p>{event.description}</p>
+                  </CardContent>
+                  {event.link && (
+                    <CardFooter>
+                      <Button asChild variant="link" className="p-0 h-auto">
+                        <a href={event.link} target="_blank" rel="noopener noreferrer">
+                          Event Details <ExternalLink className="ml-2 h-4 w-4" />
+                        </a>
+                      </Button>
+                    </CardFooter>
+                  )}
+                </Card>
+              ))
+            ) : (
+              <Card>
+                <CardContent className="pt-6 h-40 flex items-center justify-center">
+                  <p className="text-muted-foreground">No events scheduled for this day.</p>
                 </CardContent>
-                <CardFooter>
-                  <Button asChild variant="link" className="p-0 h-auto">
-                    <a href={event.link} target="_blank" rel="noopener noreferrer">
-                      Event Details <ExternalLink className="ml-2 h-4 w-4" />
-                    </a>
-                  </Button>
-                </CardFooter>
               </Card>
-            ))
-          ) : (
-            <Card>
-              <CardContent className="pt-6">
-                <p className="text-muted-foreground">No events scheduled for this day.</p>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+            )}
+          </div>
+        </ScrollArea>
       </div>
     </div>
   );
