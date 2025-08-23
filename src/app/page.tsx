@@ -2,12 +2,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Rocket, Code, Users } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { ThreeDMarquee, type MarqueeImage } from "@/components/three-d-marquee";
 import { useAuth } from "@/hooks/use-auth";
+import { ImageCycler3D } from "@/components/image-cycler-3d";
 
 const marqueeImages: MarqueeImage[] = [
     { src: '/images/1.png', alt: 'Linux', "data-ai-hint": "Linux mascot" },
@@ -19,6 +19,17 @@ const marqueeImages: MarqueeImage[] = [
     { src: '/images/7.png', alt: 'Workshops', "data-ai-hint": "coding workshop" },
     { src: '/images/8.png', alt: 'Events', "data-ai-hint": "tech conference" },
 ]
+
+const carouselImages = [
+    '/images/1.png',
+    '/images/2.png',
+    '/images/3.png',
+    '/images/4.png',
+    '/images/5.png',
+    '/images/6.png',
+    '/images/7.png',
+    '/images/8.png',
+];
 
 export default function Home() {
   const { featureFlags } = useAuth();
@@ -64,49 +75,15 @@ export default function Home() {
           </div>
         )}
       </section>
-
-      <section className="relative py-20 pt-32">
+      
+      <section className="relative py-20 pt-32 h-[600px]">
         <div className="absolute inset-0 -z-10 h-full w-full bg-background/80 backdrop-blur-sm"></div>
-        <div className="container text-center">
-            <h2 className="text-3xl md:text-4xl font-headline font-bold mb-4 animate-fadeInUp">What We Offer</h2>
+        <div className="container text-center h-full">
+            <h2 className="text-3xl md:text-4xl font-headline font-bold mb-4 animate-fadeInUp">What We Do</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto mb-12 animate-fadeInUp [animation-delay:100ms]">
-                From hands-on workshops to expert talks, we provide a platform for learning, collaboration, and growth.
+                Explore our activities through this interactive 3D carousel.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Card className="text-center bg-card/80 backdrop-blur animate-fadeInUp [animation-delay:200ms] transition-all duration-300 hover:shadow-primary/20 hover:shadow-lg hover:-translate-y-2">
-                  <CardHeader>
-                    <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit">
-                        <Users className="h-8 w-8 text-primary" />
-                    </div>
-                    <CardTitle className="font-headline">Workshops</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Practical sessions on Linux, programming, and more.</p>
-                  </CardContent>
-                </Card>
-                <Card className="text-center bg-card/80 backdrop-blur animate-fadeInUp [animation-delay:300ms] transition-all duration-300 hover:shadow-primary/20 hover:shadow-lg hover:-translate-y-2">
-                  <CardHeader>
-                    <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit">
-                        <Code className="h-8 w-8 text-primary" />
-                    </div>
-                    <CardTitle className="font-headline">Guest Lectures</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Insights from industry experts on cutting-edge tech.</p>
-                  </CardContent>
-                </Card>
-                <Card className="text-center bg-card/80 backdrop-blur animate-fadeInUp [animation-delay:400ms] transition-all duration-300 hover:shadow-primary/20 hover:shadow-lg hover:-translate-y-2">
-                  <CardHeader>
-                    <div className="mx-auto bg-primary/10 p-3 rounded-full w-fit">
-                        <Rocket className="h-8 w-8 text-primary" />
-                    </div>
-                    <CardTitle className="font-headline">Community Projects</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Collaborate on real-world open-source projects.</p>
-                  </CardContent>
-                </Card>
-            </div>
+            <ImageCycler3D images={carouselImages} />
         </div>
       </section>
     </div>
