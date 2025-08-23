@@ -1,65 +1,72 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { db } from '@/lib/firebase';
-import { collection, onSnapshot, query, Timestamp, limit, orderBy } from 'firebase/firestore';
-import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
+import { collection, onSnapshot, query, Timestamp } from 'firebase/firestore';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, getDaysInMonth, subYears, addYears, getYear, getMonth, setYear, setMonth } from 'date-fns';
 import type { User, Event, ChatMessage } from '@/lib/types';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BarChart, XAxis, YAxis, Bar, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
+import { Button } from '../ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
-const aggregateDataByMonth = (items: { createdAt?: Timestamp }[] | { date: Timestamp }[] | { timestamp: Timestamp | null }[], dateKey: 'createdAt' | 'date' | 'timestamp') => {
-    const monthlyCounts: Record<string, number> = {};
-    const now = new Date();
-    
-    // Initialize the last 5 months
-    for (let i = 4; i >= 0; i--) {
-        const month = subMonths(now, i);
-        const monthStr = format(month, 'MMM');
-        monthlyCounts[monthStr] = 0;
-    }
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const YEARS = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
+
+
+const aggregateDataByDay = (
+    items: { createdAt?: Timestamp; date?: Timestamp; timestamp?: Timestamp | null }[], 
+    dateKey: 'createdAt' | 'date' | 'timestamp',
+    currentDate: Date
+) => {
+    const dailyCounts: Record<string, number> = {};
+    const daysInMonth = eachDayOfInterval({
+        start: startOfMonth(currentDate),
+        end: endOfMonth(currentDate)
+    });
+
+    daysInMonth.forEach(day => {
+        const dayStr = format(day, 'd');
+        dailyCounts[dayStr] = 0;
+    });
 
     items.forEach(item => {
         // @ts-ignore
         const itemTimestamp = item[dateKey];
         if (itemTimestamp) {
             const itemDate = itemTimestamp.toDate();
-            const fiveMonthsAgo = startOfMonth(subMonths(now, 4));
-            const endOfThisMonth = endOfMonth(now);
-
-            if (isWithinInterval(itemDate, { start: fiveMonthsAgo, end: endOfThisMonth })) {
-                const monthStr = format(itemDate, 'MMM');
-                if (monthStr in monthlyCounts) {
-                    monthlyCounts[monthStr]++;
+            if (itemDate.getFullYear() === currentDate.getFullYear() && itemDate.getMonth() === currentDate.getMonth()) {
+                const dayStr = format(itemDate, 'd');
+                if (dayStr in dailyCounts) {
+                    dailyCounts[dayStr]++;
                 }
             }
         }
     });
-
-    return Object.entries(monthlyCounts).map(([month, count]) => ({ month, count }));
+    
+    return Object.entries(dailyCounts).map(([day, count]) => ({ day, count }));
 };
 
 
 export function AdminAnalytics() {
-    const [users, setUsers] = useState<User[]>([]);
-    const [events, setEvents] = useState<Event[]>([]);
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [allUsers, setAllUsers] = useState<User[]>([]);
+    const [allEvents, setAllEvents] = useState<Event[]>([]);
+    const [allMessages, setAllMessages] = useState<ChatMessage[]>([]);
     const [loading, setLoading] = useState(true);
+    const [currentDate, setCurrentDate] = useState(new Date());
 
     useEffect(() => {
         const usersUnsub = onSnapshot(collection(db, "users"), (snapshot) => {
-            setUsers(snapshot.docs.map(doc => doc.data() as User));
+            setAllUsers(snapshot.docs.map(doc => doc.data() as User));
         });
         const eventsUnsub = onSnapshot(collection(db, "events"), (snapshot) => {
-            setEvents(snapshot.docs.map(doc => doc.data() as Event));
+            setAllEvents(snapshot.docs.map(doc => doc.data() as Event));
         });
         
-        // Optimize query by limiting to last 1000 messages for analytics
-        const messagesQuery = query(collection(db, "messages"), orderBy("timestamp", "desc"), limit(1000));
-        const messagesUnsub = onSnapshot(messagesQuery, (snapshot) => {
-            setMessages(snapshot.docs.map(doc => doc.data() as ChatMessage));
+        const messagesUnsub = onSnapshot(collection(db, "messages"), (snapshot) => {
+            setAllMessages(snapshot.docs.map(doc => doc.data() as ChatMessage));
         });
 
         const timer = setTimeout(() => setLoading(false), 1000);
@@ -72,9 +79,9 @@ export function AdminAnalytics() {
         };
     }, []);
 
-    const userChartData = aggregateDataByMonth(users, 'createdAt');
-    const eventChartData = aggregateDataByMonth(events, 'date');
-    const messageChartData = aggregateDataByMonth(messages, 'timestamp');
+    const userChartData = useMemo(() => aggregateDataByDay(allUsers, 'createdAt', currentDate), [allUsers, currentDate]);
+    const eventChartData = useMemo(() => aggregateDataByDay(allEvents, 'date', currentDate), [allEvents, currentDate]);
+    const messageChartData = useMemo(() => aggregateDataByDay(allMessages, 'timestamp', currentDate), [allMessages, currentDate]);
     
     if (loading) {
          return (
@@ -88,75 +95,116 @@ export function AdminAnalytics() {
     const maxEventCount = Math.max(...eventChartData.map(d => d.count), 5);
     const maxMessageCount = Math.max(...messageChartData.map(d => d.count), 10);
 
+    const handleDateChange = (year: number, month: number) => {
+        setCurrentDate(new Date(year, month));
+    };
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-            <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
-                <CardHeader>
-                    <CardTitle>New Users</CardTitle>
-                    <CardDescription>Sign-ups over the last 5 months.</CardDescription>
-                </CardHeader>
-                <CardContent className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={userChartData}>
-                            <CartesianGrid vertical={false} />
-                            <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
-                            <YAxis domain={[0, maxUserCount]} allowDecimals={false} fontSize={12} />
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: 'hsl(var(--background))',
-                                    borderColor: 'hsl(var(--border))',
-                                }}
-                            />
-                            <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </CardContent>
+        <div className="mt-6 space-y-6">
+            <Card className="bg-card/60 backdrop-blur-sm p-4">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <h3 className="text-lg font-medium">Viewing Analytics For:</h3>
+                     <div className="flex items-center gap-2">
+                        <Select 
+                            value={String(getMonth(currentDate))}
+                            onValueChange={(val) => handleDateChange(getYear(currentDate), Number(val))}
+                        >
+                            <SelectTrigger className="w-36">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {MONTHS.map((month, index) => (
+                                    <SelectItem key={month} value={String(index)}>{month}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <Select
+                            value={String(getYear(currentDate))}
+                             onValueChange={(val) => handleDateChange(Number(val), getMonth(currentDate))}
+                        >
+                            <SelectTrigger className="w-28">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {YEARS.map(year => (
+                                     <SelectItem key={year} value={String(year)}>{year}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
             </Card>
-            <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
-                <CardHeader>
-                    <CardTitle>Events Created</CardTitle>
-                    <CardDescription>Events scheduled over the last 5 months.</CardDescription>
-                </CardHeader>
-                <CardContent className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={eventChartData}>
-                            <CartesianGrid vertical={false} />
-                            <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
-                            <YAxis domain={[0, maxEventCount]} allowDecimals={false} fontSize={12} />
-                             <Tooltip
-                                contentStyle={{
-                                    backgroundColor: 'hsl(var(--background))',
-                                    borderColor: 'hsl(var(--border))',
-                                }}
-                            />
-                            <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </CardContent>
-            </Card>
-            <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
-                <CardHeader>
-                    <CardTitle>Forum Activity</CardTitle>
-                    <CardDescription>Messages posted over the last 5 months.</CardDescription>
-                </CardHeader>
-                <CardContent className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={messageChartData}>
-                            <CartesianGrid vertical={false} />
-                            <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
-                            <YAxis domain={[0, maxMessageCount]} allowDecimals={false} fontSize={12} />
-                             <Tooltip
-                                contentStyle={{
-                                    backgroundColor: 'hsl(var(--background))',
-                                    borderColor: 'hsl(var(--border))',
-                                }}
-                            />
-                            <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </CardContent>
-            </Card>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
+                    <CardHeader>
+                        <CardTitle>New Users</CardTitle>
+                        <CardDescription>Daily sign-ups for {format(currentDate, 'MMMM yyyy')}.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={userChartData}>
+                                <CartesianGrid vertical={false} />
+                                <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
+                                <YAxis domain={[0, maxUserCount]} allowDecimals={false} fontSize={12} />
+                                <Tooltip
+                                    contentStyle={{
+                                        backgroundColor: 'hsl(var(--background))',
+                                        borderColor: 'hsl(var(--border))',
+                                    }}
+                                />
+                                <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </CardContent>
+                </Card>
+                <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
+                    <CardHeader>
+                        <CardTitle>Events Created</CardTitle>
+                        <CardDescription>Daily events scheduled for {format(currentDate, 'MMMM yyyy')}.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={eventChartData}>
+                                <CartesianGrid vertical={false} />
+                                <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
+                                <YAxis domain={[0, maxEventCount]} allowDecimals={false} fontSize={12} />
+                                <Tooltip
+                                    contentStyle={{
+                                        backgroundColor: 'hsl(var(--background))',
+                                        borderColor: 'hsl(var(--border))',
+                                    }}
+                                />
+                                <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </CardContent>
+                </Card>
+                <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
+                    <CardHeader>
+                        <CardTitle>Forum Activity</CardTitle>
+                        <CardDescription>Daily messages for {format(currentDate, 'MMMM yyyy')}.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={messageChartData}>
+                                <CartesianGrid vertical={false} />
+                                <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
+                                <YAxis domain={[0, maxMessageCount]} allowDecimals={false} fontSize={12} />
+                                <Tooltip
+                                    contentStyle={{
+                                        backgroundColor: 'hsl(var(--background))',
+                                        borderColor: 'hsl(var(--border))',
+                                    }}
+                                />
+                                <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     );
 }
+
+    
