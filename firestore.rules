@@ -3,61 +3,61 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Helper function to check for admin role
+    // Helper function to check if a user is an admin
     function isAdmin() {
-      return request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
-    }
-    
-    // Helper function to check if the user is authenticated
-    function isAuthenticated() {
-      return request.auth != null;
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
 
-    // Users Collection
+    // Helper function to check if a user is an active, subscribed member
+    function isMember() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subscriptionStatus == 'active';
+    }
+
+    // Users can read/update their own profile. Admins can read/update any profile.
+    // Any authenticated user can create their own user document.
     match /users/{userId} {
-      // Admins can read/write any user document.
-      // Authenticated users can read/write their own document.
-      // Anyone can read any user document (for council page, etc.).
-      allow read: if true;
-      allow write: if isAdmin() || request.auth.uid == userId;
+      allow read, update: if request.auth.uid == userId || isAdmin();
+      allow create: if request.auth.uid == userId;
     }
 
-    // Events Collection
-    // Admins can create, update, delete events.
-    // Anyone (even unauthenticated users) can read events.
+    // Authenticated and subscribed members can read events. Admins can do anything.
     match /events/{eventId} {
-      allow read: if true;
-      allow write: if isAdmin();
+      allow read: if request.auth != null && isMember() || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // Authenticated and subscribed members can read/create messages. Users can delete their own. Admins can delete any.
+    match /messages/{messageId} {
+      allow read, create: if request.auth != null && isMember() || isAdmin();
+      allow delete: if isAdmin() || (request.auth != null && resource.data.user == request.auth.token.name);
+    }
+    
+    // Authenticated users can create reports. Admins can read/update/delete any.
+    match /reports/{reportId} {
+      allow create: if request.auth != null;
+      allow read, update, delete: if isAdmin();
+    }
+    
+    // Settings can be read by any authenticated user (for feature flags). Only admins can write.
+    match /settings/{settingId} {
+        allow read: if request.auth != null;
+        allow write: if isAdmin();
+    }
+    
+    // Users can create their own activity logs. Admins can read any.
+    match /activities/{activityId} {
+      allow create: if request.auth.uid == request.resource.data.userId;
+      allow read: if isAdmin() || request.auth.uid == resource.data.userId;
     }
 
-    // Messages Collection
-    // Admins can read/delete any message.
-    // Authenticated users can read all messages and create new ones.
-    match /messages/{messageId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated();
-      allow delete: if isAdmin();
-    }
-    
-    // Reports Collection
-    // Admins can manage all reports.
-    // Any authenticated user can create a report.
-    match /reports/{reportId} {
-        allow read, write: if isAdmin();
-        allow create: if isAuthenticated();
-    }
-    
-    // Activities Collection
-    // Admins can read any activity log.
-    // Authenticated users can only read or write to their own activity log.
-    match /activities/{activityId} {
-        allow read, write: if isAdmin() || request.auth.uid == resource.data.userId;
-    }
-    
-    // Members Collection
-    // Only admins can read or write to the members list.
+    // Admins can manage member documents.
     match /members/{memberId} {
         allow read, write: if isAdmin();
+    }
+
+    // By default, deny all other access.
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
