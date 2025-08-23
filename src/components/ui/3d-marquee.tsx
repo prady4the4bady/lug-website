@@ -1,3 +1,4 @@
+
 "use client";
 
 import { motion } from "framer-motion";
@@ -41,9 +42,7 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
   const imageGroups = Array.from({ length: numCols }, (_, index) => {
     const start = index * groupSize;
     const end = start + groupSize;
-    const groupImages = images.slice(start, end);
-    // Duplicate the images within each group to ensure seamless looping
-    return [...groupImages, ...groupImages];
+    return images.slice(start, end);
   });
   
 
@@ -54,6 +53,52 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
       window.open(image.href, image.target || "_self");
     }
   };
+  
+  const MarqueeColumn = ({ images, reverse = false }: { images: MarqueeImage[], reverse?: boolean }) => {
+    return (
+      <div className="flex flex-col items-center gap-6 overflow-hidden">
+        <motion.div
+          className="flex flex-col gap-6"
+          variants={{
+            animate: {
+              y: reverse ? [0, '-100%'] : ['-100%', 0]
+            }
+          }}
+          animate="animate"
+          transition={{
+            duration: 35,
+            repeat: Infinity,
+            ease: 'linear'
+          }}
+        >
+          {/* Render the images twice for the seamless loop */}
+          {[...images, ...images].map((image, imgIdx) => {
+             const globalIndex = images.indexOf(image);
+             const isClickable = image.href || onImageClick;
+
+            return (
+              <div key={`img-col-${imgIdx}`} className="relative">
+                 <motion.img
+                  whileHover={{ y: -10 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  src={image.src}
+                  alt={image.alt}
+                  width={200}
+                  height={200}
+                  className={cn(
+                    "aspect-square w-full max-w-[200px] rounded-lg object-cover ring ring-gray-300/30 dark:ring-gray-800/50 shadow-xl hover:shadow-2xl transition-shadow duration-300",
+                    isClickable ? "cursor-pointer" : ""
+                  )}
+                  onClick={() => handleImageClick(image, globalIndex)}
+                  data-ai-hint={image['data-ai-hint']}
+                />
+              </div>
+            )
+          })}
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <section
@@ -70,40 +115,7 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
             className={`relative grid h-full w-full origin-center grid-cols-2 sm:grid-cols-4 gap-4 transform`}
           >
             {imageGroups.map((imagesInGroup, idx) => (
-              <motion.div
-                key={`column-${idx}`}
-                animate={{ y: ["0%", "-50%"] }}
-                transition={{
-                  duration: idx % 2 === 0 ? 25 : 35,
-                  repeat: Infinity,
-                  repeatType: "loop",
-                  ease: "linear",
-                }}
-                className="flex flex-col items-center gap-6"
-              >
-                {imagesInGroup.map((image, imgIdx) => {
-                  const globalIndex = idx * groupSize + (imgIdx % (imagesInGroup.length / 2));
-                  const isClickable = image.href || onImageClick;
-
-                  return (
-                    <div key={`img-${idx}-${imgIdx}`} className="relative">
-                       <motion.img
-                        whileHover={{ y: -10 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                        src={image.src}
-                        alt={image.alt}
-                        width={200}
-                        height={200}
-                        className={`aspect-square w-full max-w-[200px] rounded-lg object-cover ring ring-gray-300/30 dark:ring-gray-800/50 shadow-xl hover:shadow-2xl transition-shadow duration-300 ${
-                          isClickable ? "cursor-pointer" : ""
-                        }`}
-                        onClick={() => handleImageClick(image, globalIndex)}
-                        data-ai-hint={image['data-ai-hint']}
-                      />
-                    </div>
-                  );
-                })}
-              </motion.div>
+               <MarqueeColumn key={`column-${idx}`} images={imagesInGroup} reverse={idx % 2 === 0} />
             ))}
           </div>
         </div>
