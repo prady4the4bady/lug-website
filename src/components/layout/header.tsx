@@ -27,11 +27,10 @@ export function Header() {
     { href: "/council", label: "Council", show: true },
     { href: "/events", label: "Events", show: featureFlags?.showEvents ?? true },
     { href: "/forum", label: "Forum", show: featureFlags?.showForum ?? true },
+    { href: "/join-us", label: "Join Us", show: true },
   ];
   
-  if (user && dbUser?.subscriptionStatus !== 'active') {
-      navLinks.push({ href: "/join-us", label: "Join Us", show: true });
-  } else if (user) {
+  if (user) {
       navLinks.push({ href: "/profile", label: "Profile", show: true });
   }
   
