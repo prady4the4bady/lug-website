@@ -18,7 +18,7 @@ export default function AboutPage() {
       id: 2,
       title: "Our Mission",
       brand: "Vision",
-      description: "Our mission is to foster a collaborative environment for learning and innovation. We aim to promote the use of open-source technologies and empower students with practical skills for their future careers.",
+      description: "Our mission is to ignite a passion for open-source technology by fostering a collaborative environment for learning and innovation. We empower students with the practical skills and hands-on experience necessary to thrive in their future careers.",
       tags: ["Innovation", "Skills", "Technology"],
       imageUrl: "/images/mission.png",
       link: "https://www.linkedin.com/company/lugbpdc/posts/?feedView=all"
