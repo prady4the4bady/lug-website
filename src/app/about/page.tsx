@@ -46,7 +46,7 @@ export default function AboutPage() {
           <p className="text-lg text-muted-foreground mt-2">Learn more about our community and what drives us.</p>
         </div>
         
-        <Carousel3D items={carouselItems} />
+        <Carousel3D items={carouselItems} rotateInterval={20000} />
       </div>
     </div>
   )
