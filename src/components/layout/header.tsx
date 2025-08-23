@@ -12,6 +12,12 @@ import { useAuth } from "@/hooks/use-auth"
 import Image from "next/image"
 import { Skeleton } from "../ui/skeleton"
 
+const baseNavLinks = [
+  { href: "/about", label: "About" },
+  { href: "/council", label: "Council" },
+  { href: "/join-us", label: "Join Us" },
+];
+
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const [isClient, setIsClient] = useState(false)
@@ -21,12 +27,6 @@ export function Header() {
   useEffect(() => {
     setIsClient(true)
   }, [])
-
-  const baseNavLinks = [
-    { href: "/about", label: "About" },
-    { href: "/council", label: "Council" },
-    { href: "/join-us", label: "Join Us" },
-  ];
 
   const getDynamicNavLinks = () => {
     const dynamicLinks = [];
@@ -48,15 +48,12 @@ export function Header() {
     );
   };
   
-  const navLinks = isClient ? [...baseNavLinks, ...getDynamicNavLinks()] : baseNavLinks;
-  const mobileNavLinks = [...baseNavLinks, ...getDynamicNavLinks()];
-
   const showSignInButton = isClient ? (isAdmin || (featureFlags?.showSignIn ?? true)) : false;
 
   const handleTerminalLink = () => {
     window.open("https://lug12.netlify.app/", "_blank");
   }
-
+  
   const renderNavLinks = (links: {href: string, label: string}[]) => (
     links.map((link) => (
       <Link
