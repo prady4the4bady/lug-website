@@ -9,6 +9,8 @@ import { ThreeDMarquee, type MarqueeImage } from "@/components/ui/3d-marquee";
 import { useAuth } from "@/hooks/use-auth";
 import React from "react";
 import { Draggable3DImageRing } from "@/components/ui/draggable-3d-image-ring";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+
 
 const marqueeImages: MarqueeImage[] = [
     { src: '/images/1.png', alt: 'Linux', "data-ai-hint": "Linux mascot" },
@@ -58,11 +60,17 @@ export default function Home() {
       {/* Section 2: About Us */}
       <section className="relative w-full py-20 md:py-32 bg-background">
          <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
-        <div className="container mx-auto max-w-4xl text-center">
-            <h2 className="text-3xl md:text-4xl font-headline font-bold mb-6">About Us</h2>
-            <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-             At LUG, we believe in the power of open-source technology and the freedom to create, share, and innovate. Our community brings together students passionate about Linux, open-source software, and collaborative development. From beginners to experts, we explore system administration, scripting, and cutting-edge tools through workshops, install fests, and discussions. At LUG, curiosity drives learning, collaboration fuels growth, and innovation thrives.
-            </p>
+        <div className="container mx-auto flex justify-center">
+            <Card className="w-full max-w-4xl text-center bg-card/80 backdrop-blur-sm">
+                <CardHeader>
+                    <CardTitle className="text-3xl md:text-4xl font-headline font-bold">About Us</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                     At LUG, we believe in the power of open-source technology and the freedom to create, share, and innovate. Our community brings together students passionate about Linux, open-source software, and collaborative development. From beginners to experts, we explore system administration, scripting, and cutting-edge tools through workshops, install fests, and discussions. At LUG, curiosity drives learning, collaboration fuels growth, and innovation thrives.
+                    </p>
+                </CardContent>
+            </Card>
         </div>
       </section>
       
