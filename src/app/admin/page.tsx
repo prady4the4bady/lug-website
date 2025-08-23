@@ -145,14 +145,13 @@ export default function AdminPage() {
         </div>
 
         <Tabs defaultValue="analytics" className="w-full" orientation={isMobile ? "vertical" : "horizontal"}>
-          <TabsList className="grid w-full grid-cols-1 md:grid-cols-7 bg-card/60 backdrop-blur-sm h-auto md:h-10">
+          <TabsList className="grid w-full grid-cols-1 md:grid-cols-6 bg-card/60 backdrop-blur-sm h-auto md:h-10">
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
             <TabsTrigger value="events">Events</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="council">Council</TabsTrigger>
             <TabsTrigger value="forum">Forum</TabsTrigger>
-            <TabsTrigger value="reports">Reports</TabsTrigger>
           </TabsList>
           <TabsContent value="analytics">
             <AdminAnalytics />
@@ -172,10 +171,10 @@ export default function AdminPage() {
           <TabsContent value="forum">
             <ForumModeration />
           </TabsContent>
-          <TabsContent value="reports">
-            <ReportsManager />
-          </TabsContent>
         </Tabs>
+        <div className="mt-8">
+            <ReportsManager />
+        </div>
       </div>
     </div>
   )
