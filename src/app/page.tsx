@@ -60,10 +60,12 @@ export default function Home() {
       {/* Section 2: About Us */}
       <section className="relative w-full py-20 md:py-32 bg-background">
          <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
-        <div className="container mx-auto flex justify-center">
+        <div className="container mx-auto flex justify-center relative">
+            <div className="absolute -inset-8 -z-10 rounded-full bg-primary/20 blur-3xl opacity-30"></div>
             <Card className="w-full max-w-4xl text-center bg-card/80 backdrop-blur-sm">
                 <CardHeader>
                     <CardTitle className="text-3xl md:text-4xl font-headline font-bold">About Us</CardTitle>
+                    <div className="w-24 h-1 bg-primary mx-auto mt-2 mb-4"></div>
                 </CardHeader>
                 <CardContent>
                     <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
