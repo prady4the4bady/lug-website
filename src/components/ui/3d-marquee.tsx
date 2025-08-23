@@ -2,7 +2,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export interface MarqueeImage {
   src: string;
@@ -15,7 +16,7 @@ export interface MarqueeImage {
 export interface ThreeDMarqueeProps {
   images: MarqueeImage[];
   className?: string;
-  cols?: number; // default is 4
+  cols?: number;
   onImageClick?: (image: MarqueeImage, index: number) => void;
 }
 
@@ -25,11 +26,16 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
   cols = 4,
   onImageClick,
 }) => {
-  // Clone the image list twice to create the infinite loop effect
-  const duplicatedImages = [...images, ...images];
+  const isMobile = useIsMobile();
+  const [numCols, setNumCols] = useState(cols);
 
-  const groupSize = Math.ceil(duplicatedImages.length / cols);
-  const imageGroups = Array.from({ length: cols }, (_, index) =>
+  useEffect(() => {
+    setNumCols(isMobile ? 2 : cols);
+  }, [isMobile, cols]);
+
+  const duplicatedImages = [...images, ...images];
+  const groupSize = Math.ceil(duplicatedImages.length / numCols);
+  const imageGroups = Array.from({ length: numCols }, (_, index) =>
     duplicatedImages.slice(index * groupSize, (index + 1) * groupSize)
   );
 
@@ -70,7 +76,6 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
                 }}
                 className="flex flex-col items-center gap-6 relative"
               >
-                {/* Render the column twice for seamless looping */}
                 {[...imagesInGroup, ...imagesInGroup].map((image, imgIdx) => {
                   const globalIndex = idx * groupSize + (imgIdx % imagesInGroup.length);
                   const isClickable = image.href || onImageClick;
