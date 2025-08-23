@@ -49,10 +49,6 @@ export function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Connect With Us</h3>
             <div className="flex justify-center md:justify-start space-x-4">
-              <a href="https://github.com/lugbpdc" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-110">
-                <Github className="h-6 w-6" />
-                <span className="sr-only">GitHub</span>
-              </a>
               <a href="https://www.linkedin.com/company/lugbpdc/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-primary transition-all duration-300 hover:scale-110">
                 <Linkedin className="h-6 w-6" />
                 <span className="sr-only">LinkedIn</span>
