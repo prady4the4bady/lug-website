@@ -1,10 +1,13 @@
 
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Rocket, Code, Users } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { ThreeDMarquee, type MarqueeImage } from "@/components/three-d-marquee";
+import { useAuth } from "@/hooks/use-auth";
 
 const marqueeImages: MarqueeImage[] = [
     { src: '/images/1.png', alt: 'Linux', "data-ai-hint": "Linux mascot" },
@@ -18,6 +21,9 @@ const marqueeImages: MarqueeImage[] = [
 ]
 
 export default function Home() {
+  const { featureFlags, isAdmin } = useAuth();
+  const showSignInButton = isAdmin || (featureFlags?.showSignIn ?? true);
+
   return (
     <div className="w-full relative overflow-hidden">
        <div className="absolute inset-0 -z-20 h-full w-full bg-background">
@@ -34,11 +40,13 @@ export default function Home() {
           <p className="text-lg md:text-xl text-muted-foreground max-w-md font-headline">
             Welcome to the home of open-source enthusiasts at <span className="text-primary/80 font-semibold">BITS Pilani Dubai Campus</span>.
           </p>
-          <div className="pt-4">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xl px-10 py-8" asChild>
-              <Link href="/signin">Get Started</Link>
-            </Button>
-          </div>
+          {showSignInButton && (
+            <div className="pt-4">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xl px-10 py-8" asChild>
+                <Link href="/signin">Get Started</Link>
+              </Button>
+            </div>
+          )}
         </div>
         <div className="relative flex items-center justify-center h-full w-full max-w-md animate-float z-10">
           <Image
