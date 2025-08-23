@@ -1,4 +1,3 @@
-
 "use client";
 
 import { motion } from "framer-motion";
@@ -71,10 +70,10 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
                 transition={{ duration: 0.3, ease: "easeInOut" }}
                 src={image.src}
                 alt={image.alt}
-                width={250}
-                height={250}
+                width={400}
+                height={200}
                 className={cn(
-                  "aspect-square w-full max-w-[250px] rounded-lg object-cover ring ring-gray-300/30 dark:ring-gray-800/50 shadow-xl hover:shadow-2xl transition-shadow duration-300",
+                  "w-full max-w-[400px] rounded-lg object-cover ring ring-gray-300/30 dark:ring-gray-800/50 shadow-xl hover:shadow-2xl transition-shadow duration-300",
                   isClickable ? "cursor-pointer" : ""
                 )}
                 onClick={() => handleImageClick(image, globalIndex)}
