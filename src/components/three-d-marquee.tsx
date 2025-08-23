@@ -25,7 +25,7 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
   cols = 4,
   onImageClick,
 }) => {
-  // Clone the image list twice
+  // Clone the image list twice to create the infinite loop effect
   const duplicatedImages = [...images, ...images];
 
   const groupSize = Math.ceil(duplicatedImages.length / cols);
@@ -61,23 +61,23 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
             {imageGroups.map((imagesInGroup, idx) => (
               <motion.div
                 key={`column-${idx}`}
-                animate={{ y: idx % 2 === 0 ? 100 : -100 }}
+                animate={{ y: ["0%", "-100%"] }}
                 transition={{
-                  duration: idx % 2 === 0 ? 10 : 15,
+                  duration: idx % 2 === 0 ? 25 : 35,
                   repeat: Infinity,
-                  repeatType: "reverse",
+                  repeatType: "loop",
+                  ease: "linear",
                 }}
                 className="flex flex-col items-center gap-6 relative"
               >
-                <div className="absolute left-0 top-0 h-full w-0.5 bg-gray-200 dark:bg-gray-700/20" />
-                {imagesInGroup.map((image, imgIdx) => {
-                  const globalIndex = idx * groupSize + imgIdx;
+                {/* Render the column twice for seamless looping */}
+                {[...imagesInGroup, ...imagesInGroup].map((image, imgIdx) => {
+                  const globalIndex = idx * groupSize + (imgIdx % imagesInGroup.length);
                   const isClickable = image.href || onImageClick;
 
                   return (
-                    <div key={`img-${imgIdx}`} className="relative">
-                      <div className="absolute top-0 left-0 w-full h-0.5 bg-gray-200 dark:bg-gray-700/20" />
-                      <motion.img
+                    <div key={`img-${idx}-${imgIdx}`} className="relative">
+                       <motion.img
                         whileHover={{ y: -10 }}
                         transition={{ duration: 0.3, ease: "easeInOut" }}
                         src={image.src}
