@@ -10,6 +10,7 @@ import {
   animate,
 } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "./ui/skeleton";
 
 export interface Draggable3DImageRingProps {
   images?: string[];
@@ -34,7 +35,7 @@ export interface Draggable3DImageRingProps {
   onImageClick?: (index: number, image: string) => void;
 }
 
-export const ImageCycler3D: React.FC<Draggable3DImageRingProps> = ({
+const CyclerCore: React.FC<Draggable3DImageRingProps> = ({
   images = [],
   imageWidth = 120,
   imageHeight = 120,
@@ -201,4 +202,21 @@ export const ImageCycler3D: React.FC<Draggable3DImageRingProps> = ({
       </AnimatePresence>
     </div>
   );
+};
+
+
+export const ImageCycler3D: React.FC<Draggable3DImageRingProps> = (props) => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return <div className="w-full h-full flex items-center justify-center">
+        <Skeleton className="w-[300px] h-[200px] rounded-lg" />
+    </div>;
+  }
+
+  return <CyclerCore {...props} />;
 };

@@ -8,6 +8,7 @@ import Image from "next/image";
 import { ThreeDMarquee, type MarqueeImage } from "@/components/three-d-marquee";
 import { useAuth } from "@/hooks/use-auth";
 import { ImageCycler3D } from "@/components/image-cycler-3d";
+import React from "react";
 
 const marqueeImages: MarqueeImage[] = [
     { src: '/images/1.png', alt: 'Linux', "data-ai-hint": "Linux mascot" },
