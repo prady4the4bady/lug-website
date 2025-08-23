@@ -15,7 +15,6 @@ import { Skeleton } from "../ui/skeleton"
 const baseNavLinks = [
   { href: "/about", label: "About" },
   { href: "/council", label: "Council" },
-  { href: "/join-us", label: "Join Us" },
 ];
 
 export function Header() {
@@ -29,11 +28,10 @@ export function Header() {
   }, [])
 
   const getDynamicNavLinks = () => {
-    if (!isClient) {
-        return [];
-    }
-
     const dynamicLinks = [];
+    if (featureFlags?.showJoinUs || isAdmin) {
+      dynamicLinks.push({ href: "/join-us", label: "Join Us" });
+    }
     if (featureFlags?.showEvents || isAdmin) {
       dynamicLinks.push({ href: "/events", label: "Events" });
     }
@@ -53,20 +51,21 @@ export function Header() {
   };
   
   const showSignInButton = isClient ? (!user && (featureFlags?.showSignIn ?? true)) : false;
-  const dynamicNavLinks = getDynamicNavLinks();
-
+  const navLinks = isClient ? [...baseNavLinks, ...getDynamicNavLinks()] : baseNavLinks;
 
   const handleTerminalLink = () => {
     window.open("https://lug12.netlify.app/", "_blank");
   }
   
-  const renderNavLinks = (links: {href: string, label: string}[]) => (
+  const renderNavLinks = (links: {href: string, label: string}[], mobile = false) => (
     links.map((link) => (
       <Link
         key={link.href}
         href={link.href}
+        onClick={() => mobile && setIsOpen(false)}
         className={cn(
           "transition-colors hover:text-foreground/80",
+           mobile ? "hover:text-foreground" : "",
           pathname === link.href ? "text-foreground" : "text-foreground/60"
         )}
       >
@@ -74,23 +73,6 @@ export function Header() {
       </Link>
     ))
   );
-
-  const renderMobileNavLinks = (links: {href: string, label: string}[]) => (
-     links.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          onClick={() => setIsOpen(false)}
-          className={cn(
-            "transition-colors hover:text-foreground",
-            pathname === link.href ? "text-foreground" : "text-foreground/60"
-          )}
-        >
-          {link.label}
-        </Link>
-      ))
-  );
-
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -107,7 +89,7 @@ export function Header() {
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium transition-all duration-300 ease-in-out">
              {renderNavLinks(baseNavLinks)}
-             {isClient ? renderNavLinks(dynamicNavLinks) : <Skeleton className="h-6 w-48" />}
+             {isClient ? renderNavLinks(getDynamicNavLinks()) : <Skeleton className="h-6 w-48" />}
           </nav>
         </div>
         
@@ -132,8 +114,8 @@ export function Header() {
             </Link>
             <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
               <div className="flex flex-col space-y-3">
-                {renderMobileNavLinks(baseNavLinks)}
-                {isClient ? renderMobileNavLinks(dynamicNavLinks) : <Skeleton className="h-6 w-32 mt-3" />}
+                {renderNavLinks(baseNavLinks, true)}
+                {isClient ? renderNavLinks(getDynamicNavLinks(), true) : <Skeleton className="h-6 w-32 mt-3" />}
               </div>
             </div>
           </SheetContent>

@@ -15,7 +15,8 @@ import { useAuth } from '@/hooks/use-auth';
 const defaultFlags: FeatureFlags = {
     showEvents: true,
     showForum: true,
-    showSignIn: true
+    showSignIn: true,
+    showJoinUs: true,
 };
 
 export function FeatureManager() {
@@ -27,7 +28,10 @@ export function FeatureManager() {
         const settingsDocRef = doc(db, "settings", "featureFlags");
         const unsubscribe = onSnapshot(settingsDocRef, (doc) => {
             if (doc.exists()) {
-                setFlags(doc.data() as FeatureFlags);
+                const data = doc.data() as FeatureFlags;
+                // Ensure all flags are present, add if missing
+                const updatedFlags = { ...defaultFlags, ...data };
+                setFlags(updatedFlags);
             } else {
                 // If doc doesn't exist, create it with default values
                 setDoc(settingsDocRef, defaultFlags);
@@ -81,6 +85,17 @@ export function FeatureManager() {
                         id="forum-switch"
                         checked={flags.showForum}
                         onCheckedChange={(value) => handleFlagChange('showForum', value)}
+                    />
+                </div>
+                 <div className="flex items-center justify-between rounded-lg border p-4">
+                    <div>
+                        <Label htmlFor="joinus-switch" className="text-base">Join Us Page</Label>
+                        <p className="text-sm text-muted-foreground">Show or hide the "Join Us" link in the header.</p>
+                    </div>
+                    <Switch
+                        id="joinus-switch"
+                        checked={flags.showJoinUs}
+                        onCheckedChange={(value) => handleFlagChange('showJoinUs', value)}
                     />
                 </div>
                 <div className="flex items-center justify-between rounded-lg border p-4">

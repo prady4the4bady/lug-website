@@ -77,6 +77,7 @@ export type FeatureFlags = {
     showEvents: boolean;
     showForum: boolean;
     showSignIn: boolean;
+    showJoinUs: boolean;
 };
 
 
