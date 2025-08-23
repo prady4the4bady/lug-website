@@ -10,6 +10,7 @@ import type { User, Event, ChatMessage } from '@/lib/types';
 import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BarChart, XAxis, YAxis, Bar, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 import { Button } from '../ui/button';
+import { ScrollArea, ScrollBar } from '../ui/scroll-area';
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -104,23 +105,26 @@ export function AdminAnalytics() {
                         <CardTitle>New Users</CardTitle>
                         <CardDescription>Monthly sign-ups for {currentYear}.</CardDescription>
                     </CardHeader>
-                    <CardContent className="h-64 overflow-x-auto">
-                        <div className="min-w-[600px] h-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={userChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                    <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
-                                    <YAxis domain={[0, maxUserCount]} allowDecimals={false} fontSize={12} />
-                                    <Tooltip
-                                        contentStyle={{
-                                            backgroundColor: 'hsl(var(--background))',
-                                            borderColor: 'hsl(var(--border))',
-                                        }}
-                                    />
-                                    <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
+                    <CardContent className="h-64">
+                         <ScrollArea>
+                            <div className="min-w-[600px] h-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={userChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                        <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
+                                        <YAxis domain={[0, maxUserCount]} allowDecimals={false} fontSize={12} />
+                                        <Tooltip
+                                            contentStyle={{
+                                                backgroundColor: 'hsl(var(--background))',
+                                                borderColor: 'hsl(var(--border))',
+                                            }}
+                                        />
+                                        <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                            <ScrollBar orientation="horizontal" />
+                        </ScrollArea>
                     </CardContent>
                 </Card>
                 <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
@@ -128,23 +132,26 @@ export function AdminAnalytics() {
                         <CardTitle>Events Created</CardTitle>
                         <CardDescription>Monthly events scheduled for {currentYear}.</CardDescription>
                     </CardHeader>
-                    <CardContent className="h-64 overflow-x-auto">
-                        <div className="min-w-[600px] h-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={eventChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                    <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
-                                    <YAxis domain={[0, maxEventCount]} allowDecimals={false} fontSize={12} />
-                                    <Tooltip
-                                        contentStyle={{
-                                            backgroundColor: 'hsl(var(--background))',
-                                            borderColor: 'hsl(var(--border))',
-                                        }}
-                                    />
-                                    <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
+                    <CardContent className="h-64">
+                        <ScrollArea>
+                            <div className="min-w-[600px] h-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={eventChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                        <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
+                                        <YAxis domain={[0, maxEventCount]} allowDecimals={false} fontSize={12} />
+                                        <Tooltip
+                                            contentStyle={{
+                                                backgroundColor: 'hsl(var(--background))',
+                                                borderColor: 'hsl(var(--border))',
+                                            }}
+                                        />
+                                        <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                            <ScrollBar orientation="horizontal" />
+                        </ScrollArea>
                     </CardContent>
                 </Card>
                 <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
@@ -152,23 +159,26 @@ export function AdminAnalytics() {
                         <CardTitle>Forum Activity</CardTitle>
                         <CardDescription>Monthly messages for {currentYear}.</CardDescription>
                     </CardHeader>
-                    <CardContent className="h-64 overflow-x-auto">
-                        <div className="min-w-[600px] h-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={messageChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                    <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
-                                    <YAxis domain={[0, maxMessageCount]} allowDecimals={false} fontSize={12} />
-                                    <Tooltip
-                                        contentStyle={{
-                                            backgroundColor: 'hsl(var(--background))',
-                                            borderColor: 'hsl(var(--border))',
-                                        }}
-                                    />
-                                    <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
+                    <CardContent className="h-64">
+                         <ScrollArea>
+                            <div className="min-w-[600px] h-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={messageChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                        <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
+                                        <YAxis domain={[0, maxMessageCount]} allowDecimals={false} fontSize={12} />
+                                        <Tooltip
+                                            contentStyle={{
+                                                backgroundColor: 'hsl(var(--background))',
+                                                borderColor: 'hsl(var(--border))',
+                                            }}
+                                        />
+                                        <Bar dataKey="count" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                            <ScrollBar orientation="horizontal" />
+                        </ScrollArea>
                     </CardContent>
                 </Card>
             </div>
