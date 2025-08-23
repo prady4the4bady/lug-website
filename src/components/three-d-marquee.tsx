@@ -55,7 +55,7 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
         <div className="w-full overflow-hidden scale-90 sm:scale-100">
           <div
             className={`relative grid h-full w-full origin-center 
-              grid-cols-2 sm:grid-cols-${cols} gap-4 transform 
+              grid-cols-2 sm:grid-cols-4 gap-4 transform 
               `}
           >
             {imageGroups.map((imagesInGroup, idx) => (

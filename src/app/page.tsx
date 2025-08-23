@@ -21,17 +21,6 @@ const marqueeImages: MarqueeImage[] = [
     { src: '/images/8.png', alt: 'Events', "data-ai-hint": "tech conference" },
 ]
 
-const carouselImages = [
-    '/images/1.png',
-    '/images/2.png',
-    '/images/3.png',
-    '/images/4.png',
-    '/images/5.png',
-    '/images/6.png',
-    '/images/7.png',
-    '/images/8.png',
-];
-
 export default function Home() {
   const { featureFlags } = useAuth();
   const showSignInButton = featureFlags?.showSignIn ?? true;
@@ -75,17 +64,6 @@ export default function Home() {
             />
           </div>
         )}
-      </section>
-      
-      <section className="relative py-20 pt-32 h-[600px]">
-        <div className="absolute inset-0 -z-10 h-full w-full bg-background/80 backdrop-blur-sm"></div>
-        <div className="container text-center h-full">
-            <h2 className="text-3xl md:text-4xl font-headline font-bold mb-4 animate-fadeInUp">What We Do</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto mb-12 animate-fadeInUp [animation-delay:100ms]">
-                Explore our activities through this interactive 3D carousel.
-            </p>
-            <ImageCycler3D images={carouselImages} />
-        </div>
       </section>
     </div>
   );
