@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
@@ -185,5 +184,3 @@ export function AdminAnalytics() {
         </div>
     );
 }
-
-    
