@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -40,7 +41,7 @@ export function Footer() {
             <nav className="flex flex-col space-y-2">
               <Link href="/about" className="text-sm text-muted-foreground hover:text-primary transition-colors">About Us</Link>
               <Link href="/council" className="text-sm text-muted-foreground hover:text-primary transition-colors">Our Council</Link>
-              <Link href="/events" className="text-sm text-muted-foreground hover:text-primary transition-colors">Club Events</Link>
+              <Link href="/join-us" className="text-sm text-muted-foreground hover:text-primary transition-colors">Join Us</Link>
               <Link href="/join-us" className="text-sm text-muted-foreground hover:text-primary transition-colors">Join The Community</Link>
             </nav>
           </div>
