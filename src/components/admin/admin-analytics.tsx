@@ -84,7 +84,8 @@ export function AdminAnalytics() {
         );
     }
     
-    const maxUserCount = Math.max(...userChartData.map(d => d.count), 10);
+    const maxUserCount = Math.max(...userChartData.map(d => d.count), 5);
+    const maxEventCount = Math.max(...eventChartData.map(d => d.count), 5);
     const maxMessageCount = Math.max(...messageChartData.map(d => d.count), 10);
 
 
@@ -100,7 +101,7 @@ export function AdminAnalytics() {
                         <BarChart data={userChartData}>
                             <CartesianGrid vertical={false} />
                             <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
-                            <YAxis domain={[0, maxUserCount]} fontSize={12} />
+                            <YAxis domain={[0, maxUserCount]} allowDecimals={false} fontSize={12} />
                             <Tooltip
                                 contentStyle={{
                                     backgroundColor: 'hsl(var(--background))',
@@ -122,7 +123,7 @@ export function AdminAnalytics() {
                         <BarChart data={eventChartData}>
                             <CartesianGrid vertical={false} />
                             <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
-                            <YAxis domain={[0, 20]} ticks={[0, 5, 10, 15, 20]} fontSize={12} />
+                            <YAxis domain={[0, maxEventCount]} allowDecimals={false} fontSize={12} />
                              <Tooltip
                                 contentStyle={{
                                     backgroundColor: 'hsl(var(--background))',
@@ -144,7 +145,7 @@ export function AdminAnalytics() {
                         <BarChart data={messageChartData}>
                             <CartesianGrid vertical={false} />
                             <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
-                            <YAxis domain={[0, maxMessageCount]} fontSize={12} />
+                            <YAxis domain={[0, maxMessageCount]} allowDecimals={false} fontSize={12} />
                              <Tooltip
                                 contentStyle={{
                                     backgroundColor: 'hsl(var(--background))',
