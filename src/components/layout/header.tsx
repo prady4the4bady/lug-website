@@ -1,4 +1,3 @@
-
 "use client"
 
 import Link from "next/link"
@@ -6,7 +5,7 @@ import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import { Menu, TerminalIcon, LogOut } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import Image from "next/image"
@@ -47,7 +46,7 @@ export function Header() {
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2 group">
             <Image src="/images/lug_logo.png" alt="LUG Logo" width={80} height={80} className="h-20 w-20" data-ai-hint="logo" priority />
-            <div className="font-bold sm:inline-block relative whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out w-10 group-hover:w-48">
+            <div className="font-bold sm:inline-block relative whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out w-10 group-hover:w-52">
               <span className="opacity-100 group-hover:opacity-0 transition-opacity duration-300">LUG</span>
               <span className="absolute left-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 Linux User Group BPDC
@@ -81,6 +80,10 @@ export function Header() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="pr-0">
+             <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
+            <SheetDescription className="sr-only">
+              A list of links to navigate the website.
+            </SheetDescription>
             <Link href="/" className="flex items-center" onClick={() => setIsOpen(false)}>
               <Image src="/images/lug_logo.png" alt="LUG Logo" width={80} height={80} className="mr-2 h-20 w-20" data-ai-hint="logo" />
               <span className="font-bold">LUG</span>
