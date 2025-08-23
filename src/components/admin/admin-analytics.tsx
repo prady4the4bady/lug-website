@@ -3,13 +3,12 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { db } from '@/lib/firebase';
 import { collection, onSnapshot, query, Timestamp, limit, orderBy } from 'firebase/firestore';
 import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import type { User, Event, ChatMessage } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
-import { BarChart, XAxis, YAxis, Bar, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { BarChart, XAxis, YAxis, Bar, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 
 const aggregateDataByMonth = (items: { createdAt?: Timestamp }[] | { date: Timestamp }[] | { timestamp: Timestamp | null }[], dateKey: 'createdAt' | 'date' | 'timestamp') => {
     const monthlyCounts: Record<string, number> = {};
@@ -77,13 +76,6 @@ export function AdminAnalytics() {
     const eventChartData = aggregateDataByMonth(events, 'date');
     const messageChartData = aggregateDataByMonth(messages, 'timestamp');
     
-    const chartConfig = {
-        count: {
-            label: "Count",
-            color: "hsl(var(--primary))",
-        },
-    };
-
     if (loading) {
          return (
             <div className="flex justify-center items-center h-96">
@@ -109,7 +101,12 @@ export function AdminAnalytics() {
                             <CartesianGrid vertical={false} />
                             <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
                             <YAxis domain={[0, maxUserCount]} fontSize={12} />
-                            <ChartTooltip content={<ChartTooltipContent />} />
+                            <Tooltip
+                                contentStyle={{
+                                    backgroundColor: 'hsl(var(--background))',
+                                    borderColor: 'hsl(var(--border))',
+                                }}
+                            />
                             <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
                         </BarChart>
                     </ResponsiveContainer>
@@ -126,7 +123,12 @@ export function AdminAnalytics() {
                             <CartesianGrid vertical={false} />
                             <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
                             <YAxis domain={[0, 20]} ticks={[0, 5, 10, 15, 20]} fontSize={12} />
-                            <ChartTooltip content={<ChartTooltipContent />} />
+                             <Tooltip
+                                contentStyle={{
+                                    backgroundColor: 'hsl(var(--background))',
+                                    borderColor: 'hsl(var(--border))',
+                                }}
+                            />
                             <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
                         </BarChart>
                     </ResponsiveContainer>
@@ -143,7 +145,12 @@ export function AdminAnalytics() {
                             <CartesianGrid vertical={false} />
                             <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
                             <YAxis domain={[0, maxMessageCount]} fontSize={12} />
-                            <ChartTooltip content={<ChartTooltipContent />} />
+                             <Tooltip
+                                contentStyle={{
+                                    backgroundColor: 'hsl(var(--background))',
+                                    borderColor: 'hsl(var(--border))',
+                                }}
+                            />
                             <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
                         </BarChart>
                     </ResponsiveContainer>
@@ -152,5 +159,3 @@ export function AdminAnalytics() {
         </div>
     );
 }
-
-    
