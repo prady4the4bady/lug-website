@@ -73,7 +73,15 @@ export type Member = {
     memberUntil: Timestamp;
 };
 
+export type FeatureFlags = {
+    showEvents: boolean;
+    showForum: boolean;
+    showSignIn: boolean;
+};
+
 
 export type SignInValues = z.infer<typeof signInSchema>;
 export type SignUpValues = z.infer<typeof signUpSchema>;
 export type ReportBugValues = z.infer<typeof reportBugSchema>;
+
+    

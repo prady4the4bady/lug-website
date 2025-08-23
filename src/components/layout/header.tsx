@@ -1,3 +1,4 @@
+
 "use client"
 
 import Link from "next/link"
@@ -15,41 +16,48 @@ export function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const [isClient, setIsClient] = useState(false)
   const pathname = usePathname()
-  const { user, dbUser, isAdmin, signOutUser } = useAuth();
+  const { user, dbUser, isAdmin, signOutUser, featureFlags } = useAuth();
 
   useEffect(() => {
     setIsClient(true)
   }, [])
 
   const navLinks = [
-    { href: "/about", label: "About" },
-    { href: "/council", label: "Council" },
-    { href: "/events", label: "Events" },
-    { href: "/forum", label: "Forum" },
+    { href: "/about", label: "About", show: true },
+    { href: "/council", label: "Council", show: true },
+    { href: "/events", label: "Events", show: featureFlags?.showEvents ?? true },
+    { href: "/forum", label: "Forum", show: featureFlags?.showForum ?? true },
   ];
   
   if (user && dbUser?.subscriptionStatus !== 'active') {
-      navLinks.push({ href: "/profile?tab=membership", label: "Join Us" });
+      navLinks.push({ href: "/profile?tab=membership", label: "Join Us", show: true });
   } else if (user) {
-      navLinks.push({ href: "/profile", label: "Profile" });
+      navLinks.push({ href: "/profile", label: "Profile", show: true });
   }
   
   if (isAdmin) {
     if (!navLinks.some(link => link.href === "/admin")) {
-        navLinks.push({ href: "/admin", label: "Admin" });
+        navLinks.push({ href: "/admin", label: "Admin", show: true });
     }
   }
+
+  const visibleNavLinks = navLinks.filter(link => {
+      // Admins see all links regardless of feature flags
+      if (isAdmin) return true;
+      return link.show;
+  });
   
-  const uniqueNavLinks = navLinks.filter((link, index, self) =>
+  const uniqueNavLinks = visibleNavLinks.filter((link, index, self) =>
     index === self.findIndex((l) => (
       l.href === link.href && l.label === link.label
     ))
   );
 
-
   const handleTerminalLink = () => {
     window.open("https://lug12.netlify.app/", "_blank");
   }
+
+  const showSignInButton = isAdmin || (featureFlags?.showSignIn ?? true);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -134,9 +142,11 @@ export function Header() {
                       Sign Out
                   </Button>
               ) : (
-                <Button asChild>
-                  <Link href="/signin">Sign In</Link>
-                </Button>
+                showSignInButton && (
+                  <Button asChild>
+                    <Link href="/signin">Sign In</Link>
+                  </Button>
+                )
               )
             ) : (
               <Skeleton className="h-9 w-24" />
@@ -147,3 +157,5 @@ export function Header() {
     </header>
   )
 }
+
+    

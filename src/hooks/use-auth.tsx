@@ -6,7 +6,7 @@ import { onAuthStateChanged, User as FirebaseUser, GoogleAuthProvider, signInWit
 import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { doc, setDoc, onSnapshot, getDoc, serverTimestamp } from 'firebase/firestore';
-import type { User } from '@/lib/types';
+import type { User, FeatureFlags } from '@/lib/types';
 import { useToast } from './use-toast';
 import type { SignInValues, SignUpValues } from '@/lib/types';
 import { logActivity } from '@/lib/activity-logger';
@@ -16,6 +16,7 @@ interface AuthContextType {
   dbUser: User | null;
   loading: boolean;
   isAdmin: boolean;
+  featureFlags: FeatureFlags | null;
   signInWithGoogle: () => Promise<void>;
   signUpWithEmail: (values: SignUpValues) => Promise<void>;
   signInWithEmail: (values: SignInValues) => Promise<void>;
@@ -66,11 +67,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [dbUser, setDbUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [featureFlags, setFeatureFlags] = useState<FeatureFlags | null>(null);
   const router = useRouter();
   const { toast } = useToast();
   
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, async (authUser) => {
+        setLoading(true);
         if (authUser) {
             setUser(authUser);
             const userDocRef = doc(db, "users", authUser.uid);
@@ -80,12 +83,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     setDbUser({ id: doc.id, ...userData });
                     setIsAdmin(!!userData.isAdmin);
                 } else {
-                    // This can happen if the user exists in Auth but not in Firestore yet.
-                    // We can wait for processAuth to create it.
                     setDbUser(null);
                     setIsAdmin(false);
                 }
-                setLoading(false);
             });
             return () => unsubDoc();
         } else {
@@ -96,7 +96,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     });
 
-    return () => unsubscribe();
+    const settingsDocRef = doc(db, "settings", "featureFlags");
+    const unsubscribeFlags = onSnapshot(settingsDocRef, (doc) => {
+        if (doc.exists()) {
+            setFeatureFlags(doc.data() as FeatureFlags);
+        }
+        setLoading(false); // Set loading to false after flags are fetched
+    });
+
+
+    return () => {
+        unsubscribeAuth();
+        unsubscribeFlags();
+    };
   }, []);
 
   const signInWithGoogle = async () => {
@@ -184,7 +196,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, dbUser, loading, isAdmin, signInWithGoogle, signUpWithEmail, signInWithEmail, signOutUser }}>
+    <AuthContext.Provider value={{ user, dbUser, loading, isAdmin, featureFlags, signInWithGoogle, signUpWithEmail, signInWithEmail, signOutUser }}>
       {children}
     </AuthContext.Provider>
   );
@@ -197,3 +209,5 @@ export function useAuth() {
   }
   return context;
 }
+
+    
