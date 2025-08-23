@@ -13,12 +13,12 @@ import React from "react";
 const marqueeImages: MarqueeImage[] = [
     { src: '/images/1.png', alt: 'Linux', "data-ai-hint": "Linux mascot" },
     { src: '/images/2.png', alt: 'Open Source', "data-ai-hint": "open source code" },
-    { src: '/images/1.png', alt: 'BITS Pilani', "data-ai-hint": "university building" },
-    { src: '/images/2.png', alt: 'Dubai', "data-ai-hint": "Dubai skyline" },
-    { src: '/images/1.png', alt: 'Technology', "data-ai-hint": "futuristic technology" },
-    { src: '/images/2.png', alt: 'Community', "data-ai-hint": "diverse community" },
-    { src: '/images/1.png', alt: 'Workshops', "data-ai-hint": "coding workshop" },
-    { src: '/images/2.png', alt: 'Events', "data-ai-hint": "tech conference" },
+    { src: '/images/3.png', alt: 'BITS Pilani', "data-ai-hint": "university building" },
+    { src: '/images/4.png', alt: 'Dubai', "data-ai-hint": "Dubai skyline" },
+    { src: '/images/5.png', alt: 'Technology', "data-ai-hint": "futuristic technology" },
+    { src: '/images/6.png', alt: 'Community', "data-ai-hint": "diverse community" },
+    { src: '/images/7.png', alt: 'Workshops', "data-ai-hint": "coding workshop" },
+    { src: '/images/8.png', alt: 'Events', "data-ai-hint": "tech conference" },
 ]
 
 export default function Home() {
