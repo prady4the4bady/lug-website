@@ -9,7 +9,7 @@ export default function AboutPage() {
       id: 1,
       title: "Who We Are",
       brand: "Community",
-      description: "We are a passionate group of students at BITS Pilani Dubai Campus, united by our interest in Linux, open-source software, and technology. Our community welcomes everyone, from beginners to experienced developers.",
+      description: "At LUG, we believe in the power of open-source technology and the freedom to create, share, and innovate. Our community brings together students passionate about Linux, open-source software, and collaborative development. From beginners to experts, we explore system administration, scripting, and cutting-edge tools through workshops, install fests, and discussions. At LUG, curiosity drives learning, collaboration fuels growth, and innovation thrives.",
       tags: ["Open Source", "Collaboration", "Linux"],
       imageUrl: "/images/who.png",
       link: "https://www.linkedin.com/company/lugbpdc/posts/?feedView=all"
