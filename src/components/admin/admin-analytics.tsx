@@ -107,7 +107,7 @@ export function AdminAnalytics() {
                     </CardHeader>
                     <CardContent className="h-64">
                          <ScrollArea>
-                            <div className="min-w-[600px] h-full">
+                            <div className="min-w-[600px] h-full pr-6">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={userChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -134,7 +134,7 @@ export function AdminAnalytics() {
                     </CardHeader>
                     <CardContent className="h-64">
                         <ScrollArea>
-                            <div className="min-w-[600px] h-full">
+                            <div className="min-w-[600px] h-full pr-6">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={eventChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -161,7 +161,7 @@ export function AdminAnalytics() {
                     </CardHeader>
                     <CardContent className="h-64">
                          <ScrollArea>
-                            <div className="min-w-[600px] h-full">
+                            <div className="min-w-[600px] h-full pr-6">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={messageChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} />
