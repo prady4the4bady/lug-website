@@ -23,6 +23,7 @@ const marqueeImages: MarqueeImage[] = [
 export default function Home() {
   const { featureFlags, isAdmin } = useAuth();
   const showSignInButton = isAdmin || (featureFlags?.showSignIn ?? true);
+  const showMascot = isAdmin || (featureFlags?.showMascot ?? true);
 
   return (
     <div className="w-full relative overflow-hidden">
@@ -48,18 +49,20 @@ export default function Home() {
             </div>
           )}
         </div>
-        <div className="relative flex items-center justify-center h-full w-full max-w-md animate-float z-10">
-          <Image
-            src="https://imagepng.org/wp-content/uploads/2017/06/pinguim-linux-tux.png"
-            alt="Tux Penguin Mascot"
-            width={400}
-            height={400}
-            style={{ height: "auto" }}
-            className="object-contain transition-all duration-300 ease-in-out hover:[filter:drop-shadow(0_0_3rem_hsl(var(--primary)/0.5))]"
-            data-ai-hint="Tux penguin"
-            priority
-          />
-        </div>
+        {showMascot && (
+          <div className="relative flex items-center justify-center h-full w-full max-w-md animate-float z-10">
+            <Image
+              src="https://imagepng.org/wp-content/uploads/2017/06/pinguim-linux-tux.png"
+              alt="Tux Penguin Mascot"
+              width={400}
+              height={400}
+              style={{ height: "auto" }}
+              className="object-contain transition-all duration-300 ease-in-out hover:[filter:drop-shadow(0_0_3rem_hsl(var(--primary)/0.5))]"
+              data-ai-hint="Tux penguin"
+              priority
+            />
+          </div>
+        )}
       </section>
 
       <section className="relative py-20 pt-32">

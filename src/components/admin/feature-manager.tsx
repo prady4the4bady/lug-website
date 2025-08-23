@@ -17,6 +17,7 @@ const defaultFlags: FeatureFlags = {
     showForum: true,
     showSignIn: true,
     showJoinUs: true,
+    showMascot: true,
 };
 
 export function FeatureManager() {
@@ -62,9 +63,20 @@ export function FeatureManager() {
         <Card className="mt-6 bg-card/60 backdrop-blur-sm">
             <CardHeader>
                 <CardTitle>Feature Visibility</CardTitle>
-                <CardDescription>Control which features are visible to non-admin users in the navigation.</CardDescription>
+                <CardDescription>Control which features are visible to non-admin users.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+                 <div className="flex items-center justify-between rounded-lg border p-4">
+                    <div>
+                        <Label htmlFor="mascot-switch" className="text-base">Homepage Mascot</Label>
+                        <p className="text-sm text-muted-foreground">Show or hide the Tux mascot on the homepage.</p>
+                    </div>
+                    <Switch
+                        id="mascot-switch"
+                        checked={flags.showMascot}
+                        onCheckedChange={(value) => handleFlagChange('showMascot', value)}
+                    />
+                </div>
                 <div className="flex items-center justify-between rounded-lg border p-4">
                     <div>
                         <Label htmlFor="events-switch" className="text-base">Events Page</Label>
@@ -113,5 +125,3 @@ export function FeatureManager() {
         </Card>
     );
 }
-
-    
