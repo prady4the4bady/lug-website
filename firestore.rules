@@ -1,83 +1,83 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
     // Helper functions
-    function isSignedIn() {
+    function isAuth() {
       return request.auth != null;
     }
     function isUser(userId) {
-      return isSignedIn() && request.auth.uid == userId;
+      return isAuth() && request.auth.uid == userId;
     }
-    function getRole(userId) {
-      return get(/databases/$(database)/documents/users/$(userId)).data.isAdmin;
+    function userExists(userId) {
+        return exists(/databases/$(database)/documents/users/$(userId));
     }
-    function isAdmin() {
-      return isSignedIn() && getRole(request.auth.uid) == true;
+    function isAdmin(userId) {
+        return userExists(userId) && get(/databases/$(database)/documents/users/$(userId)).data.isAdmin == true;
     }
-    function isMember() {
-      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subscriptionStatus == 'active';
+    function isActiveMember(userId) {
+        return userExists(userId) && get(/databases/$(database)/documents/users/$(userId)).data.subscriptionStatus == 'active';
     }
 
-    // Users collection
+    // Users Collection:
+    // - Anyone can create their own user document on sign up.
+    // - Users can only read or update their own data.
+    // - Admins can read or update any user's data.
     match /users/{userId} {
-      // Admins can read anyone's profile
-      // Users can read their own profile
-      allow read: if isAdmin() || isUser(userId);
-      // Users can create their own profile on signup
+      allow read: if isUser(userId) || isAdmin(request.auth.uid);
       allow create: if isUser(userId);
-      // Users can update their own profile
-      // Admins can update any user's profile
-      allow update: if isUser(userId) || isAdmin();
+      allow update: if isUser(userId) || isAdmin(request.auth.uid);
     }
     
-    // Members collection
-    match /members/{userId} {
-        allow read: if isSignedIn();
-        allow write: if isAdmin();
+    // Members Collection (tracks active subscriptions)
+    // - Admins can read, create, update, and delete member documents.
+    // - Regular users cannot access this collection directly.
+    match /members/{memberId} {
+        allow read, write: if isAdmin(request.auth.uid);
     }
 
-    // Events collection
+    // Events Collection:
+    // - Admins can create, read, update, and delete events.
+    // - Active members can read events.
     match /events/{eventId} {
-      // Only active members and admins can read events
-      allow read: if isMember() || isAdmin();
-      // Only admins can create, update, or delete events
-      allow write: if isAdmin();
+      allow read: if isActiveMember(request.auth.uid) || isAdmin(request.auth.uid);
+      allow write: if isAdmin(request.auth.uid); // Covers create, update, delete
     }
 
-    // Messages (Forum) collection
+    // Messages Collection (Forum):
+    // - Active members and admins can read and create messages.
+    // - Users can delete their own messages.
+    // - Admins can delete any message.
     match /messages/{messageId} {
-      // Only active members and admins can read messages
-      allow read: if isMember() || isAdmin();
-      // Signed-in users can create messages
-      allow create: if isSignedIn();
-      // Only admins or the user who created the message can delete it
-      allow delete: if isAdmin() || resource.data.user == request.auth.token.name;
+      allow read, create: if isActiveMember(request.auth.uid) || isAdmin(request.auth.uid);
+      allow delete: if (isUser(resource.data.userId)) || isAdmin(request.auth.uid);
+    }
+    
+    // Reports Collection (Bug Reports)
+    // - Any authenticated user can create a report.
+    // - Admins can read, update, and delete any report.
+    match /reports/{reportId} {
+        allow create: if isAuth();
+        allow read, update, delete: if isAdmin(request.auth.uid);
     }
 
-    // Reports collection
-    match /reports/{reportId} {
-        // Any signed-in user can create a report
-        allow create: if isSignedIn();
-        // Only admins can read, update, or delete reports
-        allow read, update, delete: if isAdmin();
-    }
-    
-    // Activities collection
+    // Activities Collection (User Activity Log)
+    // - Users can create their own activity logs.
+    // - Users can read their own logs.
+    // - Admins can read any user's logs.
     match /activities/{activityId} {
-        // Only the user themselves or an admin can read their activities
-        allow read: if isAdmin() || (isSignedIn() && resource.data.userId == request.auth.uid);
-        // Users can create their own activity logs
-        allow create: if isSignedIn();
+        allow create: if isAuth() && request.resource.data.userId == request.auth.uid;
+        allow read: if isUser(resource.data.userId) || isAdmin(request.auth.uid);
     }
     
-     // Settings collection (for feature flags)
-    match /settings/{settingId} {
-        // Anyone can read the settings
+    // Settings Collection (For feature flags)
+    // - Anyone can read the feature flags.
+    // - Only admins can update the feature flags.
+    match /settings/featureFlags {
         allow read: if true;
-        // Only admins can change the settings
-        allow write: if isAdmin();
+        allow write: if isAdmin(request.auth.uid);
     }
   }
 }
