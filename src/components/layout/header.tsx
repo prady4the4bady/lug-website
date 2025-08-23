@@ -28,22 +28,22 @@ export function Header() {
     { href: "/forum", label: "Forum" },
   ];
   
-  if (dbUser?.subscriptionStatus !== 'active') {
-    navLinks.push({ href: "/profile", label: "Join Us" });
+  if (user) {
+    if (dbUser?.subscriptionStatus !== 'active') {
+        navLinks.push({ href: "/profile", label: "Join Us" });
+    } else {
+        navLinks.push({ href: "/profile", label: "Profile" });
+    }
   }
 
-  if (user) {
-    navLinks.push({ href: "/profile", label: "Profile" });
-  }
-  
   if (isAdmin) {
     navLinks.push({ href: "/admin", label: "Admin" });
   }
   
-  // Remove duplicates
+  // Remove duplicates - this logic is now more robust.
   const uniqueNavLinks = navLinks.filter((link, index, self) =>
     index === self.findIndex((l) => (
-      l.href === link.href && l.label === link.label
+      l.href === link.href
     ))
   );
 
