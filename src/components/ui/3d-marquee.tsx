@@ -58,30 +58,30 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
     const isEven = columnIndex % 2 === 0;
 
     const columnContent = (
-        <>
-            {images.map((image, imgIdx) => {
-                const globalIndex = images.indexOf(image);
-                const isClickable = image.href || onImageClick;
+      <>
+        {images.map((image, imgIdx) => {
+          const globalIndex = images.indexOf(image);
+          const isClickable = image.href || onImageClick;
 
-                return (
-                    <div key={`img-col-${columnIndex}-${imgIdx}`} className="relative mb-6">
-                        <motion.img
-                        whileHover={{ y: -10 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                        src={image.src}
-                        alt={image.alt}
-                        width={200}
-                        height={200}
-                        className={cn(
-                            "aspect-square w-full max-w-[200px] rounded-lg object-cover ring ring-gray-300/30 dark:ring-gray-800/50 shadow-xl hover:shadow-2xl transition-shadow duration-300",
-                            isClickable ? "cursor-pointer" : ""
-                        )}
-                        onClick={() => handleImageClick(image, globalIndex)}
-                        data-ai-hint={image['data-ai-hint']}
-                        />
-                    </div>
-                )
-            })}
+          return (
+            <div key={`img-col-${columnIndex}-${imgIdx}`} className="relative mb-6">
+              <motion.img
+                whileHover={{ y: -10 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                src={image.src}
+                alt={image.alt}
+                width={200}
+                height={200}
+                className={cn(
+                  "aspect-square w-full max-w-[200px] rounded-lg object-cover ring ring-gray-300/30 dark:ring-gray-800/50 shadow-xl hover:shadow-2xl transition-shadow duration-300",
+                  isClickable ? "cursor-pointer" : ""
+                )}
+                onClick={() => handleImageClick(image, globalIndex)}
+                data-ai-hint={image['data-ai-hint']}
+              />
+            </div>
+          )
+        })}
       </>
     )
     
@@ -89,17 +89,16 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
       <div className="flex flex-col items-center gap-0 overflow-hidden">
         <motion.div
           className="flex flex-col"
-          animate={{ y: isEven ? "-100%" : "0%" }}
+          animate={{ y: isEven ? ["0%", "-100%"] : ["-100%", "0%"] }}
           transition={{
-            duration: isEven ? 20 : 25,
+            duration: isEven ? 30 : 40,
             repeat: Infinity,
-            repeatType: 'loop',
             ease: "linear",
           }}
         >
           {/* Render the images twice for the seamless loop */}
-           <div className="flex flex-col">{columnContent}</div>
-           <div className="flex flex-col">{columnContent}</div>
+           <div className="flex flex-col pb-6">{columnContent}</div>
+           <div className="flex flex-col pb-6">{columnContent}</div>
         </motion.div>
       </div>
     );
