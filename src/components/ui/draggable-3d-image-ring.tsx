@@ -20,6 +20,7 @@ export interface Draggable3DImageRingProps {
   imageClassName?: string;
   backgroundColor?: string;
   draggable?: boolean;
+  ease?: "linear" | "easeIn" | "easeOut" | "easeInOut" | "circIn" | "circOut" | "circInOut" | "backIn" | "backOut" | "backInOut" | "anticipate";
   mobileBreakpoint?: number;
   mobileScaleFactor?: number;
   inertiaPower?: number;
@@ -72,11 +73,13 @@ export function Draggable3DImageRing({
     const unsubscribe = rotationY.on("change", (latestRotation) => {
       if (ringRef.current) {
         Array.from(ringRef.current.children).forEach((imgElement, i) => {
-          (imgElement as HTMLElement).style.backgroundPosition = getBgPos(
-            i,
-            latestRotation,
-            currentScale
-          );
+          if (imgElement instanceof HTMLElement) {
+             imgElement.style.backgroundPosition = getBgPos(
+              i,
+              latestRotation,
+              currentScale
+            );
+          }
         });
       }
       currentRotationY.current = latestRotation;
@@ -100,23 +103,7 @@ export function Draggable3DImageRing({
   useEffect(() => {
     setShowImages(true);
   }, []);
-
-  const handleDragStart = (event: React.MouseEvent | React.TouchEvent) => {
-    if (!draggable) return;
-    isDragging.current = true;
-    const clientX = "touches" in event ? event.touches[0].clientX : event.clientX;
-    startX.current = clientX;
-    rotationY.stop();
-    velocity.current = 0;
-    if (ringRef.current) {
-      (ringRef.current as HTMLElement).style.cursor = "grabbing";
-    }
-    document.addEventListener("mousemove", handleDrag);
-    document.addEventListener("mouseup", handleDragEnd);
-    document.addEventListener("touchmove", handleDrag);
-    document.addEventListener("touchend", handleDragEnd);
-  };
-
+  
   const handleDrag = (event: MouseEvent | TouchEvent) => {
     if (!draggable || !isDragging.current) return;
     const clientX = "touches" in event ? (event as TouchEvent).touches[0].clientX : (event as MouseEvent).clientX;
@@ -124,13 +111,15 @@ export function Draggable3DImageRing({
     velocity.current = -deltaX * 0.5;
     rotationY.set(currentRotationY.current + velocity.current);
     startX.current = clientX;
+    currentRotationY.current = rotationY.get();
   };
 
   const handleDragEnd = () => {
+    if(!isDragging.current) return;
     isDragging.current = false;
+
     if (ringRef.current) {
       ringRef.current.style.cursor = "grab";
-      currentRotationY.current = rotationY.get();
     }
 
     document.removeEventListener("mousemove", handleDrag);
@@ -138,10 +127,9 @@ export function Draggable3DImageRing({
     document.removeEventListener("touchmove", handleDrag);
     document.removeEventListener("touchend", handleDragEnd);
 
-    const initial = rotationY.get();
     const velocityBoost = velocity.current * inertiaVelocityMultiplier;
 
-    animate(rotationY, initial + velocityBoost, {
+    animate(rotationY, rotationY.get() + velocityBoost, {
       type: "inertia",
       velocity: velocityBoost,
       power: inertiaPower,
@@ -152,6 +140,25 @@ export function Draggable3DImageRing({
 
     velocity.current = 0;
   };
+
+  const handleDragStart = (event: React.MouseEvent | React.TouchEvent) => {
+    if (!draggable) return;
+    isDragging.current = true;
+    const clientX = "touches" in event ? event.touches[0].clientX : event.clientX;
+    startX.current = clientX;
+    velocity.current = 0;
+    rotationY.stop();
+    
+    if (ringRef.current) {
+      (ringRef.current as HTMLElement).style.cursor = "grabbing";
+    }
+
+    document.addEventListener("mousemove", handleDrag);
+    document.addEventListener("mouseup", handleDragEnd);
+    document.addEventListener("touchmove", handleDrag);
+    document.addEventListener("touchend", handleDragEnd);
+  };
+
 
   const imageVariants = {
     hidden: { y: 200, opacity: 0 },
@@ -199,7 +206,7 @@ export function Draggable3DImageRing({
             ringClassName
           )}
           style={{
-            transformStyle: "preserve-d",
+            transformStyle: "preserve-3d",
             rotateY: rotationY,
             cursor: draggable ? "grab" : "default",
           }}
@@ -228,7 +235,10 @@ export function Draggable3DImageRing({
                 exit="hidden"
                 variants={imageVariants}
                 custom={index}
-                whileHover={{ opacity: 1, transition: { duration: 0.15 } }}
+                transition={{
+                    opacity: { duration: 0.15 }
+                }}
+                whileHover={{ opacity: 1 }}
                 onHoverStart={() => {
                   if (isDragging.current) return;
                   if (ringRef.current) {
@@ -255,5 +265,3 @@ export function Draggable3DImageRing({
     </div>
   );
 }
-
-export default Draggable3DImageRing;
