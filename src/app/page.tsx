@@ -23,7 +23,7 @@ const marqueeImages: MarqueeImage[] = [
 export default function Home() {
   const { featureFlags, isAdmin } = useAuth();
   const showSignInButton = isAdmin || (featureFlags?.showSignIn ?? true);
-  const showMascot = isAdmin || (featureFlags?.showMascot ?? true);
+  const showMascot = featureFlags?.showMascot ?? true;
 
   return (
     <div className="w-full relative overflow-hidden">
