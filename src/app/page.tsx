@@ -8,6 +8,7 @@ import Image from "next/image";
 import { ThreeDMarquee, type MarqueeImage } from "@/components/ui/3d-marquee";
 import { useAuth } from "@/hooks/use-auth";
 import React from "react";
+import { Draggable3DImageRing } from "@/components/ui/draggable-3d-image-ring";
 
 const marqueeImages: MarqueeImage[] = [
     { src: '/images/1.png', alt: 'Linux', "data-ai-hint": "Linux mascot" },
@@ -24,6 +25,8 @@ export default function Home() {
   const { user, isAdmin, featureFlags } = useAuth();
   const showSignInButton = !user && (featureFlags?.showSignIn ?? true);
   const showMascot = featureFlags?.showMascot ?? true;
+
+  const ringImages = marqueeImages.map(img => img.src);
 
   return (
     <div className="w-full relative overflow-hidden">
@@ -50,6 +53,15 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <section className="relative w-full h-[600px] flex items-center justify-center overflow-hidden">
+        <Draggable3DImageRing 
+            images={ringImages}
+            width={400}
+            imageDistance={600}
+        />
+      </section>
+
     </div>
   );
 }
