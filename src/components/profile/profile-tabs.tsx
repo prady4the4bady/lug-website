@@ -1,4 +1,3 @@
-
 "use client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { logActivity } from "@/lib/activity-logger";
 import { UserActivityLog } from "./user-activity-log";
 import { generateCertificate } from "@/lib/certificate-generator";
+import { useSearchParams } from "next/navigation";
 
 const useParticipatedEvents = () => {
     const [events, setEvents] = useState<Event[]>([]);
@@ -253,6 +253,9 @@ function MembershipTab() {
 
 export function ProfileTabs() {
     const { user, dbUser, loading: authLoading, isAdmin } = useAuth();
+    const searchParams = useSearchParams();
+    const defaultTab = searchParams.get('tab') || 'dashboard';
+
 
     if (authLoading || !user) {
         return (
@@ -269,7 +272,7 @@ export function ProfileTabs() {
     const isActiveMember = dbUser?.subscriptionStatus === 'active';
 
     return (
-        <Tabs defaultValue="dashboard" className="w-full">
+        <Tabs defaultValue={defaultTab} className="w-full">
             <div className="flex justify-center mb-6">
                 <TabsList>
                     <TabsTrigger value="dashboard">Dashboard</TabsTrigger>

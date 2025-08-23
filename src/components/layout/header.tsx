@@ -28,25 +28,21 @@ export function Header() {
     { href: "/forum", label: "Forum" },
   ];
   
-  if (user) {
-      if (dbUser?.subscriptionStatus === 'active') {
-          navLinks.push({ href: "/profile", label: "Profile" });
-      } else {
-          navLinks.push({ href: "/profile", label: "Join Us" });
-      }
+  if (user && dbUser?.subscriptionStatus !== 'active') {
+      navLinks.push({ href: "/profile?tab=membership", label: "Join Us" });
+  } else if (user) {
+      navLinks.push({ href: "/profile", label: "Profile" });
   }
   
   if (isAdmin) {
-    // Avoid adding a duplicate /admin link if it's already there from another rule
     if (!navLinks.some(link => link.href === "/admin")) {
         navLinks.push({ href: "/admin", label: "Admin" });
     }
   }
   
-  // Remove duplicates - this logic is now more robust.
   const uniqueNavLinks = navLinks.filter((link, index, self) =>
     index === self.findIndex((l) => (
-      l.href === link.href
+      l.href === link.href && l.label === link.label
     ))
   );
 
