@@ -106,7 +106,7 @@ export function AdminAnalytics() {
                     </CardHeader>
                     <CardContent className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={userChartData}>
+                            <BarChart data={userChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                 <CartesianGrid vertical={false} />
                                 <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
                                 <YAxis domain={[0, maxUserCount]} allowDecimals={false} fontSize={12} />
@@ -128,7 +128,7 @@ export function AdminAnalytics() {
                     </CardHeader>
                     <CardContent className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={eventChartData}>
+                            <BarChart data={eventChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                 <CartesianGrid vertical={false} />
                                 <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
                                 <YAxis domain={[0, maxEventCount]} allowDecimals={false} fontSize={12} />
@@ -150,7 +150,7 @@ export function AdminAnalytics() {
                     </CardHeader>
                     <CardContent className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={messageChartData}>
+                            <BarChart data={messageChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                 <CartesianGrid vertical={false} />
                                 <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
                                 <YAxis domain={[0, maxMessageCount]} allowDecimals={false} fontSize={12} />
