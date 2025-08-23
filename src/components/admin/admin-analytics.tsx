@@ -105,9 +105,9 @@ export function AdminAnalytics() {
                         <CardTitle>New Users</CardTitle>
                         <CardDescription>Monthly sign-ups for {currentYear}.</CardDescription>
                     </CardHeader>
-                    <CardContent className="h-64">
-                         <ScrollArea className="h-full w-full">
-                            <div className="min-w-[600px] h-full pr-6">
+                    <CardContent>
+                         <ScrollArea className="w-full whitespace-nowrap">
+                            <div className="h-64 min-w-[600px] pr-6">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={userChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -130,11 +130,11 @@ export function AdminAnalytics() {
                 <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
                     <CardHeader>
                         <CardTitle>Events Created</CardTitle>
-                        <CardDescription>Monthly events scheduled for {currentYear}.</CardDescription>
+                        <CardDescription>Monthly events for {currentYear}.</CardDescription>
                     </CardHeader>
-                    <CardContent className="h-64">
-                        <ScrollArea className="h-full w-full">
-                            <div className="min-w-[600px] h-full pr-6">
+                    <CardContent>
+                        <ScrollArea className="w-full whitespace-nowrap">
+                            <div className="h-64 min-w-[600px] pr-6">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={eventChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -159,9 +159,9 @@ export function AdminAnalytics() {
                         <CardTitle>Forum Activity</CardTitle>
                         <CardDescription>Monthly messages for {currentYear}.</CardDescription>
                     </CardHeader>
-                    <CardContent className="h-64">
-                         <ScrollArea className="h-full w-full">
-                            <div className="min-w-[600px] h-full pr-6">
+                    <CardContent>
+                         <ScrollArea className="w-full whitespace-nowrap">
+                            <div className="h-64 min-w-[600px] pr-6">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={messageChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -185,3 +185,5 @@ export function AdminAnalytics() {
         </div>
     );
 }
+
+    
