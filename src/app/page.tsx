@@ -29,7 +29,7 @@ export default function Home() {
       <section className="relative container grid lg:grid-cols-2 gap-12 items-center py-20 md:py-32 h-[80vh]">
         <div className="flex flex-col gap-6 items-start text-left animate-fadeInUp z-10">
           <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-            Linux User Group
+            Linux User Group BPDC
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-md font-headline">
             Welcome to the home of open-source enthusiasts at <span className="text-primary/80 font-semibold">BITS Pilani Dubai Campus</span>.
