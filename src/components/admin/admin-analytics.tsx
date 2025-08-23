@@ -103,18 +103,16 @@ export function AdminAnalytics() {
                     <CardTitle>New Users</CardTitle>
                     <CardDescription>Sign-ups over the last 5 months.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <ChartContainer config={chartConfig} className="h-64">
-                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={userChartData}>
-                               <CartesianGrid vertical={false} />
-                               <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
-                               <YAxis domain={[0, maxUserCount]} />
-                               <ChartTooltip content={<ChartTooltipContent />} />
-                               <Bar dataKey="count" fill="var(--color-count)" radius={4} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </ChartContainer>
+                <CardContent className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={userChartData}>
+                            <CartesianGrid vertical={false} />
+                            <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
+                            <YAxis domain={[0, maxUserCount]} fontSize={12} />
+                            <ChartTooltip content={<ChartTooltipContent />} />
+                            <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
+                        </BarChart>
+                    </ResponsiveContainer>
                 </CardContent>
             </Card>
             <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
@@ -122,18 +120,16 @@ export function AdminAnalytics() {
                     <CardTitle>Events Created</CardTitle>
                     <CardDescription>Events scheduled over the last 5 months.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <ChartContainer config={chartConfig} className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={eventChartData}>
-                               <CartesianGrid vertical={false} />
-                               <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
-                               <YAxis domain={[0, 20]} ticks={[0, 5, 10, 15, 20]} />
-                               <ChartTooltip content={<ChartTooltipContent />} />
-                               <Bar dataKey="count" fill="var(--color-count)" radius={4} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </ChartContainer>
+                <CardContent className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={eventChartData}>
+                            <CartesianGrid vertical={false} />
+                            <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
+                            <YAxis domain={[0, 20]} ticks={[0, 5, 10, 15, 20]} fontSize={12} />
+                            <ChartTooltip content={<ChartTooltipContent />} />
+                            <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
+                        </BarChart>
+                    </ResponsiveContainer>
                 </CardContent>
             </Card>
             <Card className="lg:col-span-1 bg-card/60 backdrop-blur-sm">
@@ -141,18 +137,16 @@ export function AdminAnalytics() {
                     <CardTitle>Forum Activity</CardTitle>
                     <CardDescription>Messages posted over the last 5 months.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <ChartContainer config={chartConfig} className="h-64">
-                       <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={messageChartData}>
-                               <CartesianGrid vertical={false} />
-                               <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
-                               <YAxis domain={[0, maxMessageCount]} />
-                               <ChartTooltip content={<ChartTooltipContent />} />
-                               <Bar dataKey="count" fill="var(--color-count)" radius={4} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </ChartContainer>
+                <CardContent className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={messageChartData}>
+                            <CartesianGrid vertical={false} />
+                            <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
+                            <YAxis domain={[0, maxMessageCount]} fontSize={12} />
+                            <ChartTooltip content={<ChartTooltipContent />} />
+                            <Bar dataKey="count" fill="hsl(var(--primary))" radius={4} />
+                        </BarChart>
+                    </ResponsiveContainer>
                 </CardContent>
             </Card>
         </div>
