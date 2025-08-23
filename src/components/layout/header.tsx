@@ -30,7 +30,7 @@ export function Header() {
   ];
   
   if (user && dbUser?.subscriptionStatus !== 'active') {
-      navLinks.push({ href: "/profile?tab=membership", label: "Join Us", show: true });
+      navLinks.push({ href: "/join-us", label: "Join Us", show: true });
   } else if (user) {
       navLinks.push({ href: "/profile", label: "Profile", show: true });
   }
@@ -157,5 +157,3 @@ export function Header() {
     </header>
   )
 }
-
-    
