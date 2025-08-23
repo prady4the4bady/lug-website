@@ -22,41 +22,45 @@ export function Header() {
     setIsClient(true)
   }, [])
 
-  const navLinks = [
+  const baseNavLinks = [
     { href: "/about", label: "About", show: true },
     { href: "/council", label: "Council", show: true },
-    { href: "/events", label: "Events", show: featureFlags?.showEvents ?? true },
-    { href: "/forum", label: "Forum", show: featureFlags?.showForum ?? true },
     { href: "/join-us", label: "Join Us", show: true },
   ];
-  
-  if (user) {
-      navLinks.push({ href: "/profile", label: "Profile", show: true });
-  }
-  
-  if (isAdmin) {
-    if (!navLinks.some(link => link.href === "/admin")) {
-        navLinks.push({ href: "/admin", label: "Admin", show: true });
-    }
-  }
 
-  const visibleNavLinks = navLinks.filter(link => {
-      // Admins see all links regardless of feature flags
-      if (isAdmin) return true;
-      return link.show;
-  });
+  const getNavLinks = () => {
+    let links = [...baseNavLinks];
+
+    if (featureFlags?.showEvents || isAdmin) {
+        links.push({ href: "/events", label: "Events", show: true });
+    }
+
+    if (featureFlags?.showForum || isAdmin) {
+        links.push({ href: "/forum", label: "Forum", show: true });
+    }
+
+    if (user) {
+      links.push({ href: "/profile", label: "Profile", show: true });
+    }
+    
+    if (isAdmin) {
+      links.push({ href: "/admin", label: "Admin", show: true });
+    }
+
+    // Filter out duplicates that might occur if flags are true and user is admin
+    return links.filter((link, index, self) =>
+        index === self.findIndex((l) => (
+            l.href === link.href
+        ))
+    );
+  };
   
-  const uniqueNavLinks = visibleNavLinks.filter((link, index, self) =>
-    index === self.findIndex((l) => (
-      l.href === link.href && l.label === link.label
-    ))
-  );
+  const navLinks = isClient ? getNavLinks() : baseNavLinks;
+  const showSignInButton = isClient ? (isAdmin || (featureFlags?.showSignIn ?? true)) : true;
 
   const handleTerminalLink = () => {
     window.open("https://lug12.netlify.app/", "_blank");
   }
-
-  const showSignInButton = isAdmin || (featureFlags?.showSignIn ?? true);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -72,7 +76,7 @@ export function Header() {
             </div>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium transition-all duration-300 ease-in-out">
-            {uniqueNavLinks.map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -108,7 +112,7 @@ export function Header() {
             </Link>
             <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
               <div className="flex flex-col space-y-3">
-                {uniqueNavLinks.map((link) => (
+                {navLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
