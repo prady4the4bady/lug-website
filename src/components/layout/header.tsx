@@ -29,15 +29,18 @@ export function Header() {
   ];
   
   if (user) {
-    if (dbUser?.subscriptionStatus !== 'active') {
-        navLinks.push({ href: "/profile", label: "Join Us" });
-    } else {
-        navLinks.push({ href: "/profile", label: "Profile" });
-    }
+      if (dbUser?.subscriptionStatus === 'active') {
+          navLinks.push({ href: "/profile", label: "Profile" });
+      } else {
+          navLinks.push({ href: "/profile", label: "Join Us" });
+      }
   }
-
+  
   if (isAdmin) {
-    navLinks.push({ href: "/admin", label: "Admin" });
+    // Avoid adding a duplicate /admin link if it's already there from another rule
+    if (!navLinks.some(link => link.href === "/admin")) {
+        navLinks.push({ href: "/admin", label: "Admin" });
+    }
   }
   
   // Remove duplicates - this logic is now more robust.
