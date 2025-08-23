@@ -27,7 +27,7 @@ export default function AboutPage() {
       id: 3,
       title: "What We Do",
       brand: "Activities",
-      description: "We organize a variety of activities including workshops, coding sessions, tech talks by industry experts, and collaborative projects. We also maintain a forum for members to discuss, share knowledge, and seek help.",
+      description: "From hands-on workshops and collaborative coding projects to expert-led tech talks and lively install fests, we offer a wide range of activities. Our community thrives on exploring everything from system administration to cutting-edge development, providing a space for members to share knowledge, seek guidance, and innovate together.",
       tags: ["Workshops", "Projects", "Talks"],
       imageUrl: "/images/what.png",
       link: "https://www.instagram.com/lugbpdc/"
