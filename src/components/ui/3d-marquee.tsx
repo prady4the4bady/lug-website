@@ -54,16 +54,18 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
     }
   };
   
-  const MarqueeColumn = ({ images }: { images: MarqueeImage[] }) => {
+  const MarqueeColumn = ({ images, columnIndex }: { images: MarqueeImage[], columnIndex: number }) => {
+    const isEven = columnIndex % 2 === 0;
+    
     return (
       <div className="flex flex-col items-center gap-6 overflow-hidden">
         <motion.div
           className="flex flex-col gap-6"
           animate={{
-            y: ["0%", "-100%"],
+            y: isEven ? ["0%", "-100%"] : ["-100%", "0%"],
           }}
           transition={{
-            duration: 20,
+            duration: isEven ? 20 : 25,
             repeat: Infinity,
             ease: "linear",
           }}
@@ -74,7 +76,7 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
              const isClickable = image.href || onImageClick;
 
             return (
-              <div key={`img-col-${imgIdx}`} className="relative">
+              <div key={`img-col-${columnIndex}-${imgIdx}`} className="relative">
                  <motion.img
                   whileHover={{ y: -10 }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
@@ -112,7 +114,7 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
             className={`relative grid h-full w-full origin-center grid-cols-2 sm:grid-cols-4 gap-4 transform`}
           >
             {imageGroups.map((imagesInGroup, idx) => (
-               <MarqueeColumn key={`column-${idx}`} images={imagesInGroup} />
+               <MarqueeColumn key={`column-${idx}`} images={imagesInGroup} columnIndex={idx} />
             ))}
           </div>
         </div>
