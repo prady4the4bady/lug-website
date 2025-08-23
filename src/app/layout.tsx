@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { Header } from "@/components/layout/header";
 import { AuthProvider } from '@/hooks/use-auth';
+import { Footer } from '@/components/layout/footer';
 
 export const metadata: Metadata = {
   title: 'Linux User Group - BITS Pilani Dubai',
@@ -29,6 +30,7 @@ export default function RootLayout({
             <div className="relative flex min-h-screen flex-col">
               <Header />
               <main className="flex-1">{children}</main>
+              <Footer />
             </div>
             <Toaster />
           </AuthProvider>
