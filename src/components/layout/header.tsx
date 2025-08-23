@@ -47,10 +47,10 @@ export function Header() {
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2 group">
             <Image src="/images/lug_logo.png" alt="LUG Logo" width={80} height={80} className="h-20 w-20" data-ai-hint="logo" priority />
-            <div className="font-bold sm:inline-block relative whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out w-10 group-hover:w-40">
+            <div className="font-bold sm:inline-block relative whitespace-nowrap overflow-hidden transition-all duration-300 ease-in-out w-10 group-hover:w-48">
               <span className="opacity-100 group-hover:opacity-0 transition-opacity duration-300">LUG</span>
               <span className="absolute left-0 top-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                Linux User Group
+                Linux User Group BPDC
               </span>
             </div>
           </Link>
