@@ -21,6 +21,17 @@ const marqueeImages: MarqueeImage[] = [
     { src: '/images/8.png', alt: 'Events', "data-ai-hint": "tech conference" },
 ]
 
+const cyclerImages = [
+    '/images/1.png',
+    '/images/2.png',
+    '/images/3.png',
+    '/images/4.png',
+    '/images/5.png',
+    '/images/6.png',
+    '/images/7.png',
+    '/images/8.png',
+];
+
 export default function Home() {
   const { user, isAdmin, featureFlags } = useAuth();
   const showSignInButton = !user && (featureFlags?.showSignIn ?? true);
@@ -50,6 +61,12 @@ export default function Home() {
             )}
           </div>
         </div>
+      </section>
+
+      <section className="py-20">
+          <div className="container mx-auto h-[400px] w-full">
+               <ImageCycler3D images={cyclerImages} />
+          </div>
       </section>
     </div>
   );
