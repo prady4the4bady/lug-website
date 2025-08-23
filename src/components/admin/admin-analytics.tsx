@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { db } from '@/lib/firebase';
 import { collection, onSnapshot, Timestamp } from 'firebase/firestore';
-import { format, getYear, startOfYear, endOfYear, getMonth, addYears, subYears } from 'date-fns';
+import { getYear, getMonth } from 'date-fns';
 import type { User, Event, ChatMessage } from '@/lib/types';
 import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BarChart, XAxis, YAxis, Bar, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
@@ -108,7 +108,7 @@ export function AdminAnalytics() {
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={userChartData}>
                                 <CartesianGrid vertical={false} />
-                                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
+                                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
                                 <YAxis domain={[0, maxUserCount]} allowDecimals={false} fontSize={12} />
                                 <Tooltip
                                     contentStyle={{
@@ -130,7 +130,7 @@ export function AdminAnalytics() {
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={eventChartData}>
                                 <CartesianGrid vertical={false} />
-                                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
+                                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
                                 <YAxis domain={[0, maxEventCount]} allowDecimals={false} fontSize={12} />
                                 <Tooltip
                                     contentStyle={{
@@ -152,7 +152,7 @@ export function AdminAnalytics() {
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={messageChartData}>
                                 <CartesianGrid vertical={false} />
-                                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} />
+                                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
                                 <YAxis domain={[0, maxMessageCount]} allowDecimals={false} fontSize={12} />
                                 <Tooltip
                                     contentStyle={{
