@@ -9,6 +9,7 @@ import { collection, onSnapshot, query, Timestamp, limit, orderBy } from 'fireba
 import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import type { User, Event, ChatMessage } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
+import { Bar } from 'recharts';
 
 const aggregateDataByMonth = (items: { createdAt?: Timestamp }[] | { date: Timestamp }[] | { timestamp: Timestamp | null }[], dateKey: 'createdAt' | 'date' | 'timestamp') => {
     const monthlyCounts: Record<string, number> = {};
@@ -108,7 +109,7 @@ export function AdminAnalytics() {
                            <RechartsPrimitive.XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
                            <RechartsPrimitive.YAxis domain={[0, maxUserCount]} />
                            <ChartTooltip content={<ChartTooltipContent />} />
-                           <ChartBar dataKey="count" fill="var(--color-count)" radius={4} />
+                           <Bar dataKey="count" fill="var(--color-count)" radius={4} />
                         </RechartsPrimitive.BarChart>
                     </ChartContainer>
                 </CardContent>
@@ -124,7 +125,7 @@ export function AdminAnalytics() {
                            <RechartsPrimitive.XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
                            <RechartsPrimitive.YAxis domain={[0, 20]} ticks={[0, 5, 10, 15, 20]} />
                            <ChartTooltip content={<ChartTooltipContent />} />
-                           <ChartBar dataKey="count" fill="var(--color-count)" radius={4} />
+                           <Bar dataKey="count" fill="var(--color-count)" radius={4} />
                         </RechartsPrimitive.BarChart>
                     </ChartContainer>
                 </CardContent>
@@ -140,7 +141,7 @@ export function AdminAnalytics() {
                            <RechartsPrimitive.XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
                            <RechartsPrimitive.YAxis domain={[0, maxMessageCount]} />
                            <ChartTooltip content={<ChartTooltipContent />} />
-                           <ChartBar dataKey="count" fill="var(--color-count)" radius={4} />
+                           <Bar dataKey="count" fill="var(--color-count)" radius={4} />
                         </RechartsPrimitive.BarChart>
                     </ChartContainer>
                 </CardContent>
