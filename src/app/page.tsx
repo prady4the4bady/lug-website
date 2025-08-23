@@ -22,7 +22,7 @@ const marqueeImages: MarqueeImage[] = [
 ]
 
 export default function Home() {
-  const { featureFlags, isAdmin } = useAuth();
+  const { featureFlags } = useAuth();
   const showSignInButton = featureFlags?.showSignIn ?? true;
   const showMascot = featureFlags?.showMascot ?? true;
 
@@ -42,7 +42,7 @@ export default function Home() {
           <p className="text-lg md:text-xl text-muted-foreground max-w-md font-headline">
             Welcome to the home of open-source enthusiasts at <span className="text-primary/80 font-semibold">BITS Pilani Dubai Campus</span>.
           </p>
-          {(showSignInButton || isAdmin) && (
+          {showSignInButton && (
             <div className="pt-4">
               <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xl px-10 py-8" asChild>
                 <Link href="/signin">Get Started</Link>
