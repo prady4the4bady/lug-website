@@ -2,9 +2,7 @@
 "use client";
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SignInForm } from "@/components/auth/sign-in-form";
-import { SignUpForm } from "@/components/auth/sign-up-form";
 import { useAuth } from "@/hooks/use-auth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -42,18 +40,7 @@ export default function SignInPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Tabs defaultValue="signin" className="w-full">
-                        <TabsList className="grid w-full grid-cols-2">
-                            <TabsTrigger value="signin">Sign In</TabsTrigger>
-                            <TabsTrigger value="signup">Sign Up</TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="signin">
-                            <SignInForm />
-                        </TabsContent>
-                        <TabsContent value="signup">
-                            <SignUpForm />
-                        </TabsContent>
-                    </Tabs>
+                   <SignInForm />
                 </CardContent>
             </Card>
         </div>
