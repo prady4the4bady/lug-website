@@ -77,9 +77,10 @@ export function AdminAnalytics() {
         );
     }
     
-    const maxUserCount = Math.max(...userChartData.map(d => d.count), 5);
-    const maxEventCount = Math.max(...eventChartData.map(d => d.count), 5);
-    const maxMessageCount = Math.max(...messageChartData.map(d => d.count), 10);
+    const getDynamicDomain = (data: { count: number }[]) => {
+      const maxCount = Math.max(...data.map(d => d.count), 5);
+      return [0, Math.ceil((maxCount * 1.1) / 5) * 5]; // Add 10% buffer and round to next 5
+    };
 
     const handleYearChange = (direction: 'prev' | 'next') => {
         setCurrentYear(prevYear => direction === 'prev' ? prevYear - 1 : prevYear + 1);
@@ -112,7 +113,7 @@ export function AdminAnalytics() {
                                     <BarChart data={userChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                         <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
-                                        <YAxis domain={[0, maxUserCount]} allowDecimals={false} fontSize={12} />
+                                        <YAxis domain={getDynamicDomain(userChartData)} allowDecimals={false} fontSize={12} />
                                         <Tooltip
                                             contentStyle={{
                                                 backgroundColor: 'hsl(var(--background))',
@@ -139,7 +140,7 @@ export function AdminAnalytics() {
                                     <BarChart data={eventChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                         <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
-                                        <YAxis domain={[0, maxEventCount]} allowDecimals={false} fontSize={12} />
+                                        <YAxis domain={getDynamicDomain(eventChartData)} allowDecimals={false} fontSize={12} />
                                         <Tooltip
                                             contentStyle={{
                                                 backgroundColor: 'hsl(var(--background))',
@@ -166,7 +167,7 @@ export function AdminAnalytics() {
                                     <BarChart data={messageChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                         <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
-                                        <YAxis domain={[0, maxMessageCount]} allowDecimals={false} fontSize={12} />
+                                        <YAxis domain={getDynamicDomain(messageChartData)} allowDecimals={false} fontSize={12} />
                                         <Tooltip
                                             contentStyle={{
                                                 backgroundColor: 'hsl(var(--background))',
@@ -185,5 +186,3 @@ export function AdminAnalytics() {
         </div>
     );
 }
-
-    
