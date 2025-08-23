@@ -29,6 +29,10 @@ export function Header() {
   }, [])
 
   const getDynamicNavLinks = () => {
+    if (!isClient) {
+        return [];
+    }
+
     const dynamicLinks = [];
     if (featureFlags?.showEvents || isAdmin) {
       dynamicLinks.push({ href: "/events", label: "Events" });
@@ -42,13 +46,15 @@ export function Header() {
     if (isAdmin) {
       dynamicLinks.push({ href: "/admin", label: "Admin" });
     }
-    // Remove duplicates
+    
     return dynamicLinks.filter((link, index, self) =>
         index === self.findIndex((l) => l.href === link.href)
     );
   };
   
-  const showSignInButton = isClient ? (isAdmin || (featureFlags?.showSignIn ?? true)) : false;
+  const showSignInButton = isClient ? (!user && (featureFlags?.showSignIn ?? true)) : false;
+  const dynamicNavLinks = getDynamicNavLinks();
+
 
   const handleTerminalLink = () => {
     window.open("https://lug12.netlify.app/", "_blank");
@@ -101,7 +107,7 @@ export function Header() {
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium transition-all duration-300 ease-in-out">
              {renderNavLinks(baseNavLinks)}
-             {isClient && renderNavLinks(getDynamicNavLinks())}
+             {isClient ? renderNavLinks(dynamicNavLinks) : <Skeleton className="h-6 w-48" />}
           </nav>
         </div>
         
@@ -127,7 +133,7 @@ export function Header() {
             <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
               <div className="flex flex-col space-y-3">
                 {renderMobileNavLinks(baseNavLinks)}
-                {isClient && renderMobileNavLinks(getDynamicNavLinks())}
+                {isClient ? renderMobileNavLinks(dynamicNavLinks) : <Skeleton className="h-6 w-32 mt-3" />}
               </div>
             </div>
           </SheetContent>
