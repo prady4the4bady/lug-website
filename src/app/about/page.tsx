@@ -30,7 +30,7 @@ export default function AboutPage() {
       description: "From hands-on workshops and collaborative coding projects to expert-led tech talks and lively install fests, we offer a wide range of activities. Our community thrives on exploring everything from system administration to cutting-edge development, providing a space for members to share knowledge, seek guidance, and innovate together.",
       tags: ["Workshops", "Projects", "Talks"],
       imageUrl: "/images/what.png",
-      link: "https://www.instagram.com/lugbpdc/"
+      link: "https://www.instagram.com/lugbpdc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
     }
   ];
 
