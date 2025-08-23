@@ -11,7 +11,6 @@ import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { BarChart, XAxis, YAxis, Bar, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 import { Button } from '../ui/button';
 import { ScrollArea, ScrollBar } from '../ui/scroll-area';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -44,7 +43,6 @@ export function AdminAnalytics() {
     const [allMessages, setAllMessages] = useState<ChatMessage[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-    const isMobile = useIsMobile();
 
     useEffect(() => {
         const usersUnsub = onSnapshot(collection(db, "users"), (snapshot) => {
