@@ -7,7 +7,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { ThreeDMarquee, type MarqueeImage } from "@/components/ui/3d-marquee";
 import { useAuth } from "@/hooks/use-auth";
-import { ImageCycler3D } from "@/components/image-cycler-3d";
 import React from "react";
 
 const marqueeImages: MarqueeImage[] = [
@@ -20,17 +19,6 @@ const marqueeImages: MarqueeImage[] = [
     { src: '/images/7.png', alt: 'Workshops', "data-ai-hint": "coding workshop" },
     { src: '/images/8.png', alt: 'Events', "data-ai-hint": "tech conference" },
 ]
-
-const cyclerImages = [
-    '/images/1.png',
-    '/images/2.png',
-    '/images/3.png',
-    '/images/4.png',
-    '/images/5.png',
-    '/images/6.png',
-    '/images/7.png',
-    '/images/8.png',
-];
 
 export default function Home() {
   const { user, isAdmin, featureFlags } = useAuth();
@@ -61,12 +49,6 @@ export default function Home() {
             )}
           </div>
         </div>
-      </section>
-
-      <section className="py-20">
-          <div className="container mx-auto h-[400px] w-full">
-               <ImageCycler3D images={cyclerImages} imageWidth={300} imageHeight={200} />
-          </div>
       </section>
     </div>
   );
