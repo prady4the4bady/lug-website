@@ -16,10 +16,12 @@ import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { AdminAnalytics } from "@/components/admin/admin-analytics";
 import { ReportsManager } from "@/components/admin/reports-manager";
 import { SubscriptionManager } from "@/components/admin/subscription-manager";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function AdminPage() {
   const { isAdmin, loading } = useAuth();
   const router = useRouter();
+  const isMobile = useIsMobile();
 
   const [userCount, setUserCount] = useState(0);
   const [eventCount, setEventCount] = useState(0);
@@ -87,7 +89,7 @@ export default function AdminPage() {
           <p className="text-lg text-muted-foreground mt-2">Manage users, events, council, and forum content.</p>
         </div>
 
-        <div className="grid md:grid-cols-5 gap-8 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 mb-8">
           <Card className="bg-card/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -142,8 +144,8 @@ export default function AdminPage() {
           </Card>
         </div>
 
-        <Tabs defaultValue="analytics" className="w-full">
-          <TabsList className="grid w-full grid-cols-7 bg-card/60 backdrop-blur-sm">
+        <Tabs defaultValue="analytics" className="w-full" orientation={isMobile ? "vertical" : "horizontal"}>
+          <TabsList className="grid w-full grid-cols-1 md:grid-cols-7 bg-card/60 backdrop-blur-sm h-auto md:h-10">
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="subscriptions">Subscriptions</TabsTrigger>
             <TabsTrigger value="events">Events</TabsTrigger>
