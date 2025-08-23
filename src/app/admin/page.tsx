@@ -20,7 +20,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { FeatureManager } from "@/components/admin/feature-manager";
 
 export default function AdminPage() {
-  const { isAdmin, loading } = useAuth();
+  const { user, isAdmin, loading } = useAuth();
   const router = useRouter();
   const isMobile = useIsMobile();
 
@@ -32,10 +32,14 @@ export default function AdminPage() {
 
 
   useEffect(() => {
-    if (!loading && !isAdmin) {
-      router.push("/");
+    if (!loading) {
+        if (!user) {
+            router.push("/signin");
+        } else if (!isAdmin) {
+            router.push("/");
+        }
     }
-  }, [isAdmin, loading, router]);
+  }, [user, isAdmin, loading, router]);
   
   useEffect(() => {
     if (!isAdmin) return;
@@ -184,5 +188,7 @@ export default function AdminPage() {
     </div>
   )
 }
+
+    
 
     
