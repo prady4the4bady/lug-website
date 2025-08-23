@@ -1,9 +1,9 @@
-
 "use client";
 
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
 
 export interface MarqueeImage {
   src: string;
@@ -33,11 +33,19 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
     setNumCols(isMobile ? 2 : cols);
   }, [isMobile, cols]);
 
-  const duplicatedImages = [...images, ...images];
-  const groupSize = Math.ceil(duplicatedImages.length / numCols);
-  const imageGroups = Array.from({ length: numCols }, (_, index) =>
-    duplicatedImages.slice(index * groupSize, (index + 1) * groupSize)
-  );
+  if (!images || images.length === 0) {
+    return null;
+  }
+
+  const groupSize = Math.ceil(images.length / numCols);
+  const imageGroups = Array.from({ length: numCols }, (_, index) => {
+    const start = index * groupSize;
+    const end = start + groupSize;
+    const groupImages = images.slice(start, end);
+    // Duplicate the images within each group to ensure seamless looping
+    return [...groupImages, ...groupImages];
+  });
+  
 
   const handleImageClick = (image: MarqueeImage, globalIndex: number) => {
     if (onImageClick) {
@@ -49,8 +57,7 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
 
   return (
     <section
-      className={`mx-auto block h-[600px] max-sm:h-[400px] 
-        overflow-hidden ${className}`}
+      className={cn("mx-auto block h-[600px] max-sm:h-[400px] overflow-hidden", className)}
     >
       <div
         className="flex w-full h-full items-center justify-center"
@@ -60,24 +67,22 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
       >
         <div className="w-full overflow-hidden scale-90 sm:scale-100">
           <div
-            className={`relative grid h-full w-full origin-center 
-              grid-cols-2 sm:grid-cols-4 gap-4 transform 
-              `}
+            className={`relative grid h-full w-full origin-center grid-cols-2 sm:grid-cols-4 gap-4 transform`}
           >
             {imageGroups.map((imagesInGroup, idx) => (
               <motion.div
                 key={`column-${idx}`}
-                animate={{ y: ["0%", "-100%"] }}
+                animate={{ y: ["0%", "-50%"] }}
                 transition={{
                   duration: idx % 2 === 0 ? 25 : 35,
                   repeat: Infinity,
                   repeatType: "loop",
                   ease: "linear",
                 }}
-                className="flex flex-col items-center gap-6 relative"
+                className="flex flex-col items-center gap-6"
               >
-                {[...imagesInGroup, ...imagesInGroup].map((image, imgIdx) => {
-                  const globalIndex = idx * groupSize + (imgIdx % imagesInGroup.length);
+                {imagesInGroup.map((image, imgIdx) => {
+                  const globalIndex = idx * groupSize + (imgIdx % (imagesInGroup.length / 2));
                   const isClickable = image.href || onImageClick;
 
                   return (
@@ -87,9 +92,9 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
                         transition={{ duration: 0.3, ease: "easeInOut" }}
                         src={image.src}
                         alt={image.alt}
-                        width={970}
-                        height={700}
-                        className={`aspect-[970/700] w-full max-w-[200px] rounded-lg object-cover ring ring-gray-300/30 dark:ring-gray-800/50 shadow-xl hover:shadow-2xl transition-shadow duration-300 ${
+                        width={200}
+                        height={200}
+                        className={`aspect-square w-full max-w-[200px] rounded-lg object-cover ring ring-gray-300/30 dark:ring-gray-800/50 shadow-xl hover:shadow-2xl transition-shadow duration-300 ${
                           isClickable ? "cursor-pointer" : ""
                         }`}
                         onClick={() => handleImageClick(image, globalIndex)}
