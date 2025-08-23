@@ -234,9 +234,10 @@ function MembershipTab() {
                 <CardContent>
                      <p className="text-3xl font-bold mb-4">AED 40</p>
                     <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                        <li>All Semester benefits</li>
+                        <li>Access to all workshops</li>
+                        <li>Priority for limited-seat events</li>
+                        <li>Access to the community forum</li>
                         <li>Exclusive access to archived content</li>
-                        <li>A cool LUG sticker pack!</li>
                     </ul>
                 </CardContent>
                 <CardContent>
