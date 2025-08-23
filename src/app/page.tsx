@@ -65,7 +65,7 @@ export default function Home() {
 
       <section className="py-20">
           <div className="container mx-auto h-[400px] w-full">
-               <ImageCycler3D images={cyclerImages} />
+               <ImageCycler3D images={cyclerImages} imageWidth={300} imageHeight={200} />
           </div>
       </section>
     </div>
