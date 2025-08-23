@@ -26,6 +26,8 @@ export interface Draggable3DImageRingProps {
   inertiaPower?: number;
   inertiaTimeConstant?: number;
   inertiaVelocityMultiplier?: number;
+  rotationSpeed?: number;
+  rotationDirection?: "clockwise" | "counter-clockwise";
 }
 
 export function Draggable3DImageRing({
@@ -47,6 +49,8 @@ export function Draggable3DImageRing({
   inertiaPower = 0.8,
   inertiaTimeConstant = 300,
   inertiaVelocityMultiplier = 20,
+  rotationSpeed = 0,
+  rotationDirection = "clockwise"
 }: Draggable3DImageRingProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
@@ -68,6 +72,29 @@ export function Draggable3DImageRing({
     const parallaxOffset = ((effectiveRotation % 360 + 360) % 360) / 360;
     return `${-(parallaxOffset * (scaledImageDistance / 1.5))}px 0px`;
   };
+  
+    useEffect(() => {
+      let animationFrameId: number;
+
+      const continuousRotation = () => {
+        if (!isDragging.current && rotationSpeed > 0) {
+            const direction = rotationDirection === 'clockwise' ? 1 : -1;
+            rotationY.set(rotationY.get() + rotationSpeed * direction);
+        }
+        animationFrameId = requestAnimationFrame(continuousRotation);
+      };
+
+      if (rotationSpeed > 0) {
+        animationFrameId = requestAnimationFrame(continuousRotation);
+      }
+      
+      return () => {
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+        }
+      };
+    }, [rotationSpeed, rotationDirection, rotationY]);
+
 
   useEffect(() => {
     const unsubscribe = rotationY.on("change", (latestRotation) => {
@@ -127,16 +154,18 @@ export function Draggable3DImageRing({
     document.removeEventListener("touchmove", handleDrag);
     document.removeEventListener("touchend", handleDragEnd);
 
-    const velocityBoost = velocity.current * inertiaVelocityMultiplier;
+    if (draggable) { // Only apply inertia if draggable
+        const velocityBoost = velocity.current * inertiaVelocityMultiplier;
 
-    animate(rotationY, rotationY.get() + velocityBoost, {
-      type: "inertia",
-      velocity: velocityBoost,
-      power: inertiaPower,
-      timeConstant: inertiaTimeConstant,
-      restDelta: 0.5,
-      modifyTarget: (target) => Math.round(target / angle) * angle,
-    });
+        animate(rotationY, rotationY.get() + velocityBoost, {
+          type: "inertia",
+          velocity: velocityBoost,
+          power: inertiaPower,
+          timeConstant: inertiaTimeConstant,
+          restDelta: 0.5,
+          modifyTarget: (target) => Math.round(target / angle) * angle,
+        });
+    }
 
     velocity.current = 0;
   };
@@ -240,7 +269,7 @@ export function Draggable3DImageRing({
                 }}
                 whileHover={{ opacity: 1 }}
                 onHoverStart={() => {
-                  if (isDragging.current) return;
+                  if (isDragging.current || !draggable) return;
                   if (ringRef.current) {
                     Array.from(ringRef.current.children).forEach((imgEl, i) => {
                       if (i !== index) {
@@ -250,7 +279,7 @@ export function Draggable3DImageRing({
                   }
                 }}
                 onHoverEnd={() => {
-                  if (isDragging.current) return;
+                  if (isDragging.current || !draggable) return;
                   if (ringRef.current) {
                     Array.from(ringRef.current.children).forEach((imgEl) => {
                       (imgEl as HTMLElement).style.opacity = `1`;
