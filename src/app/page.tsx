@@ -26,8 +26,8 @@ export default function Home() {
             <ThreeDMarquee images={marqueeImages} className="[mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_60%,transparent_100%)]"/>
       </div>
       
-      <section className="relative container grid lg:grid-cols-2 gap-12 items-center py-20 md:py-32 h-[80vh]">
-        <div className="flex flex-col gap-6 items-start text-left animate-fadeInUp z-10">
+      <section className="relative container grid lg:grid-cols-2 gap-12 items-center justify-items-center lg:justify-items-start py-20 md:py-32 min-h-[calc(100vh-6rem)]">
+        <div className="flex flex-col gap-6 items-center lg:items-start text-center lg:text-left animate-fadeInUp z-10">
           <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
             Linux User Group BPDC
           </h1>
@@ -40,7 +40,7 @@ export default function Home() {
             </Button>
           </div>
         </div>
-        <div className="relative flex items-center justify-center h-full animate-float z-10">
+        <div className="relative flex items-center justify-center h-full w-full max-w-md animate-float z-10">
           <Image
             src="https://imagepng.org/wp-content/uploads/2017/06/pinguim-linux-tux.png"
             alt="Tux Penguin Mascot"
