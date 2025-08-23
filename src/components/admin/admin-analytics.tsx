@@ -3,13 +3,13 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartBar, RechartsPrimitive } from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { db } from '@/lib/firebase';
 import { collection, onSnapshot, query, Timestamp, limit, orderBy } from 'firebase/firestore';
 import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
 import type { User, Event, ChatMessage } from '@/lib/types';
 import { Loader2 } from 'lucide-react';
-import { Bar } from 'recharts';
+import { BarChart, XAxis, YAxis, Bar, CartesianGrid, ResponsiveContainer } from 'recharts';
 
 const aggregateDataByMonth = (items: { createdAt?: Timestamp }[] | { date: Timestamp }[] | { timestamp: Timestamp | null }[], dateKey: 'createdAt' | 'date' | 'timestamp') => {
     const monthlyCounts: Record<string, number> = {};
@@ -105,12 +105,15 @@ export function AdminAnalytics() {
                 </CardHeader>
                 <CardContent>
                     <ChartContainer config={chartConfig} className="h-64">
-                        <RechartsPrimitive.BarChart data={userChartData}>
-                           <RechartsPrimitive.XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
-                           <RechartsPrimitive.YAxis domain={[0, maxUserCount]} />
-                           <ChartTooltip content={<ChartTooltipContent />} />
-                           <Bar dataKey="count" fill="var(--color-count)" radius={4} />
-                        </RechartsPrimitive.BarChart>
+                         <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={userChartData}>
+                               <CartesianGrid vertical={false} />
+                               <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
+                               <YAxis domain={[0, maxUserCount]} />
+                               <ChartTooltip content={<ChartTooltipContent />} />
+                               <Bar dataKey="count" fill="var(--color-count)" radius={4} />
+                            </BarChart>
+                        </ResponsiveContainer>
                     </ChartContainer>
                 </CardContent>
             </Card>
@@ -121,12 +124,15 @@ export function AdminAnalytics() {
                 </CardHeader>
                 <CardContent>
                     <ChartContainer config={chartConfig} className="h-64">
-                        <RechartsPrimitive.BarChart data={eventChartData}>
-                           <RechartsPrimitive.XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
-                           <RechartsPrimitive.YAxis domain={[0, 20]} ticks={[0, 5, 10, 15, 20]} />
-                           <ChartTooltip content={<ChartTooltipContent />} />
-                           <Bar dataKey="count" fill="var(--color-count)" radius={4} />
-                        </RechartsPrimitive.BarChart>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={eventChartData}>
+                               <CartesianGrid vertical={false} />
+                               <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
+                               <YAxis domain={[0, 20]} ticks={[0, 5, 10, 15, 20]} />
+                               <ChartTooltip content={<ChartTooltipContent />} />
+                               <Bar dataKey="count" fill="var(--color-count)" radius={4} />
+                            </BarChart>
+                        </ResponsiveContainer>
                     </ChartContainer>
                 </CardContent>
             </Card>
@@ -137,15 +143,20 @@ export function AdminAnalytics() {
                 </CardHeader>
                 <CardContent>
                     <ChartContainer config={chartConfig} className="h-64">
-                        <RechartsPrimitive.BarChart data={messageChartData}>
-                           <RechartsPrimitive.XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
-                           <RechartsPrimitive.YAxis domain={[0, maxMessageCount]} />
-                           <ChartTooltip content={<ChartTooltipContent />} />
-                           <Bar dataKey="count" fill="var(--color-count)" radius={4} />
-                        </RechartsPrimitive.BarChart>
+                       <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={messageChartData}>
+                               <CartesianGrid vertical={false} />
+                               <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
+                               <YAxis domain={[0, maxMessageCount]} />
+                               <ChartTooltip content={<ChartTooltipContent />} />
+                               <Bar dataKey="count" fill="var(--color-count)" radius={4} />
+                            </BarChart>
+                        </ResponsiveContainer>
                     </ChartContainer>
                 </CardContent>
             </Card>
         </div>
     );
 }
+
+    
