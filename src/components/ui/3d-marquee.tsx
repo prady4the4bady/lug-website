@@ -56,6 +56,7 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
   
   const MarqueeColumn = ({ images, columnIndex }: { images: MarqueeImage[], columnIndex: number }) => {
     const isEven = columnIndex % 2 === 0;
+    const duration = isEven ? 30 : 40;
 
     const columnContent = (
       <>
@@ -70,10 +71,10 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
                 transition={{ duration: 0.3, ease: "easeInOut" }}
                 src={image.src}
                 alt={image.alt}
-                width={200}
-                height={200}
+                width={250}
+                height={250}
                 className={cn(
-                  "aspect-square w-full max-w-[200px] rounded-lg object-cover ring ring-gray-300/30 dark:ring-gray-800/50 shadow-xl hover:shadow-2xl transition-shadow duration-300",
+                  "aspect-square w-full max-w-[250px] rounded-lg object-cover ring ring-gray-300/30 dark:ring-gray-800/50 shadow-xl hover:shadow-2xl transition-shadow duration-300",
                   isClickable ? "cursor-pointer" : ""
                 )}
                 onClick={() => handleImageClick(image, globalIndex)}
@@ -91,7 +92,7 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
           className="flex flex-col"
           animate={{ y: isEven ? ["0%", "-100%"] : ["-100%", "0%"] }}
           transition={{
-            duration: isEven ? 30 : 40,
+            duration: duration,
             repeat: Infinity,
             ease: "linear",
           }}
