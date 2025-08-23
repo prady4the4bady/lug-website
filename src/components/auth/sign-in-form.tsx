@@ -1,8 +1,14 @@
 
 "use client"
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
+import type { SignInValues } from "@/lib/types";
+import { signInSchema } from "@/lib/schemas";
 import { Loader2 } from "lucide-react";
 
 function GoogleIcon() {
@@ -15,18 +21,64 @@ function GoogleIcon() {
 }
 
 export function SignInForm() {
-    const { signInWithGoogle, loading } = useAuth();
+    const { signInWithGoogle, signInWithEmail, loading } = useAuth();
+    const form = useForm<SignInValues>({
+        resolver: zodResolver(signInSchema),
+        defaultValues: { email: "", password: "" },
+    });
+
+    const onSubmit = (values: SignInValues) => {
+        signInWithEmail(values);
+    };
     
     return (
-        <div className="mt-4">
-            <Button variant="outline" className="w-full" onClick={signInWithGoogle} disabled={loading}>
+        <div className="space-y-4">
+             <Button variant="outline" className="w-full" onClick={signInWithGoogle} disabled={loading}>
                  {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}
                  Sign in with Google
             </Button>
-
-            <p className="text-xs text-center text-muted-foreground mt-6">
-                By signing in, you agree to our terms of service.
-            </p>
+            <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                </div>
+            </div>
+             <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Email</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="f20XXXXX@dubai.bits-pilani.ac.in" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Password</FormLabel>
+                                <FormControl>
+                                    <Input type="password" placeholder="••••••••" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <Button type="submit" className="w-full" disabled={loading}>
+                        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Sign In
+                    </Button>
+                </form>
+            </Form>
         </div>
     )
 }
