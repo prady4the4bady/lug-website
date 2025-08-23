@@ -12,7 +12,7 @@ export default function AboutPage() {
       description: "At LUG, we believe in the power of open-source technology and the freedom to create, share, and innovate. Our community brings together students passionate about Linux, open-source software, and collaborative development. From beginners to experts, we explore system administration, scripting, and cutting-edge tools through workshops, install fests, and discussions. At LUG, curiosity drives learning, collaboration fuels growth, and innovation thrives.",
       tags: ["Open Source", "Collaboration", "Linux"],
       imageUrl: "/images/who.png",
-      link: "https://www.linkedin.com/company/lugbpdc/posts/?feedView=all"
+      link: "https://www.linkedin.com/company/lugbpdc/"
     },
     {
       id: 2,
@@ -21,7 +21,7 @@ export default function AboutPage() {
       description: "Our mission is to ignite a passion for open-source technology by fostering a collaborative environment for learning and innovation. We empower students with the practical skills and hands-on experience necessary to thrive in their future careers.",
       tags: ["Innovation", "Skills", "Technology"],
       imageUrl: "/images/mission.png",
-      link: "https://www.linkedin.com/company/lugbpdc/posts/?feedView=all"
+      link: "/events"
     },
     {
       id: 3,
@@ -30,7 +30,7 @@ export default function AboutPage() {
       description: "From hands-on workshops and collaborative coding projects to expert-led tech talks and lively install fests, we offer a wide range of activities. Our community thrives on exploring everything from system administration to cutting-edge development, providing a space for members to share knowledge, seek guidance, and innovate together.",
       tags: ["Workshops", "Projects", "Talks"],
       imageUrl: "/images/what.png",
-      link: "https://www.instagram.com/lugbpdc?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+      link: "https://www.instagram.com/lugbpdc/"
     }
   ];
 

@@ -174,6 +174,8 @@ const Carousel3D = ({
 
                       <Link
                         href={item.link}
+                        target={item.link.startsWith('http') ? '_blank' : '_self'}
+                        rel={item.link.startsWith('http') ? 'noopener noreferrer' : ''}
                         className="text-primary flex items-center hover:underline relative group"
                         onClick={(e) => {
                           if (item.link === "#") {
