@@ -3,81 +3,81 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
+  
     // Helper functions
-    function isAuth() {
+    function isUserAuthenticated() {
       return request.auth != null;
     }
+    
     function isUser(userId) {
-      return isAuth() && request.auth.uid == userId;
-    }
-    function userExists(userId) {
-        return exists(/databases/$(database)/documents/users/$(userId));
-    }
-    function isAdmin(userId) {
-        return userExists(userId) && get(/databases/$(database)/documents/users/$(userId)).data.isAdmin == true;
-    }
-    function isActiveMember(userId) {
-        return userExists(userId) && get(/databases/$(database)/documents/users/$(userId)).data.subscriptionStatus == 'active';
+      return isUserAuthenticated() && request.auth.uid == userId;
     }
 
-    // Users Collection:
-    // - Anyone can create their own user document on sign up.
-    // - Users can only read or update their own data.
-    // - Admins can read or update any user's data.
+    function userIsAdmin() {
+      return isUserAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    // Users Collection
+    // - Admins can read/write any user document.
+    // - Users can read any user document (for profiles, council page, etc.).
+    // - Users can only create their own user document and update their own.
     match /users/{userId} {
-      allow read: if isUser(userId) || isAdmin(request.auth.uid);
+      allow read; // Allow all users to read profiles (for council page, avatars, etc.)
       allow create: if isUser(userId);
-      allow update: if isUser(userId) || isAdmin(request.auth.uid);
+      allow update: if isUser(userId) || userIsAdmin();
+      allow delete: if userIsAdmin();
     }
     
-    // Members Collection (tracks active subscriptions)
-    // - Admins can read, create, update, and delete member documents.
-    // - Regular users cannot access this collection directly.
+    // Members Collection
+    // - Only admins can read/write to the members collection.
     match /members/{memberId} {
-        allow read, write: if isAdmin(request.auth.uid);
+        allow read, write: if userIsAdmin();
+    }
+    
+    // Activities Collection
+    // - Admins can read all activity logs.
+    // - Users can only create their own activity logs.
+    match /activities/{activityId} {
+        allow read: if userIsAdmin();
+        allow create: if isUserAuthenticated();
     }
 
-    // Events Collection:
-    // - Admins can create, read, update, and delete events.
-    // - Active members can read events.
+    // Events Collection
+    // - All users can read events.
+    // - Only admins can create, update, or delete events.
     match /events/{eventId} {
-      allow read: if isActiveMember(request.auth.uid) || isAdmin(request.auth.uid);
-      allow write: if isAdmin(request.auth.uid); // Covers create, update, delete
+      allow read: if isUserAuthenticated();
+      allow write: if userIsAdmin();
     }
 
-    // Messages Collection (Forum):
-    // - Active members and admins can read and create messages.
-    // - Users can delete their own messages.
+    // Messages Collection (Forum)
+    // - Authenticated users with an active subscription can read/create messages.
+    // - Users can only delete their own messages.
     // - Admins can delete any message.
     match /messages/{messageId} {
-      allow read, create: if isActiveMember(request.auth.uid) || isAdmin(request.auth.uid);
-      allow delete: if (isUser(resource.data.userId)) || isAdmin(request.auth.uid);
-    }
-    
-    // Reports Collection (Bug Reports)
-    // - Any authenticated user can create a report.
-    // - Admins can read, update, and delete any report.
-    match /reports/{reportId} {
-        allow create: if isAuth();
-        allow read, update, delete: if isAdmin(request.auth.uid);
-    }
+      function userIsActiveSubscriber() {
+        let userData = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+        return userData.subscriptionStatus == 'active' || userData.isAdmin == true;
+      }
 
-    // Activities Collection (User Activity Log)
-    // - Users can create their own activity logs.
-    // - Users can read their own logs.
-    // - Admins can read any user's logs.
-    match /activities/{activityId} {
-        allow create: if isAuth() && request.resource.data.userId == request.auth.uid;
-        allow read: if isUser(resource.data.userId) || isAdmin(request.auth.uid);
+      allow read, create: if isUserAuthenticated() && userIsActiveSubscriber();
+      allow delete: if userIsAdmin() || (isUserAuthenticated() && resource.data.user == request.auth.displayName);
     }
     
-    // Settings Collection (For feature flags)
-    // - Anyone can read the feature flags.
-    // - Only admins can update the feature flags.
+    // Reports Collection
+    // - Users can create reports.
+    // - Admins can read, update, and delete reports.
+    match /reports/{reportId} {
+        allow create: if isUserAuthenticated();
+        allow read, update, delete: if userIsAdmin();
+    }
+    
+    // Settings Collection (for Feature Flags)
+    // - All users can read feature flags.
+    // - Only admins can write/update feature flags.
     match /settings/featureFlags {
-        allow read: if true;
-        allow write: if isAdmin(request.auth.uid);
+        allow read;
+        allow write: if userIsAdmin();
     }
   }
 }
