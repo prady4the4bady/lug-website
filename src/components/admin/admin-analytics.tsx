@@ -107,8 +107,8 @@ export function AdminAnalytics() {
                     <CardContent className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={userChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                                <CartesianGrid vertical={false} />
-                                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={"preserveStartEnd"} />
                                 <YAxis domain={[0, maxUserCount]} allowDecimals={false} fontSize={12} />
                                 <Tooltip
                                     contentStyle={{
@@ -129,8 +129,8 @@ export function AdminAnalytics() {
                     <CardContent className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={eventChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                                <CartesianGrid vertical={false} />
-                                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={"preserveStartEnd"} />
                                 <YAxis domain={[0, maxEventCount]} allowDecimals={false} fontSize={12} />
                                 <Tooltip
                                     contentStyle={{
@@ -151,8 +151,8 @@ export function AdminAnalytics() {
                     <CardContent className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={messageChartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                                <CartesianGrid vertical={false} />
-                                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={0} />
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} fontSize={12} interval={"preserveStartEnd"} />
                                 <YAxis domain={[0, maxMessageCount]} allowDecimals={false} fontSize={12} />
                                 <Tooltip
                                     contentStyle={{
