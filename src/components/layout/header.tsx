@@ -16,51 +16,78 @@ export function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const [isClient, setIsClient] = useState(false)
   const pathname = usePathname()
-  const { user, dbUser, isAdmin, signOutUser, featureFlags } = useAuth();
+  const { user, isAdmin, signOutUser, featureFlags } = useAuth();
 
   useEffect(() => {
     setIsClient(true)
   }, [])
 
   const baseNavLinks = [
-    { href: "/about", label: "About", show: true },
-    { href: "/council", label: "Council", show: true },
-    { href: "/join-us", label: "Join Us", show: true },
+    { href: "/about", label: "About" },
+    { href: "/council", label: "Council" },
+    { href: "/join-us", label: "Join Us" },
   ];
 
-  const getNavLinks = () => {
-    let links = [...baseNavLinks];
-
+  const getDynamicNavLinks = () => {
+    const dynamicLinks = [];
     if (featureFlags?.showEvents || isAdmin) {
-        links.push({ href: "/events", label: "Events", show: true });
+      dynamicLinks.push({ href: "/events", label: "Events" });
     }
-
     if (featureFlags?.showForum || isAdmin) {
-        links.push({ href: "/forum", label: "Forum", show: true });
+        dynamicLinks.push({ href: "/forum", label: "Forum" });
     }
-
     if (user) {
-      links.push({ href: "/profile", label: "Profile", show: true });
+      dynamicLinks.push({ href: "/profile", label: "Profile" });
     }
-    
     if (isAdmin) {
-      links.push({ href: "/admin", label: "Admin", show: true });
+      dynamicLinks.push({ href: "/admin", label: "Admin" });
     }
-
-    // Filter out duplicates that might occur if flags are true and user is admin
-    return links.filter((link, index, self) =>
-        index === self.findIndex((l) => (
-            l.href === link.href
-        ))
+    // Remove duplicates
+    return dynamicLinks.filter((link, index, self) =>
+        index === self.findIndex((l) => l.href === link.href)
     );
   };
   
-  const navLinks = isClient ? getNavLinks() : baseNavLinks;
-  const showSignInButton = isClient ? (isAdmin || (featureFlags?.showSignIn ?? true)) : true;
+  const navLinks = isClient ? [...baseNavLinks, ...getDynamicNavLinks()] : baseNavLinks;
+  const mobileNavLinks = [...baseNavLinks, ...getDynamicNavLinks()];
+
+  const showSignInButton = isClient ? (isAdmin || (featureFlags?.showSignIn ?? true)) : false;
 
   const handleTerminalLink = () => {
     window.open("https://lug12.netlify.app/", "_blank");
   }
+
+  const renderNavLinks = (links: {href: string, label: string}[]) => (
+    links.map((link) => (
+      <Link
+        key={link.href}
+        href={link.href}
+        className={cn(
+          "transition-colors hover:text-foreground/80",
+          pathname === link.href ? "text-foreground" : "text-foreground/60"
+        )}
+      >
+        {link.label}
+      </Link>
+    ))
+  );
+
+  const renderMobileNavLinks = (links: {href: string, label: string}[]) => (
+     links.map((link) => (
+        <Link
+          key={link.href}
+          href={link.href}
+          onClick={() => setIsOpen(false)}
+          className={cn(
+            "transition-colors hover:text-foreground",
+            pathname === link.href ? "text-foreground" : "text-foreground/60"
+          )}
+        >
+          {link.label}
+        </Link>
+      ))
+  );
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -76,18 +103,8 @@ export function Header() {
             </div>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium transition-all duration-300 ease-in-out">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  "transition-colors hover:text-foreground/80",
-                  pathname === link.href ? "text-foreground" : "text-foreground/60"
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
+             {renderNavLinks(baseNavLinks)}
+             {isClient && renderNavLinks(getDynamicNavLinks())}
           </nav>
         </div>
         
@@ -112,19 +129,8 @@ export function Header() {
             </Link>
             <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
               <div className="flex flex-col space-y-3">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className={cn(
-                      "transition-colors hover:text-foreground",
-                      pathname === link.href ? "text-foreground" : "text-foreground/60"
-                    )}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                {renderMobileNavLinks(baseNavLinks)}
+                {isClient && renderMobileNavLinks(getDynamicNavLinks())}
               </div>
             </div>
           </SheetContent>
