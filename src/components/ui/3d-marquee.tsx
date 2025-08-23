@@ -54,21 +54,18 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
     }
   };
   
-  const MarqueeColumn = ({ images, reverse = false }: { images: MarqueeImage[], reverse?: boolean }) => {
+  const MarqueeColumn = ({ images }: { images: MarqueeImage[] }) => {
     return (
       <div className="flex flex-col items-center gap-6 overflow-hidden">
         <motion.div
           className="flex flex-col gap-6"
-          variants={{
-            animate: {
-              y: reverse ? [0, '-100%'] : ['-100%', 0]
-            }
+          animate={{
+            y: ["0%", "-100%"],
           }}
-          animate="animate"
           transition={{
-            duration: 35,
+            duration: 20,
             repeat: Infinity,
-            ease: 'linear'
+            ease: "linear",
           }}
         >
           {/* Render the images twice for the seamless loop */}
@@ -115,7 +112,7 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
             className={`relative grid h-full w-full origin-center grid-cols-2 sm:grid-cols-4 gap-4 transform`}
           >
             {imageGroups.map((imagesInGroup, idx) => (
-               <MarqueeColumn key={`column-${idx}`} images={imagesInGroup} reverse={idx % 2 === 0} />
+               <MarqueeColumn key={`column-${idx}`} images={imagesInGroup} />
             ))}
           </div>
         </div>
