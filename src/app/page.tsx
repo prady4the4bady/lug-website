@@ -87,6 +87,7 @@ export default function Home() {
             draggable={true} 
             rotationSpeed={0.005}
             rotationDirection="counter-clockwise"
+            mobileScaleFactor={0.75}
         />
       </section>
       
