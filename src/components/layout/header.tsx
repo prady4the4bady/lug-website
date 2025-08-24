@@ -29,13 +29,15 @@ export function Header() {
 
   const getDynamicNavLinks = () => {
     const dynamicLinks = [];
-    if (featureFlags?.showJoinUs || isAdmin) {
+    const canShowGuestLinks = featureFlags?.showSignIn ?? true;
+
+    if ((featureFlags?.showJoinUs && canShowGuestLinks) || isAdmin) {
       dynamicLinks.push({ href: "/join-us", label: "Join Us" });
     }
-    if (featureFlags?.showEvents || isAdmin) {
+    if ((featureFlags?.showEvents && canShowGuestLinks) || isAdmin) {
       dynamicLinks.push({ href: "/events", label: "Events" });
     }
-    if (featureFlags?.showForum || isAdmin) {
+    if ((featureFlags?.showForum && canShowGuestLinks) || isAdmin) {
         dynamicLinks.push({ href: "/forum", label: "Forum" });
     }
     if (user) {
