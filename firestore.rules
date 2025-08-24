@@ -1,62 +1,72 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper function to check if a user is an admin
-    function isAdmin() {
-      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
-    }
-    
-    // Helper function to check if a user is an active member
-    function isActiveMember() {
-        return request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subscriptionStatus == 'active';
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
     }
 
-    // Settings are readable by all, but only writable by admins.
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isActiveSubscriber() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subscriptionStatus == 'active';
+    }
+
+    function isAdmin() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    // Settings are public read, admin write
     match /settings/{settingId} {
       allow read: if true;
       allow write: if isAdmin();
     }
     
-    // Events are readable by all active members, but only writable by admins.
+    // Users can read/update their own data.
+    // Admins can read/write any user data.
+    // Public can read basic data for council members.
+    match /users/{userId} {
+      allow read: if isSignedIn() || get(/databases/$(database)/documents/users/$(userId)).data.isCouncilMember == true;
+      allow update: if isOwner(userId) || isAdmin();
+      allow create: if isSignedIn();
+      
+       // This allows the query in council/page.tsx
+      allow list: if true;
+    }
+
+    // Events are public read, admin write.
     match /events/{eventId} {
-      allow read: if isActiveMember() || isAdmin();
+      allow read: if true;
       allow write: if isAdmin();
     }
 
-    // Users can read/update their own data. Admins can read/write any user data.
-    // Council members list is public.
-    match /users/{userId} {
-      allow get: if request.auth != null;
-      allow list: if true; // Allows querying for council members
-      allow update: if request.auth.uid == userId || isAdmin();
-      allow create: if request.auth.uid == userId;
-    }
-    
-    // Members collection is private, only accessible by admins.
+    // Members can be read by admins, and created/deleted when subscriptions change.
     match /members/{memberId} {
         allow read, write: if isAdmin();
-    }
-
-    // Messages are for active members. Admins can moderate.
-    match /messages/{messageId} {
-      allow read, create: if isActiveMember() || isAdmin();
-      allow update, delete: if isAdmin();
+        allow create: if isOwner(memberId);
     }
     
-    // Reports can be created by any authenticated user, but only managed by admins.
+    // Messages (Forum) can be read/written by active subscribers, or managed by admins.
+    match /messages/{messageId} {
+      allow read, write: if isActiveSubscriber() || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Reports are write-only for users, full access for admins.
     match /reports/{reportId} {
-        allow create: if request.auth != null;
+        allow create: if isSignedIn();
         allow read, update, delete: if isAdmin();
     }
     
-    // Activity logs are private to the user and admins.
+    // Activities can be written by the user, read by admins.
     match /activities/{activityId} {
-        allow read: if request.auth.uid == resource.data.userId || isAdmin();
-        allow create: if request.auth.uid == request.resource.data.userId;
-        allow update, delete: if false; // Activities should be immutable
+        allow create: if isSignedIn();
+        allow read: if isAdmin();
     }
   }
 }
