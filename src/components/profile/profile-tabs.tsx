@@ -1,3 +1,4 @@
+
 "use client"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -252,7 +253,7 @@ function MembershipTab() {
 }
 
 export function ProfileTabs() {
-    const { user, dbUser, loading: authLoading, isAdmin } = useAuth();
+    const { user, dbUser, loading: authLoading, isAdmin, featureFlags } = useAuth();
     const searchParams = useSearchParams();
     const defaultTab = searchParams.get('tab') || 'dashboard';
 
@@ -270,6 +271,7 @@ export function ProfileTabs() {
     const userAvatar = user.photoURL || "https://placehold.co/100x100.png";
     const isCouncilMember = dbUser?.isCouncilMember || false;
     const isActiveMember = dbUser?.subscriptionStatus === 'active';
+    const showEvents = featureFlags?.showEvents ?? true;
 
     return (
         <Tabs defaultValue={defaultTab} className="w-full">
@@ -277,7 +279,7 @@ export function ProfileTabs() {
                 <TabsList>
                     <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
                     <TabsTrigger value="membership">Membership</TabsTrigger>
-                    {(isActiveMember || isAdmin) && <TabsTrigger value="history">Event History</TabsTrigger>}
+                    {(isActiveMember || isAdmin) && showEvents && <TabsTrigger value="history">Event History</TabsTrigger>}
                     {(isCouncilMember || isAdmin) && <TabsTrigger value="edit-profile">Edit Profile</TabsTrigger>}
                 </TabsList>
             </div>
@@ -325,7 +327,7 @@ export function ProfileTabs() {
             <TabsContent value="membership">
                 <MembershipTab />
             </TabsContent>
-            {(isActiveMember || isAdmin) && (
+            {(isActiveMember || isAdmin) && showEvents && (
                 <TabsContent value="history">
                     <EventHistoryTab />
                 </TabsContent>
