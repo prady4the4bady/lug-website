@@ -23,10 +23,10 @@ export function UserManager() {
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
-        const q = query(collection(db, "users"), where("isCouncilMember", "==", false));
+        const q = query(collection(db, "users"));
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const usersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as User));
-            setUsers(usersData);
+            setUsers(usersData.filter(u => !u.isCouncilMember));
         });
 
         return () => unsubscribe();
