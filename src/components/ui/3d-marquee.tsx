@@ -99,7 +99,7 @@ export const ThreeDMarquee: React.FC<ThreeDMarqueeProps> = ({
         <motion.div
           className="flex flex-col"
           animate={{
-            y: isEven ? ["-100%", "0%"] : ["0%", "-100%"],
+            y: isEven ? ["0%", "-100%"] : ["-100%", "0%"],
           }}
           transition={{
             duration,
