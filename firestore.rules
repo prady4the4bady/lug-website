@@ -1,53 +1,61 @@
+
 rules_version = '2';
-
-function isUser(userId) {
-  return request.auth != null && request.auth.uid == userId;
-}
-
-function isAdmin() {
-    return request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
-}
-
-function isActiveSubscriber() {
-    return request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subscriptionStatus == 'active';
-}
 
 service cloud.firestore {
   match /databases/{database}/documents {
-  
-    match /users/{userId} {
-      allow read: if isUser(userId) || isAdmin();
-      allow write: if isUser(userId) || isAdmin();
+
+    // Helper function to check if a user is an admin
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
     
+    // Helper function to check if a user has an active subscription
+    function isSubscriber() {
+        return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+               get(/databases/$(database)/documents/users/$(request.auth.uid)).data.subscriptionStatus == 'active';
+    }
+
+    // Users can read/update their own data. Admins can read/write any user's data.
+    match /users/{userId} {
+      allow read, update: if request.auth.uid == userId || isAdmin();
+      allow create: if request.auth.uid == userId;
+      allow list: if isAdmin();
+    }
+    
+    // Admins can manage the list of members
+    match /members/{userId} {
+        allow read: if isSubscriber() || isAdmin();
+        allow write: if isAdmin();
+    }
+
+    // Anyone can read events and settings, only admins can write.
     match /events/{eventId} {
-      allow read: if true; 
+      allow read: if isSubscriber() || isAdmin();
       allow write: if isAdmin();
     }
     
+    match /settings/{docId} {
+      allow read;
+      allow write: if isAdmin();
+    }
+
+    // Authenticated and subscribed users can read/write messages. Admins have full access.
     match /messages/{messageId} {
-      allow read, write: if isActiveSubscriber() || isAdmin();
-    }
-
-    match /reports/{reportId} {
-        allow read, delete: if isAdmin();
-        allow create: if request.auth != null;
-        allow update: if isAdmin();
-    }
-
-    match /settings/{settingId} {
-        allow read: if true;
-        allow write: if isAdmin();
+      allow read, create: if isSubscriber() || isAdmin();
+      allow delete: if isAdmin(); // Only admins can delete messages
     }
     
-    match /members/{memberId} {
-        allow read: if isActiveSubscriber() || isAdmin();
-        allow write: if isAdmin();
+    // Any authenticated user can create a report. Admins can manage them.
+    match /reports/{reportId} {
+        allow create: if request.auth.uid != null;
+        allow read, update, delete: if isAdmin();
     }
-
+    
+    // Users can view their own activity. Admins can view any user's activity.
     match /activities/{activityId} {
-        allow read: if isUser(resource.data.userId) || isAdmin();
-        allow create: if request.auth != null;
+        allow read: if request.auth.uid == resource.data.userId || isAdmin();
+        allow create: if request.auth.uid != null;
     }
   }
 }

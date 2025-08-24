@@ -26,19 +26,18 @@ export function UserActivityLog({ userId }: UserActivityLogProps) {
         }
 
         setLoading(true);
-        // The query was simplified by removing orderBy to avoid needing a composite index.
-        // Sorting is now handled on the client side after data is fetched.
         const q = query(
             collection(db, "activities"), 
             where("userId", "==", userId),
+            orderBy("timestamp", "desc"),
             limit(20)
         );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const activitiesData = snapshot.docs.map(doc => doc.data() as UserActivity);
-            // Sort activities by timestamp descending on the client.
-            activitiesData.sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0));
             setActivities(activitiesData);
+            setLoading(false);
+        }, (error) => {
             setLoading(false);
         });
 

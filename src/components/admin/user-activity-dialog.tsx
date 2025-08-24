@@ -9,7 +9,7 @@ import { format } from "date-fns";
 import type { User, UserActivity } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { db } from "@/lib/firebase";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { collection, query, where, onSnapshot, orderBy } from "firebase/firestore";
 import { Loader2 } from "lucide-react";
 
 
@@ -30,18 +30,17 @@ export function UserActivityDialog({ user, isOpen, onOpenChange }: UserActivityD
         };
 
         setLoading(true);
-        // The query was simplified by removing orderBy to avoid needing a composite index.
-        // Sorting is now handled on the client side after data is fetched.
         const q = query(
             collection(db, "activities"), 
-            where("userId", "==", user.id)
+            where("userId", "==", user.id),
+            orderBy("timestamp", "desc")
         );
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const activitiesData = snapshot.docs.map(doc => doc.data() as UserActivity);
-            // Sort activities by timestamp descending on the client.
-            activitiesData.sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0));
             setActivities(activitiesData);
+            setLoading(false);
+        }, (error) => {
             setLoading(false);
         });
 
