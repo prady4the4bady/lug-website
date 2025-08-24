@@ -8,7 +8,7 @@ import type { Event, SubscriptionTier } from "@/lib/types";
 import { format } from "date-fns";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useAuth } from "@/hooks/use-auth";
-import { Loader2, Download, CheckCircle, Clock } from "lucide-react";
+import { Loader2, Download, CheckCircle, Clock, Bug, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { collection, onSnapshot, query, where, Timestamp, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -19,6 +19,7 @@ import { logActivity } from "@/lib/activity-logger";
 import { UserActivityLog } from "./user-activity-log";
 import { generateCertificate } from "@/lib/certificate-generator";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 
 const useParticipatedEvents = () => {
     const [events, setEvents] = useState<Event[]>([]);
@@ -308,13 +309,27 @@ export function ProfileTabs() {
                             <CardHeader>
                                 <CardTitle className="text-lg">Settings</CardTitle>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="space-y-4">
                                <div className="flex items-center justify-between rounded-lg border p-4">
                                     <div>
                                         <h4 className="font-medium">Theme</h4>
                                         <p className="text-sm text-muted-foreground">Select your preferred theme.</p>
                                     </div>
                                     <ThemeToggle />
+                                </div>
+                                <div className="flex items-center justify-between rounded-lg border p-4">
+                                    <div className="flex items-center gap-4">
+                                        <Bug className="h-5 w-5 text-destructive" />
+                                        <div>
+                                            <h4 className="font-medium">Report a Bug</h4>
+                                            <p className="text-sm text-muted-foreground">Spotted an issue? Let us know.</p>
+                                        </div>
+                                    </div>
+                                     <Button asChild variant="ghost" size="icon">
+                                        <Link href="/report-a-bug">
+                                            <ChevronRight className="h-5 w-5" />
+                                        </Link>
+                                    </Button>
                                 </div>
                             </CardContent>
                         </Card>
