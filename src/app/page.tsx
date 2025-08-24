@@ -83,9 +83,9 @@ export default function Home() {
             images={ringImages}
             width={400}
             imageDistance={600}
-            draggable={false} // Disable dragging for continuous animation
-            rotationSpeed={0.005} // Slow rotation speed
-            rotationDirection="counter-clockwise" // "left to right" effect
+            draggable={true} 
+            rotationSpeed={0.005}
+            rotationDirection="counter-clockwise"
         />
       </section>
       
