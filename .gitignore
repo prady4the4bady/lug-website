@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+.pnp.cjs
 
 # testing
 /coverage
@@ -26,7 +27,6 @@ yarn-error.log*
 pnpm-debug.log*
 
 # local env files
-.env
 .env.local
 .env.development.local
 .env.test.local
@@ -40,5 +40,17 @@ pnpm-debug.log*
 next-env.d.ts
 
 # Firebase
-.firebase
-firebase-debug.log
+.firebase/
+firebase.json
+.firebaserc
+database.rules.json
+storage.rules
+firestore.rules
+firestore.indexes.json
+functions/lib
+functions/.runtimeconfig.json
+
+# misc
+*.log
+*~
+.vscode/settings.json
