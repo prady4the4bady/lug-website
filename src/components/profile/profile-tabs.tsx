@@ -273,6 +273,7 @@ export function ProfileTabs() {
     const isCouncilMember = dbUser?.isCouncilMember || false;
     const isActiveMember = dbUser?.subscriptionStatus === 'active';
     const showEvents = featureFlags?.showEvents ?? true;
+    const showReportBug = featureFlags?.showReportBug ?? true;
 
     return (
         <Tabs defaultValue={defaultTab} className="w-full">
@@ -317,20 +318,22 @@ export function ProfileTabs() {
                                     </div>
                                     <ThemeToggle />
                                 </div>
-                                <div className="flex items-center justify-between rounded-lg border p-4">
-                                    <div className="flex items-center gap-4">
-                                        <Bug className="h-5 w-5 text-destructive" />
-                                        <div>
-                                            <h4 className="font-medium">Report a Bug</h4>
-                                            <p className="text-sm text-muted-foreground">Spotted an issue? Let us know.</p>
+                                {showReportBug && (
+                                    <div className="flex items-center justify-between rounded-lg border p-4">
+                                        <div className="flex items-center gap-4">
+                                            <Bug className="h-5 w-5 text-destructive" />
+                                            <div>
+                                                <h4 className="font-medium">Report a Bug</h4>
+                                                <p className="text-sm text-muted-foreground">Spotted an issue? Let us know.</p>
+                                            </div>
                                         </div>
+                                         <Button asChild variant="ghost" size="icon">
+                                            <Link href="/report-a-bug">
+                                                <ChevronRight className="h-5 w-5" />
+                                            </Link>
+                                        </Button>
                                     </div>
-                                     <Button asChild variant="ghost" size="icon">
-                                        <Link href="/report-a-bug">
-                                            <ChevronRight className="h-5 w-5" />
-                                        </Link>
-                                    </Button>
-                                </div>
+                                )}
                             </CardContent>
                         </Card>
                     </div>

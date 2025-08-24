@@ -18,6 +18,7 @@ const defaultFlags: FeatureFlags = {
     showSignIn: true,
     showJoinUs: true,
     showMascot: true,
+    showReportBug: true,
 };
 
 export function FeatureManager() {
@@ -119,6 +120,17 @@ export function FeatureManager() {
                         id="signin-switch"
                         checked={flags.showSignIn}
                         onCheckedChange={(value) => handleFlagChange('showSignIn', value)}
+                    />
+                </div>
+                <div className="flex items-center justify-between rounded-lg border p-4">
+                    <div>
+                        <Label htmlFor="reportbug-switch" className="text-base">Report a Bug</Label>
+                        <p className="text-sm text-muted-foreground">Show or hide the "Report a Bug" feature.</p>
+                    </div>
+                    <Switch
+                        id="reportbug-switch"
+                        checked={flags.showReportBug}
+                        onCheckedChange={(value) => handleFlagChange('showReportBug', value)}
                     />
                 </div>
             </CardContent>
