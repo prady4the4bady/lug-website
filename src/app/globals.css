@@ -29,6 +29,11 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+    
+    /* LUG Orange Colors */
+    --lug-orange: 21 100% 50%; /* #FF6700 */
+    --lug-orange-light: 21 100% 60%; /* Lighter variant */
+    --lug-orange-dark: 21 100% 40%; /* Darker variant */
   }
 
   .dark {
@@ -56,6 +61,11 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    
+    /* LUG Orange Colors for Dark Mode */
+    --lug-orange: 21 100% 55%; /* Slightly lighter for dark mode */
+    --lug-orange-light: 21 100% 65%;
+    --lug-orange-dark: 21 100% 45%;
   }
 
   .terminal {
@@ -78,6 +88,11 @@
     --border: 120 100% 40%;
     --input: 0 0% 10%;
     --ring: 120 100% 75%;
+    
+    /* LUG Orange Colors for Terminal Mode */
+    --lug-orange: 21 100% 60%;
+    --lug-orange-light: 21 100% 70%;
+    --lug-orange-dark: 21 100% 50%;
   }
 }
 
@@ -87,5 +102,22 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* Custom LUG Orange utilities */
+  .text-lug-orange {
+    color: hsl(var(--lug-orange));
+  }
+  .bg-lug-orange {
+    background-color: hsl(var(--lug-orange));
+  }
+  .border-lug-orange {
+    border-color: hsl(var(--lug-orange));
+  }
+  .shadow-lug-orange {
+    --tw-shadow-color: hsl(var(--lug-orange));
+    --tw-shadow: var(--tw-shadow-colored);
   }
 }
